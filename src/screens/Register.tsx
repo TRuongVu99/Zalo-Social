@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {fontFamily} from '../assets/fonts/Font';
 import {Color, FontSize} from '../constants';
 
 const Register = () => {
@@ -31,7 +32,11 @@ const Register = () => {
           <CustumInput
             onChangText={() => {}}
             placeholder={'Gồm 2-40 ký tự'}
-            textInputStyle={{fontSize: FontSize.h5, paddingLeft: 10}}
+            textInputStyle={{
+              fontSize: FontSize.h5,
+              paddingLeft: 10,
+              fontFamily: fontFamily.primaryFont,
+            }}
           />
         </View>
         <View style={styles.view2}>
@@ -68,6 +73,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.h3,
     paddingLeft: 10,
     paddingTop: 20,
+    fontFamily: fontFamily.primaryFont,
   },
   view1: {
     height: 100,
@@ -75,6 +81,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: FontSize.h5,
     paddingLeft: 5,
+    fontFamily: fontFamily.primaryFont,
   },
   row: {
     flexDirection: 'row',
@@ -85,6 +92,7 @@ const styles = StyleSheet.create({
     color: Color.primary,
     fontSize: FontSize.h5,
     paddingLeft: 5,
+    fontFamily: fontFamily.primaryFont,
   },
   view2: {
     paddingTop: 10,

@@ -1,6 +1,6 @@
 import {CustumInput, Header, Option, UIBottom, UiValidate} from '@components';
 import {IHeaderEnum} from '@model/handelConfig';
-import {UserNumber} from '@navigation';
+import {UserNumberPhone, useUserNumberPhone} from '../hook/useUserNumberPhone';
 import {RouterName} from '@navigation/rootName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -15,17 +15,27 @@ import {
 import {Color} from '../constants';
 
 export default function CreateCustomer() {
-  const navigation = useNavigation();
-  const [number, setNumber] = useState<string>('');
-  const isValid = number.length < 10 && number.length > 0;
-  const stateNumber = useContext(UserNumber);
+  const navigation = useNavigation<any>();
+  const [numberPhone, setNumber] = useState<string>('');
+  const {setNumberPhone} = useContext(UserNumberPhone);
 
   const saveNumber = async (value: any) => {
     try {
       const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('customerNumber', jsonValue);
+      await AsyncStorage.setItem('customerNumber', jsonValue).then(async () => {
+        // await setNumberPhone({value});
+      });
+      navigation.navigate(RouterName.AuthenStack, {
+        screen: RouterName.ConfirmOTP,
+        params: {
+          numberPhone,
+        },
+      });
     } catch (e) {
+      console.log(e);
       // saving error
+    } finally {
+      setTimeout(() => {}, 500);
     }
   };
   return (
@@ -38,7 +48,7 @@ export default function CreateCustomer() {
         />
         <UiValidate
           notification={'Nhập số điện thoại để tạo tài khoản mới'}
-          isValid={isValid ? true : false}
+          isValid={true}
         />
         <View style={styles.row}>
           <Option onPress={() => Alert.alert('option')} />
@@ -47,16 +57,19 @@ export default function CreateCustomer() {
               setNumber(text);
             }}
             placeholder={'Số điện thoại'}
-            containerTextInput={{borderBottomColor: Color.lineColor}}
+            containerTextInput={{
+              borderBottomColor: Color.lineColor,
+              flex: 1,
+            }}
             keyboardType={'number-pad'}
+            maxLength={10}
           />
         </View>
         <View style={{flex: 1}} />
         <UIBottom
+          disabled={numberPhone === ''}
           onPress={() => {
-            navigation.navigate(RouterName.ConfirmOTP);
-            saveNumber({number});
-            stateNumber.setNumber({number});
+            saveNumber({numberPhone});
           }}
         />
       </View>

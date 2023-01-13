@@ -13,6 +13,13 @@
       "@navigation/*":["./src/navigation/*"],
       "@navigation":["./src/navigation/index"],
       "@model/*":["./src/model/*"],
+      "@data/*":["./src/data/*"],
+      "@home/*":["./src/screens/Home/*"],
+      "@constants/*":["./src/constants/*"],
+      "@constants":["./src/constants/index"],
+      "@fonts/*":["./src/assets/fonts/*"],
+      "@icon/*":["./src/assets/icon/*"],
+
 
     },
     /* Completeness */

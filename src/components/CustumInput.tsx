@@ -1,52 +1,69 @@
 import {
   View,
-  Text,
   TextInput,
   StyleSheet,
   ViewStyle,
-  KeyboardTypeOptions,
   StyleProp,
   TextStyle,
+  TextInputProps,
+  Text,
+  TouchableOpacity,
+  GestureResponderEvent,
 } from 'react-native';
-import React from 'react';
-type ICustomInput = {
+import React, {RefAttributes} from 'react';
+import {IButtonEnum} from '@model/handelConfig';
+import {fontFamily} from '../assets/fonts/Font';
+import {Color} from '../constants';
+type OmitStyle<T extends {style?: any}> = Omit<T, 'style'>;
+interface ICustomInput
+  extends OmitStyle<TextInputProps>,
+    RefAttributes<TextInput> {
   onChangText: (value?: any) => void;
-  placeholder?: string;
   textInputStyle?: StyleProp<TextStyle>;
   containerTextInput?: ViewStyle;
-  keyboardType?: KeyboardTypeOptions | undefined;
-  value?: string;
-};
+  type?: string;
+  onPress?: (event: GestureResponderEvent) => void;
+  text?: string;
+}
 const CustumInput: React.FC<ICustomInput> = ({
   onChangText,
-  placeholder,
   textInputStyle,
   containerTextInput,
-  keyboardType,
-  value,
+  type,
+  onPress,
+  text,
+  ...rest
 }) => {
   return (
     <View style={[styles.customInput, containerTextInput]}>
       <TextInput
         onChangeText={onChangText}
         style={[styles.textInput, textInputStyle]}
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        value={value}
+        {...rest}
       />
+      {type === IButtonEnum.disable && (
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Text style={styles.text}>{text}</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
 const styles = StyleSheet.create({
   customInput: {
-    flex: 1,
     height: 50,
     borderBottomWidth: 0.5,
-    // borderBackgroundColor: 'green',
     marginHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingRight: 10,
   },
   textInput: {
-    paddingTop: 19,
+    flex: 1,
+    // paddingTop: 15,
   },
+  text: {fontFamily: fontFamily.primaryFont, color: Color.DimGray},
+  button: {},
 });
 export default CustumInput;

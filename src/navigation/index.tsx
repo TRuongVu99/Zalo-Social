@@ -1,15 +1,17 @@
-import React, {createContext, useEffect, useState} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import BottomTabBar from '@components/BottomTabBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Login from '@screens/Login';
 import {NavigationContainer} from '@react-navigation/native';
-import Register from '@screens/Register';
-import Detail from '@screens/Detail';
-import {RouterName} from './rootName';
-import CreateCustomer from '@screens/CreateCustomer';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConfirmOTP from '@screens/ConfirmOTP';
-import StartScreen from '@screens/StartScreen';
+import CreateCustomer from '@screens/CreateCustomer';
+import ForgetPassword from '@screens/ForgetPassword';
+import SearchScreen from '@screens/Home/SearchScreen';
+import Login from '@screens/Login';
 import OnBoarding, {keySaveData} from '@screens/OnBoarding';
+import Register from '@screens/Register';
+import {useUserNumberPhone, UserNumberPhone} from '../hook/useUserNumberPhone';
+import React, {createContext, useEffect, useMemo, useState} from 'react';
+import {RouterName} from './rootName';
 
 // export type RootStackParamList<T> = {
 //   Register: 'Register';
@@ -20,15 +22,13 @@ import OnBoarding, {keySaveData} from '@screens/OnBoarding';
 const Stack = createNativeStackNavigator<any>();
 export const UserConText = createContext({
   user: null,
-  setUser: () => {},
+  setUser: (value: any) => {},
 });
-export const UserNumber = createContext({
-  number: null,
-  setNumber: () => {},
-});
+
 const Aplication = () => {
   const [user, setUserApp] = useState(null);
-  const [number, setNumberApp] = useState(null);
+  const {numberPhone, setNumberPhoneApp} = useUserNumberPhone();
+  // const [numberPhone, setNumberPhoneApp] = useState<string | null>(null);
   const getData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(keySaveData);
@@ -41,87 +41,78 @@ const Aplication = () => {
   const getNumber = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('customerNumber');
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
+      return jsonValue !== null ? JSON.parse(jsonValue) : null;
     } catch (e) {
       // error reading value
     }
   };
-  useEffect(() => {
-    async function getUser() {
-      const data = await getData();
-      setUserApp(data);
-    }
-    getUser();
+  // useEffect(() => {
+  //   async function getUser() {
+  //     const data = await getData();
+  //     setUserApp(data);
+  //   }
+  //   getUser();
 
-    return () => setUserApp(null);
-  }, []);
+  //   return () => setUserApp(null);
+  // }, []);
   useEffect(() => {
     async function getCustomerNumber() {
       const data = await getNumber();
-      setNumberApp(data);
+      if (data && Object.keys(data).length > 0) {
+        setNumberPhoneApp(data);
+      }
     }
     getCustomerNumber();
 
-    return () => setUserApp(null);
+    return () => {
+      setNumberPhoneApp(null);
+    };
   }, []);
-  console.log(number);
+  // console.log(numberPhone);
+  const value = useMemo(
+    () => ({
+      numberPhone,
+      setNumberPhone: (number: any) => setNumberPhoneApp(number),
+    }),
+    [numberPhone],
+  );
+  const AuthenStack = () => {
+    return (
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen name={RouterName.OnBoarding} component={OnBoarding} />
+        <Stack.Screen name={RouterName.Login} component={Login} />
+        <Stack.Screen name={RouterName.Register} component={Register} />
+        <Stack.Screen name={RouterName.ConfirmOTP} component={ConfirmOTP} />
+        <Stack.Screen
+          name={RouterName.ForgetPassword}
+          component={ForgetPassword}
+        />
+        <Stack.Screen
+          name={RouterName.CreateCustomer}
+          component={CreateCustomer}
+        />
+      </Stack.Navigator>
+    );
+  };
+  const MainNavigation = () => (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{headerShown: false}}
+        initialRouteName={RouterName.AuthenStack}>
+        <Stack.Screen name={RouterName.BottomTabBar} component={BottomTabBar} />
+        <Stack.Screen name={RouterName.SearchScreen} component={SearchScreen} />
+        <Stack.Screen name={RouterName.AuthenStack} component={AuthenStack} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
   return (
-    <UserConText.Provider
+    <UserNumberPhone.Provider
       value={{
-        user,
-        setUser: value => {
-          setUserApp(value);
-        },
+        numberPhone,
+        setNumberPhone: (number: any) => setNumberPhoneApp(number),
       }}>
-      <UserNumber.Provider
-        value={{
-          number,
-          setNumber: value => {
-            setNumberApp(value);
-          },
-        }}>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={RouterName.OnBoarding}>
-            <Stack.Screen
-              name={RouterName.Login}
-              component={Login}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name={RouterName.OnBoarding}
-              component={OnBoarding}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name={RouterName.Register}
-              component={Register}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name={RouterName.ConfirmOTP}
-              component={ConfirmOTP}
-              options={{headerShown: false}}
-            />
-
-            <Stack.Screen
-              name={RouterName.CreateCustomer}
-              component={CreateCustomer}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name={RouterName.Detail}
-              component={Detail}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name={RouterName.StartScreen}
-              component={StartScreen}
-              options={{headerShown: false}}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </UserNumber.Provider>
-    </UserConText.Provider>
+      <MainNavigation />
+    </UserNumberPhone.Provider>
   );
 };
 

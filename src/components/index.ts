@@ -6,6 +6,7 @@ import UIBottom from './UIBottom';
 import OTPInput from './OTPInput';
 import Cursor from './Cursor';
 import UIButton from './UIButton';
+import UITab from './BottomTabBar';
 
 export {
   CustumInput,
@@ -16,4 +17,5 @@ export {
   OTPInput,
   Cursor,
   UIButton,
+  UITab,
 };

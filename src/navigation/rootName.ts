@@ -1,18 +1,17 @@
-// export enum Register {
-//   RegisterScreen = 'Register',
-// }
-// export enum CreateCustomer {
-//   CreateCustomerScreen = 'CreateCustomer',
-// }
-// export enum ConfirmOTP {
-//   ConfirmOTPScreen = 'ConfirmOTP',
-// }
 export const RouterName = {
   Register: 'Register',
   CreateCustomer: 'CreateCustomer',
   ConfirmOTP: 'ConfirmOTP',
   Login: 'Login',
-  Detail: 'Detail',
+  HomeMessage: 'HomeMessage',
   StartScreen: 'StartScreen',
   OnBoarding: 'OnBoarding',
+  ForgetPassword: 'ForgetPassword',
+  Phonebook: 'Phonebook',
+  Discover: 'Discover',
+  NewFeed: 'NewFeed',
+  Profile: 'Profile',
+  BottomTabBar: 'BottomTabBar',
+  SearchScreen: 'SearchScreen',
+  AuthenStack: 'AuthenStack',
 };

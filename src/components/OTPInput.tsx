@@ -53,8 +53,7 @@ const OTPInput = ({value, codeCount, renderValue, ...rest}: IOTPInput) => {
   );
   return (
     <View style={styles.codeFiledRoot}>
-      <Text>{cells}</Text>
-
+      {cells}
       <TextInput
         disableFullscreenUI
         caretHidden={true}
@@ -90,6 +89,8 @@ const styles = StyleSheet.create({
     width: 280,
     marginLeft: 'auto',
     marginRight: 'auto',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
 });
 export default OTPInput;

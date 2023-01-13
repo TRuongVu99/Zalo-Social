@@ -19,6 +19,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		175D7CB23C0F45EB84ACFDCD /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6CB8BB1C20AF43F2BEEE85BF /* Roboto-BoldItalic.ttf */; };
 		1DC586E2FCE94BC48B28CAE4 /* SanFranciscoText-RegularG3.otf in Resources */ = {isa = PBXBuildFile; fileRef = A6151C52E4264B83A360F444 /* SanFranciscoText-RegularG3.otf */; };
+		24D364F916414F5484FB4880 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69962945BD384720BF824D36 /* Poppins-Regular.ttf */; };
 		298F3B5CABA64FAF83522DF4 /* SanFranciscoText-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 400354960977459A8A30CCC8 /* SanFranciscoText-Medium.otf */; };
 		2D9A4413B4C5476C8890F8EC /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 307119D173604A7BA4A4926E /* Poppins-ExtraBoldItalic.ttf */; };
 		327AE6F9449C4ED9BBC322D9 /* SanFranciscoDisplay-Ultralight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7EE1DE000F374A379B6BDBA1 /* SanFranciscoDisplay-Ultralight.otf */; };
@@ -170,6 +171,7 @@
 		6034F60C818F49AFB9B9C9BA /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLightItalic.ttf"; path = "../assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		65367319B18445EBBE723A2C /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BlackItalic.ttf"; path = "../assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
 		66E43C2D27894146BEB24DF1 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-MediumItalic.ttf"; path = "../assets/fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
+		69962945BD384720BF824D36 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		6CB8BB1C20AF43F2BEEE85BF /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BoldItalic.ttf"; path = "../assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		7108AD489F654FFBA2FA3E02 /* SanFranciscoText-RegularG2.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-RegularG2.otf"; path = "../assets/fonts/SanFranciscoText-RegularG2.otf"; sourceTree = "<group>"; };
 		760A68A18CEA434EA03CEC03 /* SanFranciscoText-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-Light.otf"; path = "../assets/fonts/SanFranciscoText-Light.otf"; sourceTree = "<group>"; };
@@ -217,7 +219,6 @@
 		9A92620BEA3C4A559745D987 /* SanFranciscoText-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-Thin.otf"; path = "../assets/fonts/SanFranciscoText-Thin.otf"; sourceTree = "<group>"; };
 		A25025C31369BF74AC686BF2 /* libPods-TestApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6151C52E4264B83A360F444 /* SanFranciscoText-RegularG3.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-RegularG3.otf"; path = "../assets/fonts/SanFranciscoText-RegularG3.otf"; sourceTree = "<group>"; };
-		A760962404734E2AA2FBEA40 /* ¸.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "¸.ttf"; path = "../assets/fonts/¸.ttf"; sourceTree = "<group>"; };
 		AB682A0063EA4A308D3F2A2E /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		AB6E37A8AF634BF58D603A6A /* Roboto-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Thin.ttf"; path = "../assets/fonts/Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		AF08FE893B4D483DBDB06345 /* SanFranciscoText-BoldG2.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-BoldG2.otf"; path = "../assets/fonts/SanFranciscoText-BoldG2.otf"; sourceTree = "<group>"; };
@@ -231,7 +232,6 @@
 		D56CBC79EBF6C5C28749DF6E /* Pods-TestApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestApp.release.xcconfig"; path = "Target Support Files/Pods-TestApp/Pods-TestApp.release.xcconfig"; sourceTree = "<group>"; };
 		DF1384DA5DE747769573ED4D /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ThinItalic.ttf"; path = "../assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; };
 		E07E2B3E0D084EE7A5BDF93D /* SanFranciscoText-BoldItalicG1.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-BoldItalicG1.otf"; path = "../assets/fonts/SanFranciscoText-BoldItalicG1.otf"; sourceTree = "<group>"; };
-		E10A66D228C04851A90DC3D6 /* Inter-VariableFont_slnt,wght.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-VariableFont_slnt,wght.ttf"; path = "../assets/fonts/Inter-VariableFont_slnt,wght.ttf"; sourceTree = "<group>"; };
 		ED117B794F654F1ABA27E475 /* SanFranciscoDisplay-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoDisplay-Thin.otf"; path = "../assets/fonts/SanFranciscoDisplay-Thin.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		EEBB49E80D66EA7159F566E9 /* libPods-TestApp-TestAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TestApp-TestAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -448,8 +448,7 @@
 				11E6F86AA43641829784F751 /* SanFranciscoText-SemiboldItalic.otf */,
 				9A92620BEA3C4A559745D987 /* SanFranciscoText-Thin.otf */,
 				77709433B59149D1AAAC5AF1 /* SanFranciscoText-ThinItalic.otf */,
-				A760962404734E2AA2FBEA40 /* ¸.ttf */,
-				E10A66D228C04851A90DC3D6 /* Inter-VariableFont_slnt,wght.ttf */,
+				69962945BD384720BF824D36 /* Poppins-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -636,6 +635,7 @@
 				946BA6E087A8413AB89C4578 /* SanFranciscoText-SemiboldItalic.otf in Resources */,
 				37FD3F94915348C8AC34E2C7 /* SanFranciscoText-Thin.otf in Resources */,
 				111E6D4FB0324280B93FF1E0 /* SanFranciscoText-ThinItalic.otf in Resources */,
+				24D364F916414F5484FB4880 /* Poppins-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

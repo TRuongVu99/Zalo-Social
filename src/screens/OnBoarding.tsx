@@ -10,14 +10,15 @@ import {
   ImageBackground,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {FontSize, Color, image} from '../constants';
-import {fontFamily} from '../assets/fonts/Font';
+import {FontSize, Color} from '@constants';
+import {fontFamily} from '@fonts/Font';
 import UIButton from '@components/UIButton';
 import {IButtonEnum} from '@model/handelConfig';
 import Swiper from 'react-native-swiper';
-import {Icon} from '../assets/icon/index';
+import {Icon} from '@icon/index';
 import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
+
 export const keySaveData = 'User';
 const arr = ['Tiếng Việt', 'English'];
 
@@ -31,13 +32,18 @@ const renderOnBoarding = ({
   text: string;
 }) => {
   return (
-    <>
+    <View>
       <Image
         style={{width: '100%', height: 300}}
         resizeMode="contain"
         source={nameIcon}
       />
-      <Text style={{textAlign: 'center', fontSize: FontSize.h4 * 0.9}}>
+      <Text
+        style={{
+          textAlign: 'center',
+          fontSize: FontSize.h4 * 0.9,
+          fontFamily: fontFamily.primaryFont,
+        }}>
         {content}
       </Text>
       <Text
@@ -46,10 +52,11 @@ const renderOnBoarding = ({
           marginHorizontal: 30,
           color: Color.Darkgray,
           marginTop: 10,
+          fontFamily: fontFamily.primaryFont,
         }}>
         {text}
       </Text>
-    </>
+    </View>
   );
 };
 const OnBoarding: React.FC = () => {
@@ -58,8 +65,14 @@ const OnBoarding: React.FC = () => {
   const navigation = useNavigation<any>();
 
   const RenderOnBoarding = memo(renderOnBoarding);
-  const SwiperComponent = useCallback(() => {
-    return (
+  // const SwiperComponent = memo(() => {
+  //   return (
+
+  //   );
+  // });
+  return (
+    <View style={[styles.container, {paddingTop: inset.top}]}>
+      <Text style={styles.title}>Zalo</Text>
       <Swiper style={styles.wrapper} showsButtons={false} loop={false}>
         <RenderOnBoarding
           nameIcon={Icon.onboard1}
@@ -77,19 +90,14 @@ const OnBoarding: React.FC = () => {
           text="Nợi cập nhật hoạt động mới nhất của những người bạn quan tâm"
         />
       </Swiper>
-    );
-  }, []);
-  return (
-    <View style={[styles.container, {paddingTop: inset.top}]}>
-      <Text style={styles.title}>Zalo</Text>
-
-      {SwiperComponent()}
       <UIButton
         label={'Đăng nhập'}
         styleUIButton={{marginHorizontal: 30}}
         styleLabel={styles.label}
         onPress={() => {
-          navigation.navigate(RouterName.Login);
+          navigation.navigate(RouterName.AuthenStack, {
+            screen: RouterName.Login,
+          });
         }}
       />
       <UIButton
@@ -98,7 +106,9 @@ const OnBoarding: React.FC = () => {
         styleUIButtonDisable={styles.button}
         styleLabel={styles.label}
         onPress={() => {
-          navigation.navigate(RouterName.Register);
+          navigation.navigate(RouterName.AuthenStack, {
+            screen: RouterName.Register,
+          });
         }}
       />
 
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: fontFamily.fontZalo,
-    fontSize: FontSize.h1 * 1.5,
+    fontSize: FontSize.h1 * 1.4,
     color: 'rgb(15, 120, 251)',
     textAlign: 'center',
   },

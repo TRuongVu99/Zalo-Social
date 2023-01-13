@@ -9,26 +9,27 @@ import {
 import React, {useContext, useState} from 'react';
 import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import UiValidate from '@components/UiValidate';
-import {UserNumber} from '@navigation';
+import {UserNumberPhone} from '../hook/useUserNumberPhone';
 import OTPInput from '@components/OTPInput';
-import {Color, FontSize} from '../constants';
+import {Color, FontSize} from '@constants';
 import {RouterName} from '@navigation/rootName';
-import {useClearByFocusCell} from '../utils/useClearByFocusCell';
-import Cursor from '@components/Cursor';
-import UIButton from '@components/UIButton';
+import {useClearByFocusCell} from '@utils/useClearByFocusCell';
+import {Cursor, UIButton} from '@components';
 
 const ConfirmOTP = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
+  const route = useRoute();
+  const {numberPhone} = route.params || ({} as any);
   const [otp, setOTP] = useState<string>('');
-  const stateNumber = useContext(UserNumber);
-  const number = stateNumber.number.number;
-  console.log(number);
+  const stateNumber = useContext(UserNumberPhone);
+  console.log({stateNumber});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
   });
+  // console.log(stateNumber);
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -44,7 +45,8 @@ const ConfirmOTP = () => {
           }
         />
         <View style={styles.body}>
-          <Text style={styles.text1}>Đang gọi đến số (84) {number}</Text>
+          <Text style={styles.text1}>Đang gọi đến số (84) {numberPhone}</Text>
+
           <Text style={styles.text2}>Vui lòng bắt máy để nghe mã</Text>
           <OTPInput
             codeCount={4}
@@ -70,10 +72,17 @@ const ConfirmOTP = () => {
             </TouchableOpacity>
           </View>
           <UIButton
-            onPress={() => {
-              navigation.navigate(RouterName.Login);
-            }}
+            disabled={otp.length !== 4}
+            styleUIButton={[
+              styles.button,
+              {
+                backgroundColor:
+                  otp.length === 4 ? Color.primary : Color.Darkgray,
+              },
+            ]}
+            onPress={() => navigation.navigate(RouterName.BottomTabBar)}
             label={'Tiếp tục'}
+            // styleUIButton={{width: '50%', height: 40}}
           />
         </View>
       </View>
@@ -101,12 +110,8 @@ const styles = StyleSheet.create({
     fontSize: FontSize.h5 * 0.9,
   },
   button: {
-    height: 38,
-    width: 175,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Color.primary,
-    borderRadius: 38 / 2,
+    width: '50%',
+    height: 40,
   },
   cellRoot: {
     width: 60,

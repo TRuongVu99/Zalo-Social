@@ -1,3 +1,4 @@
+import UITab from '@components/BottomTabBar';
 import Aplication from '@navigation';
 import React from 'react';
 
