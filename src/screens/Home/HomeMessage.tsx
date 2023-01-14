@@ -36,23 +36,23 @@ const renderUI = (item: any) => {
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const {setNumberPhone, numberPhone} = useContext(UserNumberPhone);
-  const getNumber = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('customerNumber');
-      return jsonValue !== null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
-  useEffect(() => {
-    async function getCustomerNumber() {
-      const data = await getNumber();
-      if (data && Object.keys(data).length > 0) {
-        setNumberPhone(data);
-      }
-    }
-    getCustomerNumber();
-  }, []);
+  // const getNumber = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('customerNumber');
+  //     return jsonValue !== null ? JSON.parse(jsonValue) : null;
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
+  // useEffect(() => {
+  //   async function getCustomerNumber() {
+  //     const data = await getNumber();
+  //     if (data && Object.keys(data).length > 0) {
+  //       setNumberPhone(data);
+  //     }
+  //   }
+  //   getCustomerNumber();
+  // }, []);
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

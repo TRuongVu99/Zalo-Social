@@ -1,6 +1,6 @@
 import {CustumInput, Header, Option, UIBottom, UiValidate} from '@components';
 import {IHeaderEnum} from '@model/handelConfig';
-import {UserNumberPhone, useUserNumberPhone} from '../hook/useUserNumberPhone';
+import {UserNumberPhone} from '@navigation/index';
 import {RouterName} from '@navigation/rootName';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -18,24 +18,15 @@ export default function CreateCustomer() {
   const navigation = useNavigation<any>();
   const [numberPhone, setNumber] = useState<string>('');
   const {setNumberPhone} = useContext(UserNumberPhone);
-
   const saveNumber = async (value: any) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem('customerNumber', jsonValue).then(async () => {
         // await setNumberPhone({value});
       });
-      navigation.navigate(RouterName.AuthenStack, {
-        screen: RouterName.ConfirmOTP,
-        params: {
-          numberPhone,
-        },
-      });
     } catch (e) {
       console.log(e);
       // saving error
-    } finally {
-      setTimeout(() => {}, 500);
     }
   };
   return (
@@ -69,7 +60,10 @@ export default function CreateCustomer() {
         <UIBottom
           disabled={numberPhone === ''}
           onPress={() => {
-            saveNumber({numberPhone});
+            setNumberPhone({numberPhone});
+            navigation.navigate(RouterName.AuthenStack, {
+              screen: RouterName.ConfirmOTP,
+            });
           }}
         />
       </View>

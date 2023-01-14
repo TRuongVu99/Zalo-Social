@@ -11,25 +11,23 @@ import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import UiValidate from '@components/UiValidate';
-import {UserNumberPhone} from '../hook/useUserNumberPhone';
 import OTPInput from '@components/OTPInput';
 import {Color, FontSize} from '@constants';
 import {RouterName} from '@navigation/rootName';
 import {useClearByFocusCell} from '@utils/useClearByFocusCell';
 import {Cursor, UIButton} from '@components';
+import {UserNumberPhone} from '@navigation/index';
 
 const ConfirmOTP = () => {
   const navigation = useNavigation<any>();
-  const route = useRoute();
-  const {numberPhone} = route.params || ({} as any);
+  // const route = useRoute();
+  const stateNumber = useContext<any>(UserNumberPhone);
   const [otp, setOTP] = useState<string>('');
-  const stateNumber = useContext(UserNumberPhone);
-  console.log({stateNumber});
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
   });
-  // console.log(stateNumber);
+
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -45,7 +43,9 @@ const ConfirmOTP = () => {
           }
         />
         <View style={styles.body}>
-          <Text style={styles.text1}>Đang gọi đến số (84) {numberPhone}</Text>
+          <Text style={styles.text1}>
+            Đang gọi đến số (84) {stateNumber.numberPhone}
+          </Text>
 
           <Text style={styles.text2}>Vui lòng bắt máy để nghe mã</Text>
           <OTPInput
@@ -82,7 +82,6 @@ const ConfirmOTP = () => {
             ]}
             onPress={() => navigation.navigate(RouterName.BottomTabBar)}
             label={'Tiếp tục'}
-            // styleUIButton={{width: '50%', height: 40}}
           />
         </View>
       </View>

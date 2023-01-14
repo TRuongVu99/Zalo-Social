@@ -9,41 +9,51 @@ import SearchScreen from '@screens/Home/SearchScreen';
 import Login from '@screens/Login';
 import OnBoarding, {keySaveData} from '@screens/OnBoarding';
 import Register from '@screens/Register';
-import {useUserNumberPhone, UserNumberPhone} from '../hook/useUserNumberPhone';
+// import {useUserNumberPhone, UserNumberPhone} from '../hook/useUserNumberPhone';
 import React, {createContext, useEffect, useMemo, useState} from 'react';
+import {useContext} from 'react';
 import {RouterName} from './rootName';
-
-// export type RootStackParamList<T> = {
-//   Register: 'Register';
-//   CreateCustomer: 'CreateCustomer';
-//   ConfirmOTP: 'ConfirmOTP';
-// };
 
 const Stack = createNativeStackNavigator<any>();
 export const UserConText = createContext({
-  user: null,
+  user: {
+    userName: '',
+    numberPhone: '',
+  },
   setUser: (value: any) => {},
 });
+export const UserNumberPhone = createContext({
+  numberPhone: {
+    numberPhone: '',
+    password: '',
+  },
+  setNumberPhone: (value: any) => {},
+});
+const account = {
+  numberPhone: '0377081162',
+  password: '123456',
+};
 
 const Aplication = () => {
-  const [user, setUserApp] = useState(null);
-  const {numberPhone, setNumberPhoneApp} = useUserNumberPhone();
+  // const [user, setUserApp] = useState(null);
+  // const {numberPhone, setNumberPhoneApp} = useUserNumberPhone();
   // const [numberPhone, setNumberPhoneApp] = useState<string | null>(null);
-  const getData = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem(keySaveData);
-      return jsonValue != null ? JSON.parse(jsonValue) : null;
-    } catch (e) {
-      // error reading value
-    }
-  };
-
+  // const getData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem(keySaveData);
+  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
+  //   } catch (e) {
+  //     // error reading value
+  //   }
+  // };
+  const [numberPhone, setNumberPhoneApp] = useState<any>(null);
+  console.log(numberPhone);
   const getNumber = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem('customerNumber');
       return jsonValue !== null ? JSON.parse(jsonValue) : null;
     } catch (e) {
-      // error reading value
+      // error reading val
     }
   };
   // useEffect(() => {
@@ -58,9 +68,7 @@ const Aplication = () => {
   useEffect(() => {
     async function getCustomerNumber() {
       const data = await getNumber();
-      if (data && Object.keys(data).length > 0) {
-        setNumberPhoneApp(data);
-      }
+      setNumberPhoneApp(data);
     }
     getCustomerNumber();
 
@@ -68,15 +76,8 @@ const Aplication = () => {
       setNumberPhoneApp(null);
     };
   }, []);
-  // console.log(numberPhone);
-  const value = useMemo(
-    () => ({
-      numberPhone,
-      setNumberPhone: (number: any) => setNumberPhoneApp(number),
-    }),
-    [numberPhone],
-  );
-  const AuthenStack = () => {
+
+  function AuthenStack() {
     return (
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name={RouterName.OnBoarding} component={OnBoarding} />
@@ -93,25 +94,35 @@ const Aplication = () => {
         />
       </Stack.Navigator>
     );
-  };
-  const MainNavigation = () => (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName={RouterName.AuthenStack}>
-        <Stack.Screen name={RouterName.BottomTabBar} component={BottomTabBar} />
-        <Stack.Screen name={RouterName.SearchScreen} component={SearchScreen} />
-        <Stack.Screen name={RouterName.AuthenStack} component={AuthenStack} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+  }
   return (
     <UserNumberPhone.Provider
       value={{
         numberPhone,
         setNumberPhone: (number: any) => setNumberPhoneApp(number),
       }}>
-      <MainNavigation />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{headerShown: false}}
+          initialRouteName={RouterName.OnBoarding}>
+          {JSON.stringify(account) !== JSON.stringify(numberPhone) ? (
+            <Stack.Screen
+              name={RouterName.AuthenStack}
+              component={AuthenStack}
+            />
+          ) : (
+            <Stack.Screen
+              name={RouterName.BottomTabBar}
+              component={BottomTabBar}
+            />
+          )}
+
+          <Stack.Screen
+            name={RouterName.SearchScreen}
+            component={SearchScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </UserNumberPhone.Provider>
   );
 };

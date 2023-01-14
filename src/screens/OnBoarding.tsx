@@ -65,11 +65,7 @@ const OnBoarding: React.FC = () => {
   const navigation = useNavigation<any>();
 
   const RenderOnBoarding = memo(renderOnBoarding);
-  // const SwiperComponent = memo(() => {
-  //   return (
 
-  //   );
-  // });
   return (
     <View style={[styles.container, {paddingTop: inset.top}]}>
       <Text style={styles.title}>Zalo</Text>
@@ -95,9 +91,7 @@ const OnBoarding: React.FC = () => {
         styleUIButton={{marginHorizontal: 30}}
         styleLabel={styles.label}
         onPress={() => {
-          navigation.navigate(RouterName.AuthenStack, {
-            screen: RouterName.Login,
-          });
+          navigation.navigate(RouterName.Login);
         }}
       />
       <UIButton
@@ -106,9 +100,7 @@ const OnBoarding: React.FC = () => {
         styleUIButtonDisable={styles.button}
         styleLabel={styles.label}
         onPress={() => {
-          navigation.navigate(RouterName.AuthenStack, {
-            screen: RouterName.Register,
-          });
+          navigation.navigate(RouterName.Register);
         }}
       />
 

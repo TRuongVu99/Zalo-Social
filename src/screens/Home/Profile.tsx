@@ -5,11 +5,15 @@ import {RouterName} from '@navigation/rootName';
 import {IHeaderEnum} from '@model/handelConfig';
 import Header from '@components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useContext} from 'react';
+import {UserNumberPhone} from '@navigation/index';
 
 const Profile = () => {
+  const stateNumber = useContext<any>(UserNumberPhone);
   const removeValue = async () => {
     try {
       await AsyncStorage.removeItem('customerNumber');
+      stateNumber.setNumberPhone(null);
     } catch (e) {
       // remove error
     }
@@ -19,7 +23,10 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Header type={IHeaderEnum.Home} />
-      <TouchableOpacity onPress={() => removeValue()}>
+      <TouchableOpacity
+        onPress={() => {
+          removeValue();
+        }}>
         <Text>Log out</Text>
       </TouchableOpacity>
     </View>

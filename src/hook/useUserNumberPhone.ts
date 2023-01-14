@@ -1,5 +1,4 @@
-import {View, Text} from 'react-native';
-import React, {createContext, useState} from 'react';
+import {createContext, useState} from 'react';
 export const UserNumberPhone = createContext({
   numberPhone: null,
   setNumberPhone: (value: any) => {},

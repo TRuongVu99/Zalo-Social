@@ -16,6 +16,8 @@ import {Color, FontSize} from '@constants';
 import UIButton from '@components/UIButton';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserNumberPhone} from '@navigation/index';
 // import {UserNumberPhone} from '@navigation/index';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -24,8 +26,18 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState<boolean>(true);
   const [user, setUser] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const isOke = user !== '' && password.length > 6;
-
+  const isOke = user !== '' && password.length > 5;
+  const stateNumber = useContext(UserNumberPhone);
+  const saveUser = async (value: any) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem('customerNumber', jsonValue);
+      stateNumber.setNumberPhone(value);
+    } catch (e) {
+      console.log(e);
+      // saving error
+    }
+  };
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -55,12 +67,19 @@ const Login = () => {
           />
         </View>
         <TouchableOpacity
-          onPress={() => navigation.navigate(RouterName.ForgetPassword)}>
+          onPress={() =>
+            navigation.navigate(RouterName.AuthenStack, {
+              screen: RouterName.ForgetPassword,
+            })
+          }>
           <Text style={styles.text}>Lấy lại mật khẩu</Text>
         </TouchableOpacity>
         <UIButton
           onPress={() => {
-            navigation.navigate(RouterName.BottomTabBar);
+            saveUser({
+              numberPhone: user,
+              password: password,
+            });
           }}
           disabled={!isOke}
           type={isOke ? undefined : IButtonEnum.disable}
