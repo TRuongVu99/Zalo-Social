@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import React, {useContext, useState} from 'react';
 import Header from '@components/Header';
@@ -17,12 +18,12 @@ import UIButton from '@components/UIButton';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserNumberPhone} from '@navigation/index';
-// import {UserNumberPhone} from '@navigation/index';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import {account} from '@navigation/index';
+import {UserNumberPhone} from '../hook/UserNumberPhone';
+export const keySaveNumberPhone = 'keySaveNumberPhone';
 const Login = () => {
   const navigation = useNavigation<any>();
+  const [state, setState] = useState<number>(0);
   const [showPassword, setShowPassword] = useState<boolean>(true);
   const [user, setUser] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -31,11 +32,47 @@ const Login = () => {
   const saveUser = async (value: any) => {
     try {
       const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('customerNumber', jsonValue);
+      await AsyncStorage.setItem(keySaveNumberPhone, jsonValue);
       stateNumber.setNumberPhone(value);
     } catch (e) {
-      console.log(e);
-      // saving error
+      throw e;
+    }
+  };
+  const handelAlert = () => {
+    if (account.numberPhone !== user) {
+      return Alert.alert('Số điện thoại chưa được đăng ký', 'Đăng ký ngay', [
+        {
+          text: 'Huỷ',
+        },
+        {
+          text: 'Xác Nhận',
+          onPress: () =>
+            navigation.navigate(RouterName.AuthenStack, {
+              screen: RouterName.Register,
+            }),
+        },
+      ]);
+    } else if (account.numberPhone === user && account.password !== password) {
+      if (state === 2) {
+        Alert.alert('Sai mật khẩu', 'Lấy lại mật khẩu ngay?', [
+          {
+            text: 'Huỷ',
+          },
+          {
+            text: 'Xác Nhận',
+            onPress: () =>
+              navigation.navigate(RouterName.AuthenStack, {
+                screen: RouterName.ForgetPassword,
+              }),
+          },
+        ]);
+      } else {
+        Alert.alert('Thông báo', 'Sai mật khẩu', [
+          {
+            text: 'Cancel',
+          },
+        ]);
+      }
     }
   };
   return (
@@ -76,10 +113,20 @@ const Login = () => {
         </TouchableOpacity>
         <UIButton
           onPress={() => {
-            saveUser({
-              numberPhone: user,
-              password: password,
-            });
+            if (account.numberPhone !== user && account.password !== password) {
+              handelAlert();
+            } else if (
+              account.numberPhone === user &&
+              account.password !== password
+            ) {
+              handelAlert();
+              setState(state + 1);
+            } else {
+              saveUser({
+                numberPhone: user,
+                password: password,
+              });
+            }
           }}
           disabled={!isOke}
           type={isOke ? undefined : IButtonEnum.disable}

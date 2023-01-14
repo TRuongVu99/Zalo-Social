@@ -6,54 +6,32 @@ import ConfirmOTP from '@screens/ConfirmOTP';
 import CreateCustomer from '@screens/CreateCustomer';
 import ForgetPassword from '@screens/ForgetPassword';
 import SearchScreen from '@screens/Home/SearchScreen';
-import Login from '@screens/Login';
-import OnBoarding, {keySaveData} from '@screens/OnBoarding';
+import Login, {keySaveNumberPhone} from '@screens/Login';
+import OnBoarding from '@screens/OnBoarding';
 import Register from '@screens/Register';
-// import {useUserNumberPhone, UserNumberPhone} from '../hook/useUserNumberPhone';
-import React, {createContext, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useContext} from 'react';
+import {UserNumberPhone} from '../hook/UserNumberPhone';
+import {UserNumberPhoneProvider, UserProvider} from '../hook';
 import {RouterName} from './rootName';
 
 const Stack = createNativeStackNavigator<any>();
-export const UserConText = createContext({
-  user: {
-    userName: '',
-    numberPhone: '',
-  },
-  setUser: (value: any) => {},
-});
-export const UserNumberPhone = createContext({
-  numberPhone: {
-    numberPhone: '',
-    password: '',
-  },
-  setNumberPhone: (value: any) => {},
-});
-const account = {
+export const account = {
   numberPhone: '0377081162',
   password: '123456',
 };
-
 const Aplication = () => {
-  // const [user, setUserApp] = useState(null);
-  // const {numberPhone, setNumberPhoneApp} = useUserNumberPhone();
-  // const [numberPhone, setNumberPhoneApp] = useState<string | null>(null);
-  // const getData = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem(keySaveData);
-  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // };
   const [numberPhone, setNumberPhoneApp] = useState<any>(null);
+  const [user, setUserApp] = useState<any>(null);
   console.log(numberPhone);
+  const {setNumberPhone} = useContext(UserNumberPhone);
+
   const getNumber = async () => {
     try {
-      const jsonValue = await AsyncStorage.getItem('customerNumber');
+      const jsonValue = await AsyncStorage.getItem(keySaveNumberPhone);
       return jsonValue !== null ? JSON.parse(jsonValue) : null;
     } catch (e) {
-      // error reading val
+      throw e;
     }
   };
   // useEffect(() => {
@@ -96,34 +74,33 @@ const Aplication = () => {
     );
   }
   return (
-    <UserNumberPhone.Provider
-      value={{
-        numberPhone,
-        setNumberPhone: (number: any) => setNumberPhoneApp(number),
-      }}>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{headerShown: false}}
-          initialRouteName={RouterName.OnBoarding}>
-          {JSON.stringify(account) !== JSON.stringify(numberPhone) ? (
-            <Stack.Screen
-              name={RouterName.AuthenStack}
-              component={AuthenStack}
-            />
-          ) : (
-            <Stack.Screen
-              name={RouterName.BottomTabBar}
-              component={BottomTabBar}
-            />
-          )}
+    <UserProvider setUser={(vlu: any) => setUserApp(vlu)}>
+      <UserNumberPhoneProvider
+        setPhoneNumber={(data: any) => setNumberPhoneApp(data)}>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{headerShown: false}}
+            initialRouteName={RouterName.OnBoarding}>
+            {JSON.stringify(account) !== JSON.stringify(numberPhone) ? (
+              <Stack.Screen
+                name={RouterName.AuthenStack}
+                component={AuthenStack}
+              />
+            ) : (
+              <Stack.Screen
+                name={RouterName.BottomTabBar}
+                component={BottomTabBar}
+              />
+            )}
 
-          <Stack.Screen
-            name={RouterName.SearchScreen}
-            component={SearchScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserNumberPhone.Provider>
+            <Stack.Screen
+              name={RouterName.SearchScreen}
+              component={SearchScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserNumberPhoneProvider>
+    </UserProvider>
   );
 };
 

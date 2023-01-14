@@ -1,8 +1,6 @@
 import {CustumInput, Header, Option, UIBottom, UiValidate} from '@components';
 import {IHeaderEnum} from '@model/handelConfig';
-import {UserNumberPhone} from '@navigation/index';
 import {RouterName} from '@navigation/rootName';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import React, {useContext, useState} from 'react';
 import {
@@ -12,23 +10,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {UserContext} from '../hook/UserContext';
 import {Color} from '../constants';
 
 export default function CreateCustomer() {
   const navigation = useNavigation<any>();
   const [numberPhone, setNumber] = useState<string>('');
-  const {setNumberPhone} = useContext(UserNumberPhone);
-  const saveNumber = async (value: any) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem('customerNumber', jsonValue).then(async () => {
-        // await setNumberPhone({value});
-      });
-    } catch (e) {
-      console.log(e);
-      // saving error
-    }
-  };
+  const {setUser} = useContext(UserContext);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -60,7 +49,7 @@ export default function CreateCustomer() {
         <UIBottom
           disabled={numberPhone === ''}
           onPress={() => {
-            setNumberPhone({numberPhone});
+            setUser({numberPhone: numberPhone});
             navigation.navigate(RouterName.AuthenStack, {
               screen: RouterName.ConfirmOTP,
             });

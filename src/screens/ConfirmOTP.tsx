@@ -9,25 +9,35 @@ import {
 import React, {useContext, useState} from 'react';
 import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import UiValidate from '@components/UiValidate';
 import OTPInput from '@components/OTPInput';
 import {Color, FontSize} from '@constants';
 import {RouterName} from '@navigation/rootName';
 import {useClearByFocusCell} from '@utils/useClearByFocusCell';
 import {Cursor, UIButton} from '@components';
-import {UserNumberPhone} from '@navigation/index';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserContext} from '../hook/UserContext';
+export const keySaveUser = 'keySaveUser';
 
 const ConfirmOTP = () => {
   const navigation = useNavigation<any>();
-  // const route = useRoute();
-  const stateNumber = useContext<any>(UserNumberPhone);
+  const {user, setUser} = useContext(UserContext);
+
   const [otp, setOTP] = useState<string>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
   });
-
+  const saveNumber = async (value: any) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(keySaveUser, jsonValue);
+      setUser(value);
+    } catch (e) {
+      throw e;
+    }
+  };
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -44,7 +54,8 @@ const ConfirmOTP = () => {
         />
         <View style={styles.body}>
           <Text style={styles.text1}>
-            Đang gọi đến số (84) {stateNumber.numberPhone}
+            Đang gọi đến số (84) {user.userName} {user.numberPhone}
+            {/* {stateNumber.numberPhone} */}
           </Text>
 
           <Text style={styles.text2}>Vui lòng bắt máy để nghe mã</Text>

@@ -13,14 +13,12 @@ import React, {useContext, useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
-// import {UserNumberPhone} from '@navigation/index';
 import {Icon} from '@icon/index';
 import UserData from '@data/UserData';
 import {FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
-import {UserNumberPhone} from '../../hook/useUserNumberPhone';
 const renderUI = (item: any) => {
   return (
     <TouchableOpacity style={{flexDirection: 'row'}}>
@@ -35,24 +33,8 @@ const renderUI = (item: any) => {
 
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
-  const {setNumberPhone, numberPhone} = useContext(UserNumberPhone);
-  // const getNumber = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem('customerNumber');
-  //     return jsonValue !== null ? JSON.parse(jsonValue) : null;
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // };
-  // useEffect(() => {
-  //   async function getCustomerNumber() {
-  //     const data = await getNumber();
-  //     if (data && Object.keys(data).length > 0) {
-  //       setNumberPhone(data);
-  //     }
-  //   }
-  //   getCustomerNumber();
-  // }, []);
+  // const {setNumberPhone, numberPhone} = useContext(UserNumberPhone);
+
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>

@@ -1,18 +1,18 @@
 import {View, Text, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {RouterName} from '@navigation/rootName';
 import {IHeaderEnum} from '@model/handelConfig';
 import Header from '@components/Header';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useContext} from 'react';
-import {UserNumberPhone} from '@navigation/index';
+import {keySaveUser} from '@screens/Login';
+import {UserNumberPhone} from '../../hook/UserNumberPhone';
 
 const Profile = () => {
   const stateNumber = useContext<any>(UserNumberPhone);
   const removeValue = async () => {
     try {
-      await AsyncStorage.removeItem('customerNumber');
+      await AsyncStorage.removeItem(keySaveUser);
       stateNumber.setNumberPhone(null);
     } catch (e) {
       // remove error

@@ -4,7 +4,7 @@ import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Keyboard,
   StyleSheet,
@@ -14,11 +14,15 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {UserContext} from '../hook/UserContext';
 import {fontFamily} from '../assets/fonts/Font';
 import {Color, FontSize} from '../constants';
 
 const Register = () => {
   const navigation = useNavigation<any>();
+  const [name, setName] = useState<string>('');
+  const stateUser = useContext(UserContext);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -30,7 +34,7 @@ const Register = () => {
         <View style={styles.view1}>
           <Text style={styles.label}>Tên Zalo</Text>
           <CustumInput
-            onChangText={() => {}}
+            onChangText={text => setName(text)}
             placeholder={'Gồm 2-40 ký tự'}
             textInputStyle={{
               fontSize: FontSize.h5,
@@ -58,7 +62,10 @@ const Register = () => {
         <View style={{flex: 1}} />
         <UIBottom
           onPress={() => {
-            navigation.navigate(RouterName.CreateCustomer);
+            stateUser.user = {name};
+            navigation.navigate(RouterName.AuthenStack, {
+              screen: RouterName.CreateCustomer,
+            });
           }}
         />
       </View>
