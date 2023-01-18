@@ -9,7 +9,12 @@ import SearchScreen from '@screens/Home/SearchScreen';
 import Login, {keySaveNumberPhone} from '@screens/Login';
 import OnBoarding from '@screens/OnBoarding';
 import Register from '@screens/Register';
-import React, {createContext, useEffect, useState} from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import {UserProvider, useStateCallback} from '../hook';
 import {RouterName} from './rootName';
 import Message from '@screens/Home/Message';
@@ -21,12 +26,11 @@ const Stack = createNativeStackNavigator<any>();
 //   setAccount: (value: any) => {},
 // });
 
-const Aplication = () => {
+const Application = () => {
   const [numberPhone, setNumberPhoneApp] = useState<any>(null);
   const [user, setUserApp] = useStateCallback<any>(null);
-  const [account, setAccountApp] = useState<any>(null);
-  console.log(user);
-  console.log(account);
+  const [account, setAccountApp] = useStateCallback<any>(null);
+
   const getAccount = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(keySaveAccount);
@@ -45,20 +49,6 @@ const Aplication = () => {
   //     await RNBootSplash.hide({fade: true, duration: 500});
   //   });
   // }, []);
-  useEffect(() => {
-    async function getDataAccount() {
-      try {
-        const data = await getAccount();
-        setAccountApp(data);
-
-        RNBootSplash.hide({fade: false, duration: 1500});
-      } catch (e) {}
-    }
-    // console.log(getDataAccount());
-    getDataAccount();
-    // getDataAccount().finally(() => {});
-  }, []);
-
   const getUser = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(keySaveUser);
@@ -67,16 +57,29 @@ const Aplication = () => {
       throw e;
     }
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     async function getData() {
       const data = await getUser();
-      setUserApp(data);
+      const DataAccount = await getAccount();
+      setAccountApp(DataAccount);
+
+      setUserApp(data || {}, () => {
+        setTimeout(() => {
+          RNBootSplash.hide({fade: true});
+        }, 1000);
+      });
     }
+
     getData();
+    // console.log(getDataAccount());
 
-    return () => setUserApp(null);
+    // getDataAccount().finally(() => {});
   }, []);
-
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     RNBootSplash.hide();
+  //   }, 1000);
+  // }, []);
   /*  const getNumber = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(keySaveNumberPhone);
@@ -115,16 +118,63 @@ const Aplication = () => {
       </Stack.Navigator>
     );
   }*/
-
+  console.log({
+    account: account,
+    user:
+      Object.keys(account || {}).length > 0 &&
+      Object.keys(user || {}).length > 0,
+    user2: user,
+  });
   return (
     <UserProvider setUserProvider={(value: any) => setUserApp(value)}>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          {JSON.stringify(account) !== JSON.stringify(user) ? (
-            // <Stack.Screen
-            //   name={RouterName.AuthenStack}
-            //   component={AuthenStack}
-            // />
+          {Object.keys(account || {}).length > 0 &&
+          Object.keys(user || {}).length > 0 ? (
+            <>
+              {JSON.stringify(account) !== JSON.stringify(user) ? (
+                <>
+                  <Stack.Screen
+                    name={RouterName.OnBoarding}
+                    component={OnBoarding}
+                  />
+                  <Stack.Screen name={RouterName.Login} component={Login} />
+                  <Stack.Screen
+                    name={RouterName.Register}
+                    component={Register}
+                  />
+                  <Stack.Screen
+                    name={RouterName.ConfirmOTP}
+                    component={ConfirmOTP}
+                  />
+                  <Stack.Screen
+                    name={RouterName.ForgetPassword}
+                    component={ForgetPassword}
+                  />
+                  <Stack.Screen
+                    name={RouterName.CreateCustomer}
+                    component={CreateCustomer}
+                  />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen
+                    name={RouterName.BottomTabBar}
+                    component={BottomTabBar}
+                  />
+                  <Stack.Screen name={RouterName.Message} component={Message} />
+                  <Stack.Screen
+                    name={RouterName.OptionMessage}
+                    component={OptionMessage}
+                  />
+                  <Stack.Screen
+                    name={RouterName.SearchScreen}
+                    component={SearchScreen}
+                  />
+                </>
+              )}
+            </>
+          ) : (
             <>
               <Stack.Screen
                 name={RouterName.OnBoarding}
@@ -145,22 +195,6 @@ const Aplication = () => {
                 component={CreateCustomer}
               />
             </>
-          ) : (
-            <>
-              <Stack.Screen
-                name={RouterName.BottomTabBar}
-                component={BottomTabBar}
-              />
-              <Stack.Screen name={RouterName.Message} component={Message} />
-              <Stack.Screen
-                name={RouterName.OptionMessage}
-                component={OptionMessage}
-              />
-              <Stack.Screen
-                name={RouterName.SearchScreen}
-                component={SearchScreen}
-              />
-            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>
@@ -168,4 +202,4 @@ const Aplication = () => {
   );
 };
 
-export default Aplication;
+export default Application;
