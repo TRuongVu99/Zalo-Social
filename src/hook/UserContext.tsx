@@ -1,14 +1,9 @@
 import React, {createContext, useState} from 'react';
 
-export const UserContext = createContext({
-  user: {
-    userName: '',
-    numberPhone: '',
-    password: 123456,
-  },
+export const UserContext = createContext<any>({
+  user: null,
   setUser: (value: any) => {},
 });
-
 const UserProvider = ({
   children,
   setUserProvider,
@@ -17,6 +12,7 @@ const UserProvider = ({
   setUserProvider: (value: any) => void;
 }) => {
   const [user, setUserApp] = useState<any>(null);
+
   return (
     <UserContext.Provider
       value={{

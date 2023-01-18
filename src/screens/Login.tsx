@@ -35,7 +35,7 @@ const Login = () => {
       await AsyncStorage.setItem(keySaveNumberPhone, jsonValue);
       stateNumber.setNumberPhone(value);
     } catch (e) {
-      throw e;
+      // throw e;
     }
   };
   const handelAlert = () => {

@@ -13,11 +13,10 @@ import {
 import {UserContext} from '../hook/UserContext';
 import {Color} from '../constants';
 
-export default function CreateCustomer() {
+export default function CreateCustomer({route}: {route: any}) {
   const navigation = useNavigation<any>();
   const [numberPhone, setNumber] = useState<string>('');
-  const {setUser} = useContext(UserContext);
-
+  const {userName} = route.params;
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -49,9 +48,9 @@ export default function CreateCustomer() {
         <UIBottom
           disabled={numberPhone === ''}
           onPress={() => {
-            setUser({numberPhone: numberPhone});
-            navigation.navigate(RouterName.AuthenStack, {
-              screen: RouterName.ConfirmOTP,
+            navigation.navigate(RouterName.ConfirmOTP, {
+              userName: userName,
+              numberPhone: numberPhone,
             });
           }}
         />

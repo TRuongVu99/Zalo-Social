@@ -5,12 +5,10 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
   Keyboard,
-  Alert,
   FlatList,
   Image,
 } from 'react-native';
-import React, {useContext, useEffect} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
 import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
@@ -20,18 +18,13 @@ import {fontFamily} from '@fonts/Font';
 import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
 
-const Home: React.FC = () => {
+const Message = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
-  // const {setNumberPhone, numberPhone} = useContext(UserNumberPhone);
+  const {name} = route.params;
+  console.log(name);
   const renderUI = (item: any) => {
     return (
-      <TouchableOpacity
-        style={{flexDirection: 'row'}}
-        onPress={() => {
-          navigation.navigate(RouterName.Message, {
-            name: item.name,
-          });
-        }}>
+      <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => {}}>
         <Image style={styles.avatar} source={{uri: item.url}} />
         <View style={styles.viewMessage}>
           <Text style={styles.userName}>{item.name}</Text>
@@ -44,13 +37,10 @@ const Home: React.FC = () => {
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Header
-          placeholder={'Tìm kiếm'}
-          type={IHeaderEnum.Home}
-          nameIconRight1={Icon.qrcode}
-          nameIconRight2={Icon.plus}
-          onPressIn={() => navigation.push(RouterName.SearchScreen)}
+          onPress={() => navigation.pop()}
+          type={IHeaderEnum.Message}
+          label={name}
         />
-        <FlatList data={UserData} renderItem={({item}) => renderUI(item)} />
       </View>
     </TouchableNativeFeedback>
   );
@@ -86,4 +76,4 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.primaryFont,
   },
 });
-export default Home;
+export default Message;

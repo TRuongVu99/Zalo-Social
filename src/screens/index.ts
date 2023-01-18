@@ -10,3 +10,5 @@ export * from './Home/Discover';
 export * from './Home/NewFeed';
 export * from './Home/Profile';
 export * from './Home/SearchScreen';
+export * from './Home/Message';
+export * from './Home/OptionMessage';

@@ -10,4 +10,6 @@ export const Icon = {
   qrcode: require('./qrcode.png'),
   plus: require('./plus.png'),
   addfriend: require('./addfriend.png'),
+  videocall: require('./videocall.png'),
+  telephone: require('./telephone.png'),
 };

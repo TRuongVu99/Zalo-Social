@@ -19,7 +19,6 @@ import {IHeaderEnum} from '@model/handelConfig';
 import {fontFamily} from '../assets/fonts/Font';
 import {Color, FontSize} from '../constants';
 import {TargetedEvent} from 'react-native';
-import {Icon as icon} from '@icon';
 
 interface IHeader {
   type?: string;
@@ -31,13 +30,12 @@ interface IHeader {
   onPress?: (event: GestureResponderEvent) => void;
   onPressIconRight1?: (event: GestureResponderEvent) => void;
   onPressIconRight2?: (event: GestureResponderEvent) => void;
-  styleIconRight?: StyleProp<ImageStyle>;
   onPressIn?:
     | ((event: NativeSyntheticEvent<TargetedEvent>) => void)
     | undefined;
   buttonBack?: string;
 }
-const Header = ({
+const HeaderMessage = ({
   type,
   label,
   placeholder,
@@ -47,7 +45,6 @@ const Header = ({
   onPress,
   onPressIconRight2,
   onPressIconRight1,
-  styleIconRight,
   onPressIn,
   buttonBack,
 }: IHeader) => {
@@ -59,29 +56,6 @@ const Header = ({
           <Icon name="angle-left" size={28} color={'white'} />
         </TouchableOpacity>
         <Text style={styles.label}>{label}</Text>
-      </View>
-    );
-  } else if (type === IHeaderEnum.Message) {
-    return (
-      <View style={[styles.header, {paddingTop: inset.top * 1.15}]}>
-        <TouchableOpacity style={[styles.back]} onPress={onPress}>
-          <Icon name="angle-left" size={28} color={'white'} />
-        </TouchableOpacity>
-        <Text style={styles.label}>{label}</Text>
-        <TouchableOpacity
-          style={styles.buttonRight}
-          onPress={onPressIconRight1}>
-          <Image source={icon.telephone} style={[styles.styleiconRight]} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonRight,
-            {paddingLeft: nameIconRight2 === undefined ? 0 : 5},
-          ]}
-          onPress={onPressIconRight2}>
-          <Image source={nameIconRight2} style={styles.styleiconRight} />
-          <Icons name={''} size={24} color={'white'} />
-        </TouchableOpacity>
       </View>
     );
   } else if (type === IHeaderEnum.Home) {
@@ -119,12 +93,6 @@ const Header = ({
     );
   }
   return <View />;
-  // return (
-  //   <View style={[styles.header, {paddingTop: inset.top, paddingVertical: 16}]}>
-  //     <Text style={{width: windowWidth}}>Header</Text>
-  //     {/* <Icon name="arrow-left" size={24} /> */}
-  //   </View>
-  // );
 };
 const styles = StyleSheet.create({
   header: {
@@ -139,11 +107,10 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: fontFamily.primaryFont,
-    fontSize: FontSize.h4,
+    fontSize: FontSize.h3,
     color: 'white',
     alignSelf: 'center',
     fontWeight: '500',
-    flex: 1,
   },
   textInput: {
     flex: 1,
@@ -159,7 +126,6 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: 'white',
     marginLeft: 15,
-    backgroundColor: 'red',
   },
 });
-export default Header;
+export default HeaderMessage;

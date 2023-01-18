@@ -14,4 +14,6 @@ export const RouterName = {
   BottomTabBar: 'BottomTabBar',
   SearchScreen: 'SearchScreen',
   AuthenStack: 'AuthenStack',
+  Message: 'Message',
+  OptionMessage: 'OptionMessage',
 };

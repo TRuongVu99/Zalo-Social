@@ -62,6 +62,7 @@
 		84378C052969C05200B716E5 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 84378BE32969C05100B716E5 /* FontAwesome5_Regular.ttf */; };
 		84378C082969C05200B716E5 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 84378BE62969C05100B716E5 /* Ionicons.ttf */; };
 		84378C0A2969C05200B716E5 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 84378BE82969C05100B716E5 /* Foundation.ttf */; };
+		8455727F29770F2700713BE5 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8455727E29770F2700713BE5 /* BootSplash.storyboard */; };
 		8B8802939AD25107205623E0 /* libPods-TestApp-TestAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EEBB49E80D66EA7159F566E9 /* libPods-TestApp-TestAppTests.a */; };
 		8C83FEA59CA94731B42EF195 /* SanFranciscoText-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 956E8F95F4E84E95BAF2BCA5 /* SanFranciscoText-LightItalic.otf */; };
 		8D2A6114AF884BC195A661E1 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 66E43C2D27894146BEB24DF1 /* Poppins-MediumItalic.ttf */; };
@@ -171,7 +172,7 @@
 		6034F60C818F49AFB9B9C9BA /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLightItalic.ttf"; path = "../assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		65367319B18445EBBE723A2C /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BlackItalic.ttf"; path = "../assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
 		66E43C2D27894146BEB24DF1 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-MediumItalic.ttf"; path = "../assets/fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
-		69962945BD384720BF824D36 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		69962945BD384720BF824D36 /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
 		6CB8BB1C20AF43F2BEEE85BF /* Roboto-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BoldItalic.ttf"; path = "../assets/fonts/Roboto-BoldItalic.ttf"; sourceTree = "<group>"; };
 		7108AD489F654FFBA2FA3E02 /* SanFranciscoText-RegularG2.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-RegularG2.otf"; path = "../assets/fonts/SanFranciscoText-RegularG2.otf"; sourceTree = "<group>"; };
 		760A68A18CEA434EA03CEC03 /* SanFranciscoText-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-Light.otf"; path = "../assets/fonts/SanFranciscoText-Light.otf"; sourceTree = "<group>"; };
@@ -213,6 +214,7 @@
 		84378BE72969C05100B716E5 /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Black.ttf"; path = "TestApp/Fonts/Poppins-Black.ttf"; sourceTree = "<group>"; };
 		84378BE82969C05100B716E5 /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Foundation.ttf; path = TestApp/Fonts/Foundation.ttf; sourceTree = "<group>"; };
 		84378BE92969C05200B716E5 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-MediumItalic.ttf"; path = "TestApp/Fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
+		8455727E29770F2700713BE5 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TestApp/BootSplash.storyboard; sourceTree = "<group>"; };
 		864AD4BFE66942359C878363 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Bold.ttf"; path = "../assets/fonts/Poppins-Bold.ttf"; sourceTree = "<group>"; };
 		912A18B873254953B8BB515E /* Roboto-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-LightItalic.ttf"; path = "../assets/fonts/Roboto-LightItalic.ttf"; sourceTree = "<group>"; };
 		956E8F95F4E84E95BAF2BCA5 /* SanFranciscoText-LightItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-LightItalic.otf"; path = "../assets/fonts/SanFranciscoText-LightItalic.otf"; sourceTree = "<group>"; };
@@ -281,6 +283,7 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
+				8455727E29770F2700713BE5 /* BootSplash.storyboard */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -622,6 +625,7 @@
 				5CC23032F8784E739612943A /* SanFranciscoText-Italic.otf in Resources */,
 				CBCCA387AA0349ABBDB8CA34 /* SanFranciscoText-ItalicG1.otf in Resources */,
 				3F6BEBF641F34D7596084DD3 /* SanFranciscoText-ItalicG2.otf in Resources */,
+				8455727F29770F2700713BE5 /* BootSplash.storyboard in Resources */,
 				526AA77746D54C5D8E7CE52A /* SanFranciscoText-ItalicG3.otf in Resources */,
 				8E372E1D4019433195AFA71C /* SanFranciscoText-Light.otf in Resources */,
 				8C83FEA59CA94731B42EF195 /* SanFranciscoText-LightItalic.otf in Resources */,

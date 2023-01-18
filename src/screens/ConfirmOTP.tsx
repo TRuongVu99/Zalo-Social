@@ -19,23 +19,32 @@ import {Cursor, UIButton} from '@components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserContext} from '../hook/UserContext';
 export const keySaveUser = 'keySaveUser';
-
-const ConfirmOTP = () => {
+export const keySaveAccount = 'keySaveAccount';
+const ConfirmOTP = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
-  const {user, setUser} = useContext(UserContext);
-
+  const {setUser} = useContext(UserContext);
   const [otp, setOTP] = useState<string>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
   });
+  const {userName, numberPhone} = route.params;
   const saveNumber = async (value: any) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem(keySaveUser, jsonValue);
       setUser(value);
     } catch (e) {
-      throw e;
+      // throw e;
+    }
+  };
+  const saveAccount = async (value: any) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(keySaveAccount, jsonValue);
+      setUser(value);
+    } catch (e) {
+      // throw e;
     }
   };
   return (
@@ -53,10 +62,7 @@ const ConfirmOTP = () => {
           }
         />
         <View style={styles.body}>
-          <Text style={styles.text1}>
-            Đang gọi đến số (84) {user.userName} {user.numberPhone}
-            {/* {stateNumber.numberPhone} */}
-          </Text>
+          <Text style={styles.text1}>Đang gọi đến số (84) {numberPhone}</Text>
 
           <Text style={styles.text2}>Vui lòng bắt máy để nghe mã</Text>
           <OTPInput
@@ -91,7 +97,17 @@ const ConfirmOTP = () => {
                   otp.length === 4 ? Color.primary : Color.Darkgray,
               },
             ]}
-            onPress={() => navigation.navigate(RouterName.BottomTabBar)}
+            onPress={() => {
+              saveNumber({
+                numberPhone,
+                password: '123456',
+              });
+              saveAccount({
+                numberPhone,
+                password: '123456',
+              });
+              // navigation.push(RouterName.BottomTabBar);
+            }}
             label={'Tiếp tục'}
           />
         </View>

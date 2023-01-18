@@ -12,6 +12,8 @@ const SearchScreen = () => {
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Header
+          onPress={() => navigation.pop()}
+          buttonBack={'back'}
           placeholder={'Tìm kiếm'}
           type={IHeaderEnum.Home}
           nameIconRight2={Icon.qrcode}

@@ -14,15 +14,12 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {UserContext} from '../hook/UserContext';
 import {fontFamily} from '../assets/fonts/Font';
 import {Color, FontSize} from '../constants';
 
 const Register = () => {
   const navigation = useNavigation<any>();
   const [name, setName] = useState<string>('');
-  const stateUser = useContext(UserContext);
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -62,9 +59,8 @@ const Register = () => {
         <View style={{flex: 1}} />
         <UIBottom
           onPress={() => {
-            stateUser.user = {name};
-            navigation.navigate(RouterName.AuthenStack, {
-              screen: RouterName.CreateCustomer,
+            navigation.navigate(RouterName.CreateCustomer, {
+              userName: name,
             });
           }}
         />
