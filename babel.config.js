@@ -27,6 +27,8 @@ module.exports = {
           '@constants': './src/constants',
           '@fonts': './src/assets/fonts',
           '@icon': './src/assets/icon',
+          '@hook': './src/hook',
+          '@store': './src/store',
         },
       },
     ],

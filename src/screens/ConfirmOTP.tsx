@@ -1,60 +1,73 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableNativeFeedback,
-  Keyboard,
-  TouchableOpacity,
-} from 'react-native';
-import React, {useContext, useState} from 'react';
+import {Cursor, UIButton} from '@components';
 import Header from '@components/Header';
+import OTPInput from '@components/OTPInput';
+import UiValidate from '@components/UiValidate';
+import {Color, FontSize} from '@constants';
 import {IHeaderEnum} from '@model/handelConfig';
 import {useNavigation} from '@react-navigation/native';
-import UiValidate from '@components/UiValidate';
-import OTPInput from '@components/OTPInput';
-import {Color, FontSize} from '@constants';
-import {RouterName} from '@navigation/rootName';
 import {useClearByFocusCell} from '@utils/useClearByFocusCell';
-import {Cursor, UIButton} from '@components';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UserContext} from '../hook/UserContext';
+import React, {useState} from 'react';
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import {useSelector} from 'react-redux';
+import {RootState} from '@store';
 export const keySaveUser = 'keySaveUser';
 export const keySaveAccount = 'keySaveAccount';
+import auth from '@react-native-firebase/auth';
+
+// export const {addUser} = counterSlice.actions;
 const ConfirmOTP = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
-  const {setUser} = useContext(UserContext);
   const [otp, setOTP] = useState<string>('');
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
   });
-  const {userName, numberPhone} = route.params;
-  const saveNumber = async (value: any) => {
+  const {confirm, numberPhone, isLogin} = route.params;
+  const {profileUser} = useSelector((state: RootState) => state.user);
+  const {username} = profileUser;
+
+  async function confirmCode(code: string) {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(keySaveUser, jsonValue);
-      setUser(value);
-    } catch (e) {
-      // throw e;
+      const result = await confirm.confirm(code).then(async (user: any) => {
+        if (!isLogin) {
+          await firestore()
+            .collection('Users')
+            .add({
+              status: 1,
+              numberPhone,
+              username,
+              uid: auth().currentUser?.uid,
+            })
+            .catch((error: any) => {
+              console.log(error);
+            });
+        }
+      });
+    } catch (error: any) {
+      console.log(error);
+      Alert.alert('Thông báo', 'Mã OTP không đúng', [
+        {
+          text: 'Cancel',
+        },
+      ]);
     }
-  };
-  const saveAccount = async (value: any) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(keySaveAccount, jsonValue);
-      setUser(value);
-    } catch (e) {
-      // throw e;
-    }
-  };
+  }
+
   return (
-    <TouchableNativeFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Header
-          type={IHeaderEnum.Register}
-          label={'Kích hoạt tài khoản'}
-          onPress={() => navigation.goBack()}
-        />
+        <Header type={IHeaderEnum.Register} label={'Kích hoạt tài khoản'} />
         <UiValidate
           isValid={true}
           notification={
@@ -62,11 +75,11 @@ const ConfirmOTP = ({route}: {route: any}) => {
           }
         />
         <View style={styles.body}>
-          <Text style={styles.text1}>Đang gọi đến số (84) {numberPhone}</Text>
+          <Text style={styles.text1}>Đang gọi đến số (+84) {numberPhone}</Text>
 
           <Text style={styles.text2}>Vui lòng bắt máy để nghe mã</Text>
           <OTPInput
-            codeCount={4}
+            codeCount={6}
             value={otp}
             onChangeText={text => setOTP(text)}
             keyboardType={'number-pad'}
@@ -83,36 +96,28 @@ const ConfirmOTP = ({route}: {route: any}) => {
             )}
           />
           <View style={{flexDirection: 'row', paddingVertical: 30}}>
-            <Text>Gửi lại mã</Text>
+            <Text style={{color: Color.DimGray}}>Gửi lại mã</Text>
             <TouchableOpacity>
               <Text style={styles.time}>00:25</Text>
             </TouchableOpacity>
           </View>
           <UIButton
-            disabled={otp.length !== 4}
+            disabled={otp.length !== 6}
             styleUIButton={[
               styles.button,
               {
                 backgroundColor:
-                  otp.length === 4 ? Color.primary : Color.Darkgray,
+                  otp.length === 6 ? Color.primary : Color.Darkgray,
               },
             ]}
             onPress={() => {
-              saveNumber({
-                numberPhone,
-                password: '123456',
-              });
-              saveAccount({
-                numberPhone,
-                password: '123456',
-              });
-              // navigation.push(RouterName.BottomTabBar);
+              confirmCode(otp);
             }}
             label={'Tiếp tục'}
           />
         </View>
       </View>
-    </TouchableNativeFeedback>
+    </TouchableWithoutFeedback>
   );
 };
 const styles = StyleSheet.create({
@@ -131,17 +136,20 @@ const styles = StyleSheet.create({
   text1: {
     fontSize: FontSize.h4,
     padding: 5,
+    color: Color.DimGray,
   },
   text2: {
     fontSize: FontSize.h5 * 0.9,
+    color: Color.DimGray,
   },
   button: {
     width: '50%',
     height: 40,
   },
   cellRoot: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
+    marginHorizontal: 6,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomColor: '#ccc',
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
   },
   cellText: {
     color: '#000',
-    fontSize: 36,
+    fontSize: 30,
     textAlign: 'center',
   },
   focusCell: {

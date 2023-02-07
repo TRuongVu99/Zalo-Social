@@ -16,4 +16,5 @@ export const RouterName = {
   AuthenStack: 'AuthenStack',
   Message: 'Message',
   OptionMessage: 'OptionMessage',
+  Setting: 'Setting',
 };

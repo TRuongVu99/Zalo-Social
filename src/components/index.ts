@@ -7,6 +7,7 @@ import OTPInput from './OTPInput';
 import Cursor from './Cursor';
 import UIButton from './UIButton';
 import UITab from './BottomTabBar';
+import ResultSearch from './ResultSearch';
 
 export {
   CustumInput,
@@ -18,4 +19,5 @@ export {
   Cursor,
   UIButton,
   UITab,
+  ResultSearch,
 };

@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   codeFiledRoot: {
     marginTop: 20,
-    width: 280,
+    // width: 300,
     marginLeft: 'auto',
     marginRight: 'auto',
     justifyContent: 'space-between',

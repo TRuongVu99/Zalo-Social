@@ -40,11 +40,7 @@ const ForgetPassword = ({navigation}: IForgetPassword) => {
   return (
     <TouchableNativeFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Header
-          type={IHeaderEnum.Register}
-          label={'Lấy lại mật khẩu'}
-          onPress={() => navigation.goBack()}
-        />
+        <Header type={IHeaderEnum.Register} label={'Lấy lại mật khẩu'} />
         <UiValidate
           isValid={true}
           notification={'Nhập số điện thoại để nhận mã xác nhận '}

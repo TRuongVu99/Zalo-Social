@@ -1,5 +1,5 @@
-const searchItembyTitle = (items, key) => {
-  return items.filter(item =>
+const searchItembyTitle = (items: any, key: any) => {
+  return items.filter((item: any) =>
     item.label.toLowerCase().trim().includes(key.toLowerCase().trim()),
   );
 };

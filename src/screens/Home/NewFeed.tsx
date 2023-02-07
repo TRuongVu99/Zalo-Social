@@ -1,12 +1,40 @@
-import {View, Text} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableNativeFeedback,
+  Keyboard,
+  Alert,
+  TouchableNativeFeedbackBase,
+} from 'react-native';
 import React from 'react';
-
-const NewFeed = () => {
+import Header from '@components/Header';
+import {IHeaderEnum} from '@model/handelConfig';
+import {Icon} from '@icon/index';
+import {RouterName} from '@navigation/rootName';
+interface IPhoneBook {
+  navigation: any;
+}
+const NewFeed = ({navigation}: IPhoneBook) => {
   return (
-    <View>
-      <Text>NewFeed</Text>
-    </View>
+    <TouchableNativeFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Header
+          placeholder={'Tìm kiếm'}
+          type={IHeaderEnum.Home}
+          nameIconRight2={Icon.notification}
+          nameIconRight1={Icon.create}
+          onPressIn={() => navigation.navigate(RouterName.SearchScreen)}
+        />
+      </View>
+    </TouchableNativeFeedback>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 export default NewFeed;

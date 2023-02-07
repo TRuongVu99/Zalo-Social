@@ -43,6 +43,7 @@ const renderOnBoarding = ({
           textAlign: 'center',
           fontSize: FontSize.h4 * 0.9,
           fontFamily: fontFamily.primaryFont,
+          color: Color.DimGray,
         }}>
         {content}
       </Text>

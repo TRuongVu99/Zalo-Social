@@ -1,8 +1,9 @@
 import {CustumInput, Header, Option, UIBottom, UiValidate} from '@components';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
+import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Alert,
   Keyboard,
@@ -10,21 +11,45 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {UserContext} from '../hook/UserContext';
+import {useSelector, useDispatch} from 'react-redux';
+import {RootState, AppDispatch} from '../store';
 import {Color} from '../constants';
+import {addUser} from '../store/slice/user/userSlice';
 
 export default function CreateCustomer({route}: {route: any}) {
   const navigation = useNavigation<any>();
+  const {profileUser} = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch<AppDispatch>();
   const [numberPhone, setNumber] = useState<string>('');
-  const {userName} = route.params;
+  const [confirm, setConfirm] = useState<any>(null);
+  const [focus, setFocus] = useState<boolean>(true);
+
+  const disable = numberPhone.length < 10;
+
+  const formartNumberPhone: string =
+    numberPhone[0] === '0'
+      ? `+84 ${numberPhone.slice(1, numberPhone.length)}`
+      : `+84 ${numberPhone}`;
+  async function signInWithPhoneNumber(phoneNumber: string) {
+    try {
+      const confirmation = await auth()
+        .signInWithPhoneNumber(phoneNumber)
+        .then(a => {
+          dispatch(addUser({...profileUser, phoneNumber: numberPhone}));
+          navigation.navigate(RouterName.ConfirmOTP, {
+            numberPhone: numberPhone,
+            confirm: a,
+          });
+        });
+      setConfirm(confirmation);
+    } finally {
+    }
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Header
-          type={IHeaderEnum.Register}
-          label={'Nhập thông tin'}
-          onPress={() => navigation.goBack()}
-        />
+        <Header type={IHeaderEnum.Register} label={'Nhập thông tin'} />
         <UiValidate
           notification={'Nhập số điện thoại để tạo tài khoản mới'}
           isValid={true}
@@ -42,18 +67,20 @@ export default function CreateCustomer({route}: {route: any}) {
             }}
             keyboardType={'number-pad'}
             maxLength={10}
+            onFocus={() => setFocus(false)}
+            onBlur={() => setFocus(true)}
           />
         </View>
         <View style={{flex: 1}} />
-        <UIBottom
-          disabled={numberPhone === ''}
-          onPress={() => {
-            navigation.navigate(RouterName.ConfirmOTP, {
-              userName: userName,
-              numberPhone: numberPhone,
-            });
-          }}
-        />
+        {focus && (
+          <UIBottom
+            disabled={disable}
+            color={disable ? Color.Darkgray : Color.primary}
+            onPress={() => {
+              signInWithPhoneNumber(formartNumberPhone);
+            }}
+          />
+        )}
       </View>
     </TouchableWithoutFeedback>
   );

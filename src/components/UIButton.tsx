@@ -10,10 +10,11 @@ import {
 import React from 'react';
 import {FontSize, Color} from '../constants';
 import {IButtonEnum} from '@model/handelConfig';
+import {fontFamily} from '@fonts/Font';
 interface IUIButton {
   onPress: (event: GestureResponderEvent) => void;
   label: string;
-  styleUIButton?: StyleProp<TextStyle>;
+  styleUIButton?: StyleProp<TextStyle> | ViewStyle;
   type?: string | undefined;
   styleUIButtonDisable?: ViewStyle;
   styleLabel?: TextStyle;
@@ -68,7 +69,11 @@ const styles = StyleSheet.create({
     borderRadius: 50 / 2,
     marginVertical: 10,
   },
-  text: {color: 'white', fontSize: FontSize.h6},
+  text: {
+    color: 'white',
+    fontSize: FontSize.h6,
+    fontFamily: fontFamily.primaryFont,
+  },
   textdisable: {color: 'black', fontSize: FontSize.h6},
 });
 export default UIButton;

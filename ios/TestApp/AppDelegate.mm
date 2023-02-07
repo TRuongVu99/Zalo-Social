@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import <Firebase.h>
 
 
 #import "RNBootSplash.h" // <- add the header import
@@ -36,6 +37,9 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+if ([FIRApp defaultApp] == nil) {
+[FIRApp configure];
+}
   RCTAppSetupPrepareApp(application);
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];

@@ -6,8 +6,9 @@ import {fontFamily} from '../assets/fonts/Font';
 interface IUIBottom {
   onPress: () => void;
   disabled?: boolean;
+  color?: string;
 }
-const UIBottom = ({onPress, disabled}: IUIBottom) => {
+const UIBottom = ({onPress, disabled, color}: IUIBottom) => {
   return (
     <View
       style={{
@@ -18,7 +19,11 @@ const UIBottom = ({onPress, disabled}: IUIBottom) => {
       }}>
       <View>
         <Text
-          style={{fontSize: FontSize.h5, fontFamily: fontFamily.primaryFont}}>
+          style={{
+            fontSize: FontSize.h5,
+            fontFamily: fontFamily.primaryFont,
+            color: Color.DimGray,
+          }}>
           Tiếp tục nghĩa là bạn đồng ý với các
         </Text>
         <TouchableOpacity>
@@ -33,7 +38,7 @@ const UIBottom = ({onPress, disabled}: IUIBottom) => {
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={onPress} disabled={disabled}>
-        <Icon name={'arrow-right'} size={26} color={Color.primary} />
+        <Icon name={'arrow-right'} size={26} color={color} />
       </TouchableOpacity>
     </View>
   );

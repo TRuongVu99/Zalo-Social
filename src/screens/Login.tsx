@@ -1,145 +1,169 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Keyboard,
-  Alert,
-} from 'react-native';
-import React, {useContext, useState} from 'react';
-import Header from '@components/Header';
-import {IButtonEnum, IHeaderEnum} from '@model/handelConfig';
-import UiValidate from '@components/UiValidate';
 import CustumInput from '@components/CustumInput';
-import {fontFamily} from '@fonts/Font';
-import {Color, FontSize} from '@constants';
+import Header from '@components/Header';
 import UIButton from '@components/UIButton';
+import UiValidate from '@components/UiValidate';
+import {Color, FontSize} from '@constants';
+import {fontFamily} from '@fonts/Font';
+import {IButtonEnum, IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
+import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {account} from '@navigation/index';
-import {UserNumberPhone} from '../hook/UserNumberPhone';
-export const keySaveNumberPhone = 'keySaveNumberPhone';
+import {RootState} from '@store/index';
+import React, {useState} from 'react';
+
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useSelector} from 'react-redux';
 const Login = () => {
+  // const [state, setState] = useState<number>(0);
+  // const [showPassword, setShowPassword] = useState<boolean>(true);
+  // const [account, setAccount] = useStateCallback<any>({
+  //   numberPhone: '',
+  //   password: '',
+  // });
+  // const [user, setUser] = useState<string>(account.numberPhone);
+  // const [password, setPassword] = useState<string>(account.password);
+  // const isOke =
+  //   (user !== '' && password.length > 5) ||
+  //   (account.numberPhone !== '' && password.length !== 0);
+  // console.log(isOke);
+
+  // const stateUser = useContext(UserContext);
+  // const saveUser = async (value: any) => {
+  //   try {
+  //     const jsonValue = JSON.stringify(value);
+  //     await AsyncStorage.setItem(keySaveUser, jsonValue);
+  //     stateUser.setUser(value);
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // };
+  // const getAccount = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem(keySaveAccount);
+  //     return jsonValue !== null ? JSON.parse(jsonValue) : null;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // };
+  // useEffect(() => {
+  //   async function getData() {
+  //     const data = await getAccount();
+  //     setAccount(data);
+  //     setUser(data.numberPhone);
+  //   }
+  //   getData();
+  // }, []);
+
+  // const handelAlert = () => {
+  //   if (account.numberPhone !== user) {
+  //     return Alert.alert(
+  //       `Số điện thoại ${user} chưa được đăng ký`,
+  //       'Đăng ký ngay',
+  //       [
+  //         {
+  //           text: 'Huỷ',
+  //         },
+  //         {
+  //           text: 'Xác Nhận',
+  //           onPress: () => navigation.navigate(RouterName.Register),
+  //         },
+  //       ],
+  //     );
+  //   } else if (account.numberPhone === user && account.password !== password) {
+  //     if (state >= 2) {
+  //       Alert.alert('Sai mật khẩu', 'Lấy lại mật khẩu ngay?', [
+  //         {
+  //           text: 'Huỷ',
+  //         },
+  //         {
+  //           text: 'Xác Nhận',
+  //           onPress: () => navigation.push(RouterName.ForgetPassword),
+  //         },
+  //       ]);
+  //     } else if (password.length === 0) {
+  //       Alert.alert('Thông báo', 'Chưa nhập mật khẩu', [
+  //         {
+  //           text: 'Cancel',
+  //         },
+  //       ]);
+  //     } else {
+  //       Alert.alert('Thông báo', 'Sai mật khẩu', [
+  //         {
+  //           text: 'Cancel',
+  //         },
+  //       ]);
+  //     }
+  //   }
+  // };
   const navigation = useNavigation<any>();
-  const [state, setState] = useState<number>(0);
-  const [showPassword, setShowPassword] = useState<boolean>(true);
-  const [user, setUser] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const isOke = user !== '' && password.length > 5;
-  const stateNumber = useContext(UserNumberPhone);
-  const saveUser = async (value: any) => {
+  const [focus, setFocus] = useState<boolean>(true);
+  const [confirm, setConfirm] = useState<any>(null);
+  const [numberPhone, setNumber] = useState<string>('');
+  const {profileUser} = useSelector((state: RootState) => state.user);
+  console.log(profileUser.username);
+  const formartNumberPhone: string =
+    numberPhone[0] === '0'
+      ? `+84 ${numberPhone.slice(1, numberPhone.length)}`
+      : `+84 ${numberPhone}`;
+  async function signInWithPhoneNumber(phoneNumber: string) {
     try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem(keySaveNumberPhone, jsonValue);
-      stateNumber.setNumberPhone(value);
-    } catch (e) {
-      // throw e;
-    }
-  };
-  const handelAlert = () => {
-    if (account.numberPhone !== user) {
-      return Alert.alert('Số điện thoại chưa được đăng ký', 'Đăng ký ngay', [
-        {
-          text: 'Huỷ',
-        },
-        {
-          text: 'Xác Nhận',
-          onPress: () =>
-            navigation.navigate(RouterName.AuthenStack, {
-              screen: RouterName.Register,
-            }),
-        },
-      ]);
-    } else if (account.numberPhone === user && account.password !== password) {
-      if (state === 2) {
-        Alert.alert('Sai mật khẩu', 'Lấy lại mật khẩu ngay?', [
-          {
-            text: 'Huỷ',
-          },
-          {
-            text: 'Xác Nhận',
-            onPress: () =>
-              navigation.navigate(RouterName.AuthenStack, {
-                screen: RouterName.ForgetPassword,
-              }),
-          },
-        ]);
-      } else {
-        Alert.alert('Thông báo', 'Sai mật khẩu', [
-          {
-            text: 'Cancel',
-          },
-        ]);
-      }
-    }
-  };
+      const confirmation = await auth()
+        .signInWithPhoneNumber(phoneNumber)
+        .then(a => {
+          navigation.navigate(RouterName.ConfirmOTP, {
+            numberPhone: numberPhone,
+            confirm: a,
+            isLogin: true,
+          });
+        });
+      setConfirm(confirmation);
+    } catch {}
+  }
+  console.log(Keyboard);
   return (
-    <TouchableNativeFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Header
-          type={IHeaderEnum.Register}
-          label={'Đăng nhập'}
-          onPress={() => navigation.goBack()}
+    <View style={styles.container}>
+      <Header type={IHeaderEnum.Register} label={'Đăng nhập'} />
+      <UiValidate
+        isValid={true}
+        notification={'Vui lòng nhập số điện thoại và mật khẩu để đăng nhập'}
+      />
+      <View style={styles.textInput}>
+        <CustumInput
+          onChangText={text => setNumber(text)}
+          containerTextInput={styles.line}
+          placeholder={'Số điện thoại'}
+          keyboardType="number-pad"
+          onFocus={() => setFocus(false)}
+          onBlur={() => setFocus(true)}
         />
-        <UiValidate
-          isValid={true}
-          notification={'Vui lòng nhập số điện thoại và mật khẩu để đăng nhập'}
-        />
-        <View style={styles.textInput}>
-          <CustumInput
-            onChangText={text => setUser(text)}
-            containerTextInput={styles.line}
-            placeholder={'Số điện thoại'}
-            keyboardType="number-pad"
-          />
-          <CustumInput
-            type={IButtonEnum.disable}
-            text={showPassword ? 'HIỆN' : 'ẨN'}
-            onChangText={text => setPassword(text)}
-            containerTextInput={styles.line}
-            onPress={() => setShowPassword(!showPassword)}
-            secureTextEntry={showPassword}
-          />
-        </View>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(RouterName.AuthenStack, {
-              screen: RouterName.ForgetPassword,
-            })
-          }>
-          <Text style={styles.text}>Lấy lại mật khẩu</Text>
-        </TouchableOpacity>
-        <UIButton
-          onPress={() => {
-            if (account.numberPhone !== user && account.password !== password) {
-              handelAlert();
-            } else if (
-              account.numberPhone === user &&
-              account.password !== password
-            ) {
-              handelAlert();
-              setState(state + 1);
-            } else {
-              saveUser({
-                numberPhone: user,
-                password: password,
-              });
-            }
-          }}
-          disabled={!isOke}
-          type={isOke ? undefined : IButtonEnum.disable}
-          styleUIButton={styles.button}
-          styleUIButtonDisable={styles.button}
-          label={'Đăng Nhập'}
-        />
-        <View style={{flex: 1}} />
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate(RouterName.ForgetPassword)}>
+        <Text style={styles.text}>Lấy lại mật khẩu</Text>
+      </TouchableOpacity>
+      <UIButton
+        onPress={() => signInWithPhoneNumber(formartNumberPhone)}
+        disabled={!numberPhone}
+        type={numberPhone ? undefined : IButtonEnum.disable}
+        styleUIButton={styles.button}
+        styleUIButtonDisable={styles.button}
+        label={'Gửi OTP'}
+      />
+      <View style={{flex: 1}} />
+      {focus && (
         <TouchableOpacity style={styles.question}>
           <Text style={styles.textBottom}>Các câu hỏi thường gặp</Text>
         </TouchableOpacity>
-      </View>
-    </TouchableNativeFeedback>
+      )}
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -159,7 +183,7 @@ const styles = StyleSheet.create({
     color: Color.primary,
     fontSize: FontSize.h5,
   },
-  button: {height: 40, marginTop: 20, marginHorizontal: 100},
+  button: {height: 40, marginTop: 20, marginHorizontal: 140},
   textBottom: {
     paddingBottom: 30,
     textDecorationLine: 'underline',

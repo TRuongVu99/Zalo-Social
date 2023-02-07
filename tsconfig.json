@@ -19,8 +19,10 @@
       "@constants":["./src/constants/index"],
       "@fonts/*":["./src/assets/fonts/*"],
       "@icon/*":["./src/assets/icon/*"],
-
-
+      "@hook/*":["./src/hook/*"],
+      "@hook":["./src/hook/index"],
+      "@store/*":["./src/store/*"],
+      "@store":["./src/store/index"],
     },
     /* Completeness */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */

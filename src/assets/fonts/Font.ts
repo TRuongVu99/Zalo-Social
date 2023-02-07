@@ -2,6 +2,7 @@ export const fontFamily = {
   headerFont: 'SanFranciscoText-Medium',
   primaryFont: 'Roboto-Regular',
   fontZalo: 'Poppins-Medium',
+  mainFont: 'Roboto-Thin',
 };
 
 // export default {

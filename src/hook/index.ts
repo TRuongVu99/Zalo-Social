@@ -1,5 +1,5 @@
-import UserNumberPhoneProvider from './UserNumberPhone';
+import AccountProvider from './AccountProvider';
 import UserProvider from './UserContext';
 import useStateCallback from './useStateCallback';
 
-export {UserNumberPhoneProvider, UserProvider, useStateCallback};
+export {AccountProvider, UserProvider, useStateCallback};

@@ -10,7 +10,6 @@ import {
   Image,
 } from 'react-native';
 import React, {useContext, useEffect} from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '@components/Header';
 import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
@@ -48,7 +47,6 @@ const Home: React.FC = () => {
           type={IHeaderEnum.Home}
           nameIconRight1={Icon.qrcode}
           nameIconRight2={Icon.plus}
-          onPressIn={() => navigation.push(RouterName.SearchScreen)}
         />
         <FlatList data={UserData} renderItem={({item}) => renderUI(item)} />
       </View>
