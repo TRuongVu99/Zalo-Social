@@ -31,6 +31,16 @@ export const addListFrends = async (numberPhone: string, profileUser: any) => {
     console.log(err);
   }
 };
+export const handleReject = async (profileReject: any, profileUser: any) => {
+  try {
+    await firestore()
+      .collection('Users')
+      .doc(profileUser.UserId)
+      .update({
+        listFriend: firestore.FieldValue.arrayRemove(profileReject),
+      });
+  } catch {}
+};
 const FriendRequest = ({route}: IFriendRequest) => {
   const {label} = route.params;
   const dispatch = useDispatch();
@@ -39,16 +49,6 @@ const FriendRequest = ({route}: IFriendRequest) => {
   const [selected, setSelected] = useState<string>('ĐÃ NHẬN  ');
   const {profileUser} = useSelector((state: RootState) => state.user);
 
-  const handleReject = async (profileReject: any) => {
-    try {
-      await firestore()
-        .collection('Users')
-        .doc(profileUser.UserId)
-        .update({
-          listFriend: firestore.FieldValue.arrayRemove(profileReject),
-        });
-    } catch {}
-  };
   return (
     <View style={styles.container}>
       <Header type={IHeaderEnum.Register} name={'setting'} label={label} />
@@ -97,7 +97,7 @@ const FriendRequest = ({route}: IFriendRequest) => {
               navigation.navigate(RouterName.PersonalFriendRequest);
             }}
             onPressReject={() => {
-              handleReject(item);
+              handleReject(item, profileUser);
             }}
           />
         )}

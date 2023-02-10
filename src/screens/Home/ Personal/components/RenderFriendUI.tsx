@@ -58,23 +58,8 @@ const RenderFriendUI = ({
               type === IPeronalEnum.Confirm ? 'transparent' : 'white',
           },
         ]}>
-        <View
-          style={{
-            position: 'relative',
-            top: -85,
-            borderWidth: 3,
-            borderRadius: 150 / 2,
-            borderColor: 'white',
-            alignItems: 'center',
-          }}>
-          <Image
-            source={{uri: urlAvatar}}
-            style={{
-              width: 130,
-              height: 130,
-              borderRadius: 130 / 2,
-            }}
-          />
+        <View style={styles.borderAvatar}>
+          <Image source={{uri: urlAvatar}} style={styles.avatar} />
         </View>
         <Text style={styles.userName}>
           {`${name}  `}
@@ -187,5 +172,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     paddingHorizontal: 20,
+  },
+  borderAvatar: {
+    position: 'relative',
+    top: -85,
+    borderWidth: 3,
+    borderRadius: 150 / 2,
+    borderColor: 'white',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 130,
+    height: 130,
+    borderRadius: 130 / 2,
   },
 });

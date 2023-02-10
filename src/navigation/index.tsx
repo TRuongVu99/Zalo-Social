@@ -1,6 +1,6 @@
 import BottomTabBar from '@components/BottomTabBar';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConfirmOTP from '@screens/Authen/ConfirmOTP';
@@ -32,6 +32,7 @@ const Application = () => {
   const [userApp, setUser] = useState();
   const {profileUser, option} = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+  firebase.auth().settings.appVerificationDisabledForTesting = true;
   async function onAuthStateChanged(user: any) {
     setUser(user);
     const uid = user?._user?.uid;

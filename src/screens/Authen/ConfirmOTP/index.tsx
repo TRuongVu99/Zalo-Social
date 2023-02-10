@@ -39,7 +39,7 @@ const ConfirmOTP = ({route}: {route: any}) => {
 
   async function confirmCode(code: string) {
     try {
-      const result = await confirm.confirm(code).then(async (user: any) => {
+      const result = await confirm?.confirm(code).then(async (user: any) => {
         if (!isLogin) {
           await firestore()
             .collection('Users')

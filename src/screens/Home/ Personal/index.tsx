@@ -9,7 +9,7 @@ import moment from 'moment';
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {addListFrends} from '../ FriendRequest';
+import {addListFrends, handleReject} from '../ FriendRequest';
 import RenderFriendUI from './components/RenderFriendUI';
 import RenderUserUI from './components/RenderUserUI';
 interface IPersonal {
@@ -63,6 +63,10 @@ const Personal = ({route}: IPersonal) => {
           onPressConfirm={() => {
             addListFrends(profile.numberPhone, profileUser);
             navigation.navigate(RouterName.Phonebook);
+          }}
+          onPressReject={() => {
+            handleReject(profile, profileUser);
+            navigation.navigate(RouterName.FriendRequest);
           }}
         />
       );

@@ -21,7 +21,7 @@ const Login = () => {
       : `+84 ${numberPhone}`;
   async function signInWithPhoneNumber(phoneNumber: string) {
     try {
-      const confirmation = await auth()
+      await auth()
         .signInWithPhoneNumber(phoneNumber)
         .then(a => {
           navigation.navigate(RouterName.ConfirmOTP, {
