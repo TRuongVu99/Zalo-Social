@@ -17,4 +17,9 @@ export const RouterName = {
   Message: 'Message',
   OptionMessage: 'OptionMessage',
   Setting: 'Setting',
+  Personal: 'Personal',
+  AddFriend: 'AddFriend',
+  FriendRequest: 'FriendRequest',
+  TabbarFriend: 'TabbarFriend',
+  PersonalFriendRequest: 'PersonalFriendRequest',
 };

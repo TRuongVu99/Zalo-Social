@@ -3,6 +3,8 @@ export const fontFamily = {
   primaryFont: 'Roboto-Regular',
   fontZalo: 'Poppins-Medium',
   mainFont: 'Roboto-Thin',
+  RobotoMedium: 'Roboto-Medium',
+  SanFranciscoDisplayMedium: 'SanFranciscoDisplay-Medium',
 };
 
 // export default {

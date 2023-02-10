@@ -1,12 +1,14 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {user} from './slice/user';
-import {frends} from './slice/frends';
+import {friends} from './slice/friends';
+import {profileFriend} from './slice/profileFriend';
 import logger from 'redux-logger';
 
 export const store = configureStore({
   reducer: {
     user,
-    frends,
+    friends,
+    profileFriend,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

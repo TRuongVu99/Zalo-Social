@@ -3,22 +3,26 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ConfirmOTP from '@screens/ConfirmOTP';
-import CreateCustomer from '@screens/CreateCustomer';
-import ForgetPassword from '@screens/ForgetPassword';
+import ConfirmOTP from '@screens/Authen/ConfirmOTP';
+import CreateCustomer from '@screens/Authen/CreateCustomer';
+import ForgetPassword from '@screens/Authen/ForgetPassword';
+import Login from '@screens/Authen/Login';
+import OnBoarding from '@screens/Authen/OnBoarding';
+import Register from '@screens/Authen/Register';
+import FriendRequest from '@screens/Home/ FriendRequest';
+import PersonalFriendRequest from '@screens/Home/ FriendRequest/components/PersonalFriendRequest';
+import Personal from '@screens/Home/ Personal';
+import AddFriend from '@screens/Home/AddFriend';
 import Message from '@screens/Home/Message';
 import OptionMessage from '@screens/Home/OptionMessage';
 import SearchScreen from '@screens/Home/SearchScreen';
 import Setting from '@screens/Home/Setting';
-import Login from '@screens/Login';
-import OnBoarding from '@screens/OnBoarding';
-import Register from '@screens/Register';
 import {RootState} from '@store/index';
+import {addFriends} from '@store/slice/friends/friendsSlice';
 import React, {useEffect, useState} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
 import {addUser} from '../store/slice/user/userSlice';
-import {addFrends} from '../store/slice/frends/frendsSlice';
 import {RouterName} from './rootName';
 
 const Stack = createNativeStackNavigator<any>();
@@ -26,35 +30,24 @@ const Stack = createNativeStackNavigator<any>();
 const Application = () => {
   const [initializing, setInitializing] = useState(true);
   const [userApp, setUser] = useState();
-  const {profileUser} = useSelector((state: RootState) => state.user);
-  const {listFrends} = useSelector((state: RootState) => state.frends);
-  console.log(listFrends);
+  const {profileUser, option} = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  function onResult(QuerySnapshot: any) {
-    QuerySnapshot.forEach((documentSnapshot: any) => {
-      dispatch(addFrends(documentSnapshot.data()));
-    });
-  }
-  function onError(error: any) {
-    console.error(error);
-  }
-  useEffect(() => {
-    firestore().collection('Users').onSnapshot(onResult, onError);
-  }, []);
-
   async function onAuthStateChanged(user: any) {
     setUser(user);
     const uid = user?._user?.uid;
     try {
       if (user) {
-        await firestore()
+        firestore()
           .collection('Users')
           // Filter results
           .where('uid', '==', uid)
-          .get()
-          .then(querySnapshot => {
+          .onSnapshot(querySnapshot => {
+            let profile: any = {};
+
             querySnapshot.forEach(documentSnapshot => {
-              dispatch(addUser(documentSnapshot.data()));
+              const UserId = documentSnapshot.id;
+              profile = {...documentSnapshot.data(), UserId};
+              dispatch(addUser(profile));
             });
           });
       }
@@ -63,9 +56,16 @@ const Application = () => {
     }
 
     RNBootSplash.hide();
+
     if (initializing) setInitializing(false);
   }
-
+  useEffect(() => {
+    dispatch(
+      addFriends(
+        profileUser?.listFriend?.filter((friend: any) => friend.status === 3),
+      ),
+    );
+  }, [profileUser?.listFriend]);
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
@@ -106,12 +106,28 @@ const Application = () => {
               component={OptionMessage}
             />
             <Stack.Screen name={RouterName.Setting} component={Setting} />
+            <Stack.Screen name={RouterName.AddFriend} component={AddFriend} />
+            <Stack.Screen name={RouterName.Personal} component={Personal} />
+            <Stack.Screen
+              name={RouterName.FriendRequest}
+              component={FriendRequest}
+            />
             <Stack.Screen
               options={{
                 animation: 'fade',
               }}
               name={RouterName.SearchScreen}
               component={SearchScreen}
+            />
+
+            <Stack.Screen
+              options={{
+                animation: option,
+                presentation: 'transparentModal',
+                fullScreenGestureEnabled: true,
+              }}
+              name={RouterName.PersonalFriendRequest}
+              component={PersonalFriendRequest}
             />
           </>
         )}
