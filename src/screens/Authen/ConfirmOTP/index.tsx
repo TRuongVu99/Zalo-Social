@@ -44,7 +44,6 @@ const ConfirmOTP = ({route}: {route: any}) => {
           await firestore()
             .collection('Users')
             .add({
-              status: 1,
               numberPhone,
               username,
               uid: auth().currentUser?.uid,

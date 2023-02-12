@@ -201,6 +201,7 @@
 		77709433B59149D1AAAC5AF1 /* SanFranciscoText-ThinItalic.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoText-ThinItalic.otf"; path = "../assets/fonts/SanFranciscoText-ThinItalic.otf"; sourceTree = "<group>"; };
 		7EE1DE000F374A379B6BDBA1 /* SanFranciscoDisplay-Ultralight.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SanFranciscoDisplay-Ultralight.otf"; path = "../assets/fonts/SanFranciscoDisplay-Ultralight.otf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TestApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		840134CC29978D0000357973 /* TestAppRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TestAppRelease.entitlements; path = TestApp/TestAppRelease.entitlements; sourceTree = "<group>"; };
 		84378BC82969C04F00B716E5 /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-ExtraBold.ttf"; path = "TestApp/Fonts/Poppins-ExtraBold.ttf"; sourceTree = "<group>"; };
 		84378BC92969C04F00B716E5 /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-SemiBoldItalic.ttf"; path = "TestApp/Fonts/Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
 		84378BCA2969C04F00B716E5 /* Poppins-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-BlackItalic.ttf"; path = "TestApp/Fonts/Poppins-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -318,6 +319,7 @@
 		13B07FAE1A68108700A75B9A /* TestApp */ = {
 			isa = PBXGroup;
 			children = (
+				840134CC29978D0000357973 /* TestAppRelease.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -884,6 +886,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -912,6 +915,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = TestAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
@@ -964,6 +968,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TestApp/TestAppRelease.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = TestApp/Info.plist;

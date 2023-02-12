@@ -1,15 +1,16 @@
 import Header from '@components/Header';
 import {Color, FontSize, image} from '@constants';
 import {fontFamily} from '@fonts/Font';
-import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {IButtonEnum, IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {windowHeight} from '@utils/Dimensions';
-import Icon from 'react-native-vector-icons/AntDesign';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 import React from 'react';
 import {
   GestureResponderEvent,
   Image,
   ImageBackground,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -17,14 +18,19 @@ import {
   View,
 } from 'react-native';
 import moment from 'moment';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {Icon} from '@icon/index';
 interface IRenderFriendUI {
   urlAvatar: string | undefined;
   name: string | undefined;
   onPressAddFriend?: (event: GestureResponderEvent) => void;
   onPressReject?: (event: GestureResponderEvent) => void;
   onPressConfirm?: (event: GestureResponderEvent) => void;
+  onPressMessage?: (event: GestureResponderEvent) => void;
+  onPressUnFriend?: (event: GestureResponderEvent) => void;
   type: string;
   timeStamp?: string;
+  typeUnFriend?: string;
 }
 const RenderFriendUI = ({
   urlAvatar,
@@ -34,9 +40,22 @@ const RenderFriendUI = ({
   onPressReject,
   type,
   timeStamp,
+  onPressMessage,
+  typeUnFriend,
+  onPressUnFriend,
 }: IRenderFriendUI) => {
+  const inset = useSafeAreaInsets();
+  const types = type === IPeronalEnum.Confirm || type === IButtonEnum.disable;
   return (
     <View style={styles.container}>
+      {types && (
+        <TouchableOpacity
+          style={[styles.button, styles.message, {marginBottom: inset.bottom}]}
+          onPress={onPressMessage}>
+          <IconAntDesign name={'message1'} size={20} color={Color.blue} />
+          <Text style={styles.textMessage}>Nhắn tin</Text>
+        </TouchableOpacity>
+      )}
       <ImageBackground
         source={image.background}
         resizeMode="cover"
@@ -44,28 +63,22 @@ const RenderFriendUI = ({
         <Header
           StyleHeaderSetting={{
             backgroundColor: 'transparent',
-            position: 'absolute',
+            paddingVertical: 40,
+            paddingTop: Platform.OS === 'android' ? 40 : inset.top * 1.15,
           }}
           type={IHeaderEnum.Register}
           typePersonal={IHeaderEnum.Personal}
         />
       </ImageBackground>
-      <View
-        style={[
-          styles.body,
-          {
-            backgroundColor:
-              type === IPeronalEnum.Confirm ? 'transparent' : 'white',
-          },
-        ]}>
+      <View style={[styles.body]}>
         <View style={styles.borderAvatar}>
           <Image source={{uri: urlAvatar}} style={styles.avatar} />
         </View>
-        <Text style={styles.userName}>
-          {`${name}  `}
-          <Icon name={'edit'} size={22} />
-        </Text>
-        {type === IPeronalEnum.Confirm ? (
+        <TouchableOpacity style={{flexDirection: 'row'}}>
+          <Text style={styles.userName}>{name}</Text>
+          <IconAntDesign name={'edit'} size={22} style={styles.edit} />
+        </TouchableOpacity>
+        {type === IPeronalEnum.Confirm && (
           <View style={styles.view}>
             <Text style={styles.text}>
               {`Từ số điện thoại - ${moment(
@@ -91,15 +104,46 @@ const RenderFriendUI = ({
               </TouchableOpacity>
             </View>
           </View>
-        ) : (
-          <TouchableOpacity onPress={onPressAddFriend}>
-            <Text>Add frend</Text>
-          </TouchableOpacity>
+        )}
+        {type === IPeronalEnum.Confirm && (
+          <Text style={styles.depcription}>
+            Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
+          </Text>
+        )}
+        {type === IPeronalEnum.AddFriend && (
+          <View style={[styles.row, {top: -70}]}>
+            <TouchableOpacity
+              style={[
+                styles.message2,
+                {
+                  paddingHorizontal:
+                    typeUnFriend === IPeronalEnum.UnFriend ? 70 : 100,
+                },
+              ]}
+              onPress={onPressMessage}>
+              <IconAntDesign name={'message1'} size={20} color={Color.blue} />
+
+              <Text style={[styles.textMessage, {color: Color.blue}]}>
+                Nhắn tin
+              </Text>
+            </TouchableOpacity>
+            {typeUnFriend === IPeronalEnum.AddFriend && (
+              <TouchableOpacity
+                style={styles.addFriend}
+                onPress={onPressAddFriend}>
+                <Image source={Icon.addUser} style={{width: 18, height: 18}} />
+              </TouchableOpacity>
+            )}
+            {typeUnFriend === IPeronalEnum.UnFriend && (
+              <TouchableOpacity
+                style={styles.addFriend}
+                onPress={onPressUnFriend}>
+                <Text>Huỷ kết bạn</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
-      <Text style={styles.depcription}>
-        Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
-      </Text>
     </View>
   );
 };
@@ -119,7 +163,6 @@ const styles = StyleSheet.create({
   },
   userName: {
     top: -80,
-
     fontFamily: fontFamily.RobotoMedium,
     color: Color.DimGray,
     fontSize: FontSize.h4,
@@ -127,12 +170,12 @@ const styles = StyleSheet.create({
   row: {flexDirection: 'row'},
   button: {
     paddingVertical: 8,
-    paddingHorizontal: 50,
+    paddingHorizontal: 55,
     marginHorizontal: 5,
-    borderRadius: 13,
+    borderRadius: 15,
   },
   FontFamily: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: fontFamily.PoppinsRegular,
     // fontSize: FontSize.h5,
   },
   reject: {
@@ -140,14 +183,12 @@ const styles = StyleSheet.create({
   },
   textReject: {
     color: 'black',
-    fontWeight: '500',
   },
   confirm: {
     backgroundColor: Color.confirm,
   },
   textConfirm: {
     color: 'rgb(0,108,254)',
-    fontWeight: '500',
   },
   view: {
     alignItems: 'center',
@@ -161,29 +202,69 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 5,
+    marginBottom: 30,
   },
   text: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: fontFamily.PoppinsRegular,
     fontSize: FontSize.h6 * 1.1,
     color: 'gray',
     paddingBottom: 10,
   },
   depcription: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: fontFamily.PoppinsRegular,
     textAlign: 'center',
     paddingHorizontal: 20,
+    top: -65,
+    color: 'gray',
   },
   borderAvatar: {
     position: 'relative',
-    top: -85,
     borderWidth: 3,
     borderRadius: 150 / 2,
     borderColor: 'white',
-    alignItems: 'center',
+    alignSelf: 'center',
+    top: -85,
   },
   avatar: {
     width: 130,
     height: 130,
     borderRadius: 130 / 2,
+  },
+  edit: {top: -80, position: 'absolute', right: -25},
+  message: {
+    backgroundColor: 'white',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 7,
+    position: 'absolute',
+    bottom: Platform.OS === 'ios' ? 10 : 30,
+    right: 20,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    borderRadius: 50,
+  },
+  textMessage: {
+    fontFamily: fontFamily.SanFranciscoDisplayMedium,
+    color: Color.DimGray,
+    fontWeight: '500',
+    paddingLeft: 5,
+  },
+  message2: {
+    flexDirection: 'row',
+    backgroundColor: Color.confirm,
+    paddingHorizontal: 100,
+    alignItems: 'center',
+    borderRadius: 40,
+  },
+  addFriend: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 20,
+    paddingVertical: 11,
+    marginLeft: 10,
+    borderRadius: 40,
   },
 });

@@ -37,4 +37,5 @@ export const Icon = {
   n: require('./n.png'),
   useravatar: require('./useravatar.png'),
   exit: require('./exit.png'),
+  addUser: require('./add-user.png'),
 };

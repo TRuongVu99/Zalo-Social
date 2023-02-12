@@ -18,6 +18,9 @@ import {FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {useNavigation} from '@react-navigation/native';
 import DataMesseger from '@data/DataMesseger';
+import {useSelector} from 'react-redux';
+import {RootState} from '@store/index';
+import firestore from '@react-native-firebase/firestore';
 
 const renderUI = (item: any) => {
   const formatTime = (date: any) => {
@@ -48,8 +51,25 @@ const renderUI = (item: any) => {
 };
 const Message = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
-  const {name} = route.params;
-
+  const {name} = route?.params;
+  const {profileFriend} = useSelector(
+    (state: RootState) => state?.profileFriend,
+  );
+  // const sendMessage = async () => {
+  //   try {
+  //     await firestore()
+  //       .collection('Message')
+  //       .doc(profileFriend?.UserId)
+  //       .update({
+  //         listFriend: firestore.FieldValue.arrayUnion(newProfileUser),
+  //       })
+  //       .then(() => {
+  //         console.log('User updated!');
+  //       });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -100,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 60 / 2,
   },
   viewMessage: {
-    backgroundColor: 'red',
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
   },

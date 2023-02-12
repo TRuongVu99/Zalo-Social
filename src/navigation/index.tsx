@@ -44,10 +44,11 @@ const Application = () => {
           .where('uid', '==', uid)
           .onSnapshot(querySnapshot => {
             let profile: any = {};
-
             querySnapshot.forEach(documentSnapshot => {
               const UserId = documentSnapshot.id;
               profile = {...documentSnapshot.data(), UserId};
+
+              console.log(profile);
               dispatch(addUser(profile));
             });
           });
@@ -58,21 +59,19 @@ const Application = () => {
 
     RNBootSplash.hide();
 
-    if (initializing) setInitializing(false);
+    if (initializing) {
+      setInitializing(false);
+    }
   }
-  useEffect(() => {
-    dispatch(
-      addFriends(
-        profileUser?.listFriend?.filter((friend: any) => friend.status === 3),
-      ),
-    );
-  }, [profileUser?.listFriend]);
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing) return null;
+  if (initializing) {
+    return null;
+  }
 
   return (
     <NavigationContainer>

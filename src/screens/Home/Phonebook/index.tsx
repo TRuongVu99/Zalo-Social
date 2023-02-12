@@ -1,31 +1,24 @@
+import Header from '@components/Header';
+import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
+import {fontFamily} from '@fonts/Font';
+import {Icon} from '@icon/index';
+import {IHeaderEnum} from '@model/handelConfig';
+import {RouterName} from '@navigation/rootName';
+import {useNavigation} from '@react-navigation/native';
+import {RootState} from '@store/index';
+import {windowWidth} from '@utils/Dimensions';
+import React, {useState} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Keyboard,
-  Alert,
-  TouchableNativeFeedbackBase,
   FlatList,
   Image,
-  ScrollView,
   Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Header from '@components/Header';
-import {IHeaderEnum} from '@model/handelConfig';
-import {Icon} from '@icon/index';
-import {useDispatch, useSelector} from 'react-redux';
-import firestore from '@react-native-firebase/firestore';
-import {addFriends} from '@store/slice/friends/friendsSlice';
-import {RootState} from '@store/index';
-import {useNavigation} from '@react-navigation/native';
-import {RouterName} from '@navigation/rootName';
-import {windowWidth} from '@utils/Dimensions';
-import Color from '@constants/Color';
-import {fontFamily} from '@fonts/Font';
-import FontSize from '@constants/FontSize';
+import {useSelector} from 'react-redux';
 import UIButton from './components/UIButton';
 const data = [
   {
@@ -41,8 +34,6 @@ const data = [
 ];
 const Phonebook = () => {
   const navigation = useNavigation<any>();
-  const [statusApp, setStatus] = useState<any>();
-  const {listFriends} = useSelector((state: RootState) => state.friends);
   const {profileUser} = useSelector((state: RootState) => state.user);
   let status: any = '';
   profileUser?.listFriend?.map((user: any) => {
@@ -50,29 +41,9 @@ const Phonebook = () => {
       status = user.status;
     }
   });
-  const dispatch = useDispatch();
   const listTitle = ['BẠN BÈ', 'NHÓM', 'OA'];
   const [selected, setSelected] = useState<string>('BẠN BÈ');
-  const getListFrends = async () => {
-    let frends: any = [];
-    try {
-      await firestore()
-        .collection('Users')
-        .where('status', '==', 1)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            frends.push(documentSnapshot.data());
-          });
-        });
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
-  useEffect(() => {
-    getListFrends();
-  }, []);
   return (
     <View style={styles.container}>
       <Header
@@ -113,14 +84,17 @@ const Phonebook = () => {
         />
       ))}
       <FlatList
-        data={listFriends}
+        data={profileUser?.listFriend?.filter((item: any) => item.status === 3)}
         renderItem={({item}) => (
-          <Image
-            source={{
-              uri: item.avatar,
-            }}
-            style={styles.avatar}
-          />
+          <View style={{flexDirection: 'row'}}>
+            <Image
+              source={{
+                uri: item.avatar,
+              }}
+              style={styles.avatar}
+            />
+            <Text>{item.username}</Text>
+          </View>
         )}
         extraData={(item: any) => item.uid}
       />

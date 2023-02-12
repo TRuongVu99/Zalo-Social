@@ -13,4 +13,11 @@ export enum IButtonEnum {
 export enum IPeronalEnum {
   Confirm = 'CONFIRM',
   AddFriend = 'ADDFRIEND',
+  UnFriend = 'UNFRIEND',
+  Friend = 'FRIEND',
+}
+
+export enum IRequestEnum {
+  Received = 'RECEIVED',
+  Sent = 'SENT',
 }

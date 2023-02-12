@@ -3,11 +3,13 @@ import {createSlice, configureStore} from '@reduxjs/toolkit';
 interface IUser {
   profileUser: {
     username?: string | undefined;
-    phoneNumber?: string | undefined;
+    numberPhone?: string | undefined;
     uid?: string | undefined;
     listFriend?: any;
-    UserId?: string;
-    avatar?: string;
+    UserId?: string | undefined;
+    avatar?: string | undefined;
+    listFriendInvitations?: any;
+    timeStamp?: string;
   };
   option?: string;
 }

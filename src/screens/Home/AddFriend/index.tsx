@@ -6,6 +6,7 @@ import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {RootState} from '@store/index';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 import React, {useEffect, useState} from 'react';
 import {
@@ -19,14 +20,31 @@ import {
   View,
 } from 'react-native';
 import IconEntypo from 'react-native-vector-icons/Entypo';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {options} from './data/options';
 
 const AddFriend = () => {
   const navigation = useNavigation<any>();
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const dispatch = useDispatch();
+  const {profileUser} = useSelector((state: RootState) => state.user);
 
+  const isFriendRequest =
+    profileUser?.listFriend?.filter(
+      (item: any) => item.numberPhone === phoneNumber && item.status === 2,
+    ).length > 0;
+
+  const isFriend =
+    profileUser?.listFriend?.filter(
+      (item: any) => item.numberPhone === phoneNumber && item.status === 3,
+    ).length > 0;
+  const isUser = profileUser.numberPhone === phoneNumber;
+
+  const isSentInvitation =
+    profileUser?.listFriendInvitations?.filter(
+      (item: any) => item.numberPhone === phoneNumber,
+    ).length > 0;
+  console.log(isUser);
   const getFrendByPhoneNumber = async () => {
     firestore()
       .collection('Users')
@@ -51,7 +69,16 @@ const AddFriend = () => {
           navigation.navigate(RouterName.Personal, {
             profile,
             UserId,
-            type: IPeronalEnum.AddFriend,
+            type: isFriendRequest
+              ? IPeronalEnum.Confirm
+              : isFriend
+              ? IPeronalEnum.Friend
+              : isUser
+              ? null
+              : IPeronalEnum.AddFriend,
+            typeUnFriend: isSentInvitation
+              ? IPeronalEnum.UnFriend
+              : IPeronalEnum.AddFriend,
           });
         }
       });

@@ -17,8 +17,8 @@ const Login = () => {
   const [numberPhone, setNumber] = useState<string>('');
   const formartNumberPhone: string =
     numberPhone[0] === '0'
-      ? `+84 ${numberPhone.slice(1, numberPhone.length)}`
-      : `+84 ${numberPhone}`;
+      ? `+84${numberPhone.slice(1, numberPhone.length)}`
+      : `+84${numberPhone}`;
   async function signInWithPhoneNumber(phoneNumber: string) {
     try {
       await auth()

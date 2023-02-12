@@ -63,8 +63,8 @@ const Header = ({
       <View
         style={[
           styles.header,
-          StyleHeaderSetting,
           {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
+          StyleHeaderSetting,
         ]}>
         <TouchableOpacity
           style={[styles.back]}
@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
     paddingVertical: 10,
+    alignItems: 'center',
   },
   headerHome: {
     backgroundColor: Color.primary,

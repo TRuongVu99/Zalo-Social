@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Pressable,
+  ImageBackground,
 } from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -21,6 +22,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RouterName} from '@navigation/rootName';
 import {addOption} from '@store/slice/user/userSlice';
 import {IPeronalEnum} from '@model/handelConfig';
+import {addFrendByPhoneNumber, handleConfirm} from '../index';
+import {handleUnFriend} from '@screens/Home/ Personal';
 
 const PersonalFriendRequest = () => {
   const navigation = useNavigation<any>();
@@ -48,7 +51,12 @@ const PersonalFriendRequest = () => {
       console.log(err);
     }
   };
-
+  const profileFriend = {
+    ...profileUser,
+    status: 3,
+  };
+  delete profileFriend?.listFriend;
+  delete profileFriend?.listFriendInvitations;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -78,7 +86,11 @@ const PersonalFriendRequest = () => {
                     paddingRight: index === data.length - 1 ? 20 : 0,
                   },
                 ]}>
-                <Image source={image.background} style={styles.background} />
+                <Image
+                  resizeMode="cover"
+                  source={image.background}
+                  style={styles.background}
+                />
 
                 <View style={styles.body2}>
                   <View style={styles.borderRadius}>
@@ -113,7 +125,17 @@ const PersonalFriendRequest = () => {
                     <TouchableOpacity
                       style={[styles.button, styles.confirm]}
                       onPress={() => {
+                        const profileUserRecall = {
+                          ...profileUser,
+                          status: 4,
+                          timeStamp: item.timeStamp,
+                        };
+                        delete profileUserRecall?.listFriend;
+                        delete profileUserRecall?.listFriendInvitations;
+
                         addListFrends(item.numberPhone);
+                        addFrendByPhoneNumber(item.UserId, profileFriend);
+                        handleUnFriend(item.UserId, profileUserRecall);
                         navigation.navigate(RouterName.Phonebook);
                       }}>
                       <Text style={[styles.labelButton, {color: 'white'}]}>
@@ -156,6 +178,7 @@ const styles = StyleSheet.create({
     borderRadius: 130 / 2,
   },
   background: {
+    width: windowWidth * 0.85,
     height: windowHeight / 5,
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
@@ -164,6 +187,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: 'white',
+    width: windowWidth * 0.85,
     borderBottomRightRadius: 15,
     borderBottomLeftRadius: 15,
   },
