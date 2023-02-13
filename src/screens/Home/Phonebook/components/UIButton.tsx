@@ -18,7 +18,15 @@ interface IUIButton {
 }
 const UIButton = ({item, onPress, notification}: IUIButton) => {
   return (
-    <TouchableOpacity key={item.label} style={styles.item} onPress={onPress}>
+    <TouchableOpacity
+      key={item.label}
+      style={[
+        styles.item,
+        {
+          marginBottom: item.description !== null ? 10 : 0,
+        },
+      ]}
+      onPress={onPress}>
       <Image source={item.icon} style={styles.icon} />
       <View style={styles.row}>
         <View>
@@ -61,8 +69,9 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.primaryFont,
     fontWeight: '300',
     color: Platform.OS === 'ios' ? Color.DimGray : Color.Darkgray,
+    fontSize: FontSize.h4 * 0.8,
   },
-  userName: {fontSize: FontSize.h4 * 0.95, marginBottom: 5},
+  userName: {fontSize: FontSize.h4 * 0.9, marginBottom: 5},
   row: {
     flex: 1,
     flexDirection: 'row',

@@ -47,7 +47,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -68,7 +68,6 @@
 		<string>Fontisto.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
-		<string>Poppins-Bold.ttf</string>
 		<string>Poppins-BoldItalic.ttf</string>
 		<string>Poppins-ExtraBold.ttf</string>
 		<string>Poppins-ExtraBoldItalic.ttf</string>
@@ -137,6 +136,9 @@
 		<string>SanFranciscoText-Thin.otf</string>
 		<string>SanFranciscoText-ThinItalic.otf</string>
 		<string>Poppins-Regular.ttf</string>
+		<string>Poppins-Bold.otf</string>
+		<string>Julee-Regular.ttf</string>
+		<string>SVN-Cherish Moment.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

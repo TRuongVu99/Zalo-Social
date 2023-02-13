@@ -1,25 +1,16 @@
 import Header from '@components/Header';
 import Color from '@constants/Color';
-import FontSize from '@constants/FontSize';
 import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {windowWidth} from '@utils/Dimensions';
 import React, {useState} from 'react';
-import {
-  FlatList,
-  Image,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import UIButton from './components/UIButton';
+import styles from './styles';
 const data = [
   {
     icon: Icon.adduser,
@@ -32,6 +23,16 @@ const data = [
     description: 'Liên hệ có dùng Zalo',
   },
 ];
+const label = [
+  {
+    title: 'Tất cả ',
+    id: 1,
+  },
+  {
+    title: 'Mới truy cập',
+    id: 2,
+  },
+];
 const Phonebook = () => {
   const navigation = useNavigation<any>();
   const {profileUser} = useSelector((state: RootState) => state.user);
@@ -41,8 +42,13 @@ const Phonebook = () => {
       status = user.status;
     }
   });
+
   const listTitle = ['BẠN BÈ', 'NHÓM', 'OA'];
   const [selected, setSelected] = useState<string>('BẠN BÈ');
+  const [state, setState] = useState<string>(label[0].title);
+  const ListFriend = profileUser?.listFriend?.filter(
+    (item: any) => item.status === 3,
+  );
 
   return (
     <View style={styles.container}>
@@ -59,11 +65,6 @@ const Phonebook = () => {
           <TouchableOpacity
             key={title}
             onPress={() => {
-              // if (title !== 'BẠN BÈ') {
-              //   Alert.alert('Thông báo', 'Chức năng chưa phát triển', [
-              //     {text: 'Đóng'},
-              //   ]);
-              // }
               setSelected(title);
             }}
             style={styles.listTitle}>
@@ -83,76 +84,60 @@ const Phonebook = () => {
           notification={status === 2}
         />
       ))}
-      <FlatList
-        data={profileUser?.listFriend?.filter((item: any) => item.status === 3)}
-        renderItem={({item}) => (
-          <View style={{flexDirection: 'row'}}>
-            <Image
-              source={{
-                uri: item.avatar,
-              }}
-              style={styles.avatar}
-            />
-            <Text>{item.username}</Text>
-          </View>
-        )}
-        extraData={(item: any) => item.uid}
-      />
+      <View style={styles.phoneBook}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 10,
+            borderBottomColor: Color.Gainsboro,
+            borderBottomWidth: 0.5,
+          }}>
+          {label.map((item: any) => (
+            <TouchableOpacity
+              onPress={() => setState(item.title)}
+              style={[
+                styles.label,
+                {
+                  borderWidth: state === item.title ? 0 : 0.5,
+                  backgroundColor:
+                    state === item.title ? Color.reject : 'white',
+                },
+              ]}>
+              <Text
+                style={{
+                  fontFamily: fontFamily.primaryFont,
+                  color: state === item.title ? Color.DimGray : 'gray',
+                }}>
+                {item.title}
+                {item.id === 1 && <Text>{ListFriend.length}</Text>}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <FlatList
+          data={ListFriend}
+          renderItem={({item}) => (
+            <TouchableOpacity style={styles.friend}>
+              <Image
+                source={{
+                  uri: item.avatar,
+                }}
+                style={styles.avatar}
+              />
+              <View style={styles.name}>
+                <Text style={styles.userName}>{item.username}</Text>
+                <View style={{flex: 1}} />
+                <Image source={Icon.telephone} style={styles.icons} />
+                <Image source={Icon.videocall} style={styles.icons} />
+              </View>
+            </TouchableOpacity>
+          )}
+          extraData={(item: any) => item.uid}
+        />
+      </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  avatar: {
-    width: 55,
-    height: 55,
-    borderRadius: 55 / 2,
-    marginHorizontal: 18,
-  },
-  listTitle: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderBottomWidth: 0.2,
-    borderBottomColor: Color.Darkgray,
-  },
-  icon: {
-    width: 35,
-    height: 35,
-    marginHorizontal: 18,
-    alignSelf: 'center',
-  },
-  item: {
-    paddingVertical: 10,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  labelStyle: {
-    fontFamily: fontFamily.primaryFont,
-    color: Color.DimGray,
-  },
-  description: {
-    fontFamily: fontFamily.primaryFont,
-    fontWeight: '300',
-    color: Platform.OS === 'ios' ? Color.DimGray : Color.Darkgray,
-    // fontSize: Platform.OS === 'android' ? FontSize.h6 : null,
-  },
-  userName: {fontSize: FontSize.h4 * 0.95, marginBottom: 5},
-  title: {
-    textAlign: 'center',
-    width: windowWidth / 3,
-    paddingVertical: 10,
-  },
-  line: {
-    borderBottomColor: Color.blue,
-    borderBottomWidth: 1,
-    width: windowWidth / 4,
-    position: 'absolute',
-    bottom: 0,
-    left: 20,
-  },
-});
 export default Phonebook;

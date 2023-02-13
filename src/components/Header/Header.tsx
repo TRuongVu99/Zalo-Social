@@ -3,6 +3,7 @@ import {
   Image,
   ImageStyle,
   Platform,
+  Pressable,
   StyleProp,
   StyleSheet,
   Text,
@@ -12,18 +13,28 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import {Icon as icon} from '@icon/index';
-import {IHeaderEnum} from '@model/handelConfig';
+import {Icon, Icon as icon} from '@icon/index';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icons from 'react-native-vector-icons/AntDesign';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconFeather from 'react-native-vector-icons/Feather';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
 import {fontFamily} from '../../assets/fonts/Font';
 import {Color, FontSize} from '../../constants';
-
+import {
+  Menu,
+  MenuOptions,
+  MenuOption,
+  MenuTrigger,
+} from 'react-native-popup-menu';
+import {renderers} from 'react-native-popup-menu';
+import {menu} from './menu';
 interface IHeader {
   type?: string;
   label?: string;
@@ -38,9 +49,10 @@ interface IHeader {
   buttonBack?: string;
   name?: string;
   StyleHeaderSetting?: ViewStyle;
-
+  typeOption?: string;
   typePersonal?: string;
 }
+
 const Header = ({
   type,
   label,
@@ -53,150 +65,273 @@ const Header = ({
   onPressIconRight1,
   name,
   StyleHeaderSetting,
-
+  typeOption,
   typePersonal,
 }: IHeader) => {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<any>();
-  if (type === IHeaderEnum.Register) {
-    return (
-      <View
-        style={[
-          styles.header,
-          {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
-          StyleHeaderSetting,
-        ]}>
-        <TouchableOpacity
-          style={[styles.back]}
-          onPress={() => navigation.goBack()}>
-          <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
-        </TouchableOpacity>
-        <Text style={styles.label}>{label}</Text>
-        <TouchableOpacity onPress={onPress}>
-          <Icons name={name} size={24} color={'white'} />
-        </TouchableOpacity>
-        {typePersonal === IHeaderEnum.Personal && (
+  const {Popover, SlideInMenu, NotAnimatedContextMenu, ContextMenu} = renderers;
+  const [isSelect, setSelect] = useState<boolean>(true);
+  switch (type) {
+    case IHeaderEnum.Register:
+      return (
+        <View
+          style={[
+            styles.header,
+            {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
+            StyleHeaderSetting,
+          ]}>
+          <TouchableOpacity
+            style={[styles.back]}
+            onPress={() => navigation.goBack()}>
+            <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
+          </TouchableOpacity>
+          <Text style={styles.label}>{label}</Text>
+          <TouchableOpacity onPress={onPress}>
+            <Icons name={name} size={24} color={'white'} />
+          </TouchableOpacity>
+          {typePersonal === IHeaderEnum.Personal && (
+            <View style={styles.iconInPersonal}>
+              <TouchableOpacity onPress={onPressIconRight1}>
+                <IconFeather name={'phone'} size={24} color={'white'} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onPressIconRight2}>
+                <IconFeather
+                  name={'more-horizontal'}
+                  size={24}
+                  color={'white'}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      );
+    case IHeaderEnum.Message:
+      return (
+        <View
+          style={[
+            styles.header,
+            {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 15},
+          ]}>
+          <TouchableOpacity style={[styles.back]} onPress={onPress}>
+            <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
+          </TouchableOpacity>
+          <Text style={styles.label}>{label}</Text>
+          <TouchableOpacity
+            style={styles.buttonRight}
+            onPress={onPressIconRight1}>
+            <Image
+              source={icon.telephone}
+              style={[styles.styleiconRightMessage]}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonRight}
+            onPress={onPressIconRight1}>
+            <Image
+              source={icon.videocall}
+              style={[styles.styleiconRightMessage]}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.buttonRight, {paddingEnd: 0}]}
+            onPress={onPressIconRight1}>
+            <Image source={icon.menu} style={[styles.styleiconRightMessage]} />
+          </TouchableOpacity>
+        </View>
+      );
+    case IHeaderEnum.Home:
+      return (
+        <View
+          style={[
+            styles.headerHome,
+            {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 3},
+          ]}>
+          <TouchableOpacity style={styles.back} onPress={onPress}>
+            <Icons name="search1" size={24} color={'white'} />
+          </TouchableOpacity>
+          <TextInput
+            // onPressIn={onPressIn}
+            onPressOut={() => navigation.push(RouterName.SearchScreen)}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor="white"
+            style={styles.textInput}
+            showSoftInputOnFocus={false}
+          />
+
+          <TouchableOpacity
+            style={styles.buttonRight}
+            onPress={onPressIconRight1}>
+            <Image source={nameIconRight1} style={styles.styleiconRight} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.buttonRight,
+              {paddingLeft: nameIconRight2 === undefined ? 0 : 5},
+            ]}
+            onPress={onPressIconRight2}>
+            {typeOption === IPeronalEnum.AddFriend ? (
+              <Menu>
+                <MenuTrigger>
+                  <Image
+                    source={nameIconRight2}
+                    style={styles.styleiconRight}
+                  />
+                </MenuTrigger>
+                <MenuOptions style={styles.menu}>
+                  {menu.map((item: any) => (
+                    <MenuOption
+                      onSelect={() => {
+                        if (item.id === 1) {
+                          navigation.navigate(RouterName.AddFriend);
+                        }
+                      }}
+                      style={{flexDirection: 'row', alignItems: 'center'}}
+                      key={item.id}>
+                      <Image source={item.icon} style={styles.icon} />
+                      <Text style={styles.text}>{item.text}</Text>
+                      {item.id === 1 && (
+                        <Image source={Icon.triangle} style={styles.triangle} />
+                      )}
+                    </MenuOption>
+                  ))}
+                </MenuOptions>
+              </Menu>
+            ) : (
+              <Image source={nameIconRight2} style={styles.styleiconRight} />
+            )}
+          </TouchableOpacity>
+        </View>
+      );
+    case IHeaderEnum.Search:
+      return (
+        <View
+          style={[
+            styles.header,
+            {
+              paddingTop: Platform.OS === 'ios' ? inset.top * 1.1 : 10,
+              paddingVertical: Platform.OS === 'ios' ? 8 : 10,
+            },
+          ]}>
+          <TouchableOpacity style={styles.back} onPress={onPress}>
+            <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
+          </TouchableOpacity>
+          <TextInput
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={Color.Darkgray}
+            autoFocus={true}
+            clearButtonMode={'while-editing'}
+            style={[
+              styles.textInput,
+              {
+                backgroundColor: 'white',
+                paddingVertical: Platform.OS === 'ios' ? 5 : 0,
+                paddingLeft: 10,
+                color: Color.DimGray,
+                borderRadius: 8,
+              },
+            ]}
+          />
+          <TouchableOpacity
+            style={[styles.buttonRight, {marginLeft: 25}]}
+            onPress={onPressIconRight2}>
+            <Image source={icon.qrcode} style={styles.styleiconRight} />
+          </TouchableOpacity>
+        </View>
+      );
+    case IHeaderEnum.PostStatus:
+      return (
+        <View
+          style={[
+            styles.headerPostStatus,
+            {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
+          ]}>
+          <TouchableOpacity
+            style={[styles.back]}
+            onPress={() => navigation.goBack()}>
+            <IconEvilIcons name="close" size={30} color={'black'} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={{flex: 1}} onPress={onPress}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <IconMaterial
+                name={'account-multiple'}
+                size={20}
+                color={'black'}
+              />
+              <Text style={styles.title}>Tất cả bạn bè</Text>
+              <Icons
+                name={'caretdown'}
+                size={10}
+                color={Color.DimGray}
+                style={{top: -2, left: -2}}
+              />
+            </View>
+            <Text style={styles.depcription}>Xem bởi bạn bè trên Zalo</Text>
+          </TouchableOpacity>
           <View style={styles.iconInPersonal}>
-            <TouchableOpacity onPress={onPressIconRight1}>
-              <IconFeather name={'phone'} size={24} color={'white'} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onPressIconRight2}>
-              <IconFeather name={'more-horizontal'} size={24} color={'white'} />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: Color.primary,
+                width: 70,
+                height: 32,
+                borderRadius: 20,
+                marginRight: 25,
+              }}>
+              <Pressable
+                style={{
+                  backgroundColor: isSelect ? 'white' : Color.primary,
+                  margin: 1,
+                  borderRadius: 20,
+                }}
+                onPress={() => setSelect(!isSelect)}>
+                <Text
+                  style={{
+                    color: isSelect ? Color.primary : Color.Gainsboro,
+                    paddingVertical: 6,
+                    paddingHorizontal: 8,
+                    fontFamily: fontFamily.RobotoMedium,
+                  }}>
+                  Aa
+                </Text>
+              </Pressable>
+              <Pressable
+                style={{
+                  backgroundColor: !isSelect ? 'white' : Color.primary,
+                  margin: 1,
+                  paddingVertical: 7.6,
+                  paddingHorizontal: 9,
+                  borderRadius: 20,
+                }}
+                onPress={() => setSelect(!isSelect)}>
+                <Image
+                  source={Icon.paintbrush}
+                  style={{
+                    width: 15,
+                    height: 15,
+                    tintColor: !isSelect ? Color.primary : Color.Gainsboro,
+                  }}
+                />
+              </Pressable>
+            </View>
+
+            <TouchableOpacity style={{}} onPress={onPressIconRight1}>
+              <IconIonicons name={'send'} size={24} color={Color.disable} />
             </TouchableOpacity>
           </View>
-        )}
-      </View>
-    );
-  } else if (type === IHeaderEnum.Message) {
-    return (
-      <View
-        style={[
-          styles.header,
-          {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 15},
-        ]}>
-        <TouchableOpacity style={[styles.back]} onPress={onPress}>
-          <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
-        </TouchableOpacity>
-        <Text style={styles.label}>{label}</Text>
-        <TouchableOpacity
-          style={styles.buttonRight}
-          onPress={onPressIconRight1}>
-          <Image
-            source={icon.telephone}
-            style={[styles.styleiconRightMessage]}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonRight}
-          onPress={onPressIconRight1}>
-          <Image
-            source={icon.videocall}
-            style={[styles.styleiconRightMessage]}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.buttonRight, {paddingEnd: 0}]}
-          onPress={onPressIconRight1}>
-          <Image source={icon.menu} style={[styles.styleiconRightMessage]} />
-        </TouchableOpacity>
-      </View>
-    );
-  } else if (type === IHeaderEnum.Home) {
-    return (
-      <View
-        style={[
-          styles.headerHome,
-          {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 3},
-        ]}>
-        <TouchableOpacity style={styles.back} onPress={onPress}>
-          <Icons name="search1" size={24} color={'white'} />
-        </TouchableOpacity>
-        <TextInput
-          // onPressIn={onPressIn}
-          onPressOut={() => navigation.push(RouterName.SearchScreen)}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor="white"
-          style={styles.textInput}
-          showSoftInputOnFocus={false}
-        />
-
-        <TouchableOpacity
-          style={styles.buttonRight}
-          onPress={onPressIconRight1}>
-          <Image source={nameIconRight1} style={styles.styleiconRight} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.buttonRight,
-            {paddingLeft: nameIconRight2 === undefined ? 0 : 5},
-          ]}
-          onPress={onPressIconRight2}>
-          <Image source={nameIconRight2} style={styles.styleiconRight} />
-          {/* <Icons name={nameIconRight2} size={24} color={'white'} /> */}
-        </TouchableOpacity>
-      </View>
-    );
-  } else if (type === IHeaderEnum.Search) {
-    return (
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: Platform.OS === 'ios' ? inset.top * 1.1 : 10,
-            paddingVertical: Platform.OS === 'ios' ? 8 : 10,
-          },
-        ]}>
-        <TouchableOpacity style={styles.back} onPress={onPress}>
-          <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
-        </TouchableOpacity>
-        <TextInput
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          placeholderTextColor={Color.Darkgray}
-          autoFocus={true}
-          clearButtonMode={'while-editing'}
-          style={[
-            styles.textInput,
-            {
-              backgroundColor: 'white',
-              paddingVertical: Platform.OS === 'ios' ? 5 : 0,
-              paddingLeft: 10,
-              color: Color.DimGray,
-              borderRadius: 8,
-            },
-          ]}
-        />
-        <TouchableOpacity
-          style={[styles.buttonRight, {marginLeft: 25}]}
-          onPress={onPressIconRight2}>
-          <Image source={icon.qrcode} style={styles.styleiconRight} />
-        </TouchableOpacity>
-      </View>
-    );
+        </View>
+      );
+    default:
+      return <View />;
   }
-  return <View />;
 };
+export default Header;
+
 const styles = StyleSheet.create({
   header: {
     backgroundColor: Color.primary,
@@ -210,6 +345,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
     paddingVertical: Platform.OS === 'ios' ? 10 : 3,
+  },
+  headerPostStatus: {
+    // backgroundColor: Color.primary,
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 0.2,
+    borderBottomColor: Color.Darkgray,
   },
   back: {
     justifyContent: 'center',
@@ -248,7 +391,83 @@ const styles = StyleSheet.create({
   iconInPersonal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     width: 70,
+    marginRight: 50,
+  },
+  triangle: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    tintColor: 'white',
+    top: -13,
+    right: 10,
+  },
+  icon: {
+    width: 17,
+    height: 17,
+    tintColor: 'gray',
+    marginVertical: 8,
+    marginHorizontal: 15,
+  },
+  menu: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: 40,
+    left: -30,
+    borderRadius: 10,
+  },
+  text: {
+    fontFamily: fontFamily.primaryFont,
+    color: Color.DimGray,
+    marginRight: 20,
+  },
+  title: {
+    fontFamily: fontFamily.RobotoMedium,
+    color: Color.DimGray,
+    marginHorizontal: 7,
+  },
+  depcription: {
+    fontFamily: fontFamily.primaryFont,
+    color: 'gray',
+    fontSize: FontSize.h6,
   },
 });
-export default Header;
+
+/* <MenuOption onSelect={() => {}} style={{flexDirection: 'row'}}>
+                  <Image
+                    source={icon.addUser}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                 <Text>Thêm bạn </Text>
+                </MenuOption>
+                <MenuOption>
+                  <Image
+                    source={icon.addgroup}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                </MenuOption>
+                <MenuOption>
+                  <Image
+                    source={icon.cloud}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                </MenuOption>
+                <MenuOption>
+                  <Image
+                    source={icon.calendar}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                </MenuOption>
+                <MenuOption>
+                  <Image
+                    source={icon.videocall}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                </MenuOption>
+                <MenuOption>
+                  <Image
+                    source={icon.monitor}
+                    style={{width: 20, height: 20, tintColor: Color.Darkgray}}
+                  />
+                </MenuOption> */

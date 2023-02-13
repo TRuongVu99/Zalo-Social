@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, {useContext, useEffect} from 'react';
 import Header from '@components/Header';
-import {IHeaderEnum} from '@model/handelConfig';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
 import UserData from '@data/UserData';
 import {FontSize} from '@constants';
@@ -47,6 +47,7 @@ const Home: React.FC = () => {
           type={IHeaderEnum.Home}
           nameIconRight1={Icon.qrcode}
           nameIconRight2={Icon.plus}
+          typeOption={IPeronalEnum.AddFriend}
         />
         <FlatList data={UserData} renderItem={({item}) => renderUI(item)} />
       </View>

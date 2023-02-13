@@ -11,7 +11,6 @@ import {
   Image,
   ImageBackground,
   Platform,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -202,6 +201,8 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 5,
+    elevation: 5,
+
     marginBottom: 30,
   },
   text: {
@@ -239,6 +240,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 7,
+    elevation: 7,
     position: 'absolute',
     bottom: Platform.OS === 'ios' ? 10 : 30,
     right: 20,

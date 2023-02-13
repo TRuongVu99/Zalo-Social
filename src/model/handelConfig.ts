@@ -5,6 +5,7 @@ export enum IHeaderEnum {
   Message = 'MESSAGE',
   Search = 'SEARCH',
   Personal = 'PERSONAL',
+  PostStatus = 'PostStatus',
 }
 
 export enum IButtonEnum {

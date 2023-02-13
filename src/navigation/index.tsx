@@ -12,25 +12,24 @@ import Register from '@screens/Authen/Register';
 import FriendRequest from '@screens/Home/ FriendRequest';
 import PersonalFriendRequest from '@screens/Home/ FriendRequest/components/PersonalFriendRequest';
 import Personal from '@screens/Home/ Personal';
+import PostStatus from '@screens/Home/ Personal/components/PostStatus';
 import AddFriend from '@screens/Home/AddFriend';
 import Message from '@screens/Home/Message';
 import OptionMessage from '@screens/Home/OptionMessage';
 import SearchScreen from '@screens/Home/SearchScreen';
 import Setting from '@screens/Home/Setting';
 import {RootState} from '@store/index';
-import {addFriends} from '@store/slice/friends/friendsSlice';
 import React, {useEffect, useState} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
 import {addUser} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
-
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
   const [initializing, setInitializing] = useState(true);
   const [userApp, setUser] = useState();
-  const {profileUser, option} = useSelector((state: RootState) => state.user);
+  const {option} = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   firebase.auth().settings.appVerificationDisabledForTesting = true;
   async function onAuthStateChanged(user: any) {
@@ -119,7 +118,13 @@ const Application = () => {
               name={RouterName.SearchScreen}
               component={SearchScreen}
             />
-
+            <Stack.Screen
+              options={{
+                animation: 'slide_from_bottom',
+              }}
+              name={RouterName.PostStatus}
+              component={PostStatus}
+            />
             <Stack.Screen
               options={{
                 animation: option,

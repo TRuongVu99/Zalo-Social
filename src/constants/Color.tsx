@@ -7,6 +7,9 @@ export default {
   Gainsboro: '#DCDCDC',
   call: 'rgb(227, 238, 252)',
   blue: 'rgb(9,78,240)',
+  blue2: 'rgb(51, 112, 241)',
   reject: 'rgba(240, 240, 240, 1)',
   confirm: 'rgba(0, 128, 255, 0.1)',
+  disable: 'rgba(0, 120, 255, 0.5)',
+  paintbrush: 'rgb(133, 193, 255)',
 };

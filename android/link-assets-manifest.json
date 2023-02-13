@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/Julee-Regular.ttf",
+      "sha1": "414c9bf8036d576d7a805fdcdcf122b980a59f80"
+    },
+    {
       "path": "assets/fonts/Poppins-Black.ttf",
       "sha1": "645e04c53c6b5b35bce654a811ebce16af8aa721"
     },
@@ -10,8 +14,8 @@
       "sha1": "be4ef2aac7775a4b0179c0ecfce6cea8f7783f63"
     },
     {
-      "path": "assets/fonts/Poppins-Bold.ttf",
-      "sha1": "875cf0cecd647bcf22e79d633d868c1b1ec98dfa"
+      "path": "assets/fonts/Poppins-Bold.otf",
+      "sha1": "fc40855366c1f38478de1473bf483a4ad5d515ac"
     },
     {
       "path": "assets/fonts/Poppins-BoldItalic.ttf",
@@ -144,6 +148,10 @@
     {
       "path": "assets/fonts/RobotoCondensed-Regular.ttf",
       "sha1": "f4742e15c489d5c491ce9a0f06461c797227b42b"
+    },
+    {
+      "path": "assets/fonts/SVN-Cherish Moment.otf",
+      "sha1": "5e6a94721629a376f1e87e5505300e30f6e0d252"
     },
     {
       "path": "assets/fonts/SanFranciscoDisplay-Black.otf",

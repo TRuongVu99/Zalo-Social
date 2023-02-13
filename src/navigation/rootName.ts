@@ -22,4 +22,5 @@ export const RouterName = {
   FriendRequest: 'FriendRequest',
   TabbarFriend: 'TabbarFriend',
   PersonalFriendRequest: 'PersonalFriendRequest',
+  PostStatus: 'PostStatus',
 };
