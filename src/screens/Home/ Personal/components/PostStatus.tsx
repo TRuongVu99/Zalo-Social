@@ -1,29 +1,24 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Platform,
-  KeyboardAvoidingView,
-  Keyboard,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
-import React, {useState} from 'react';
-import {IHeaderEnum} from '@model/handelConfig';
+import Cursor from '@components/Cursor';
 import Header from '@components/Header';
-import {windowWidth} from '@utils/Dimensions';
+import Color from '@constants/Color';
 import FontSize from '@constants/FontSize';
 import {fontFamily} from '@fonts/Font';
-import IconIonicons from 'react-native-vector-icons/Ionicons';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import Color from '@constants/Color';
+import {IHeaderEnum} from '@model/handelConfig';
+import React, {useState} from 'react';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {arr, listIcon, listFontFamily} from '../data';
+import {arr, listFontFamily} from '../data';
 import RenderSelectFont from './RenderSelectFont';
 import Touch from './Touch';
-import Cursor from '@components/Cursor';
+import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 
 const PostStatus = () => {
   const inset = useSafeAreaInsets();
@@ -31,7 +26,15 @@ const PostStatus = () => {
   const [isSelectFont, setSelectFont] = useState<number>(0);
   const [font, setFont] = useState<any>(listFontFamily[0]);
   const [text, setText] = useState<string>('');
-
+  const getImageInAlbum = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((images: ImageOrVideo) => {
+      console.log(images);
+    });
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
