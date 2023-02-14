@@ -46,8 +46,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Cấp quyền camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cấp quyền Micro</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cấp quyền Album </string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

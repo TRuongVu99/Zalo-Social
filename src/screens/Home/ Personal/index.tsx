@@ -16,6 +16,7 @@ import {
 } from '../ FriendRequest';
 import RenderFriendUI from './components/RenderFriendUI';
 import RenderUserUI from './components/RenderUserUI';
+import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 interface IPersonal {
   route: any;
 }
@@ -47,6 +48,16 @@ const Personal = ({route}: IPersonal) => {
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
   );
+  const [avatar, setAvatar] = useState<string | undefined>(profileUser?.avatar);
+  const getImageInAlbum = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then((images: ImageOrVideo) => {
+      setAvatar(images.path);
+    });
+  };
   const newProfileUser = {
     ...profileUser,
     timeStamp: moment().format('L'),
@@ -180,8 +191,9 @@ const Personal = ({route}: IPersonal) => {
     default:
       return (
         <RenderUserUI
-          urlAvatar={profileUser?.avatar}
+          urlAvatar={avatar}
           name={profileUser?.username}
+          onPressImage={() => getImageInAlbum()}
         />
       );
   }

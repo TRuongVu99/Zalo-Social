@@ -23,6 +23,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {arr, listIcon, listFontFamily} from '../data';
 import RenderSelectFont from './RenderSelectFont';
 import Touch from './Touch';
+import Cursor from '@components/Cursor';
 
 const PostStatus = () => {
   const inset = useSafeAreaInsets();
@@ -30,10 +31,7 @@ const PostStatus = () => {
   const [isSelectFont, setSelectFont] = useState<number>(0);
   const [font, setFont] = useState<any>(listFontFamily[0]);
   const [text, setText] = useState<string>('');
-  const setItem = (item: string) => {
-    return item;
-  };
-  console.log(setItem(1));
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -42,6 +40,7 @@ const PostStatus = () => {
         <Header type={IHeaderEnum.PostStatus} />
         <View>
           <TextInput
+            caretHidden={true}
             multiline={true}
             onChangeText={texts => setText(texts)}
             defaultValue={text}
@@ -67,6 +66,7 @@ const PostStatus = () => {
               color: text.length !== 0 ? font.colorText : 'transparent',
             }}>
             {text}
+            <Cursor />
           </Text>
         </View>
         <View style={styles.container} />

@@ -5,7 +5,7 @@ import {IHeaderEnum} from '@model/handelConfig';
 import {windowHeight} from '@utils/Dimensions';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {data} from '../data';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Image,
@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
   Pressable,
+  GestureResponderEvent,
 } from 'react-native';
 import {Icon} from '@icon/index';
 import {RouterName} from '@navigation/rootName';
@@ -23,10 +24,12 @@ import {useNavigation} from '@react-navigation/core';
 interface IRenderUserUI {
   urlAvatar: string | undefined;
   name: string | undefined;
+  onPressImage?: (event: GestureResponderEvent) => void;
 }
 
-const RenderUserUI = ({urlAvatar, name}: IRenderUserUI) => {
+const RenderUserUI = ({urlAvatar, name, onPressImage}: IRenderUserUI) => {
   const navigation = useNavigation<any>();
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -73,7 +76,9 @@ const RenderUserUI = ({urlAvatar, name}: IRenderUserUI) => {
             <Text style={styles.text}>Bạn đang nghĩ gì?</Text>
           </View>
 
-          <Image source={Icon.photo} style={styles.iconPhoto} />
+          <TouchableOpacity onPress={onPressImage}>
+            <Image source={Icon.photo} style={styles.iconPhoto} />
+          </TouchableOpacity>
         </Pressable>
       </View>
     </View>

@@ -47,7 +47,6 @@ const Application = () => {
               const UserId = documentSnapshot.id;
               profile = {...documentSnapshot.data(), UserId};
 
-              console.log(profile);
               dispatch(addUser(profile));
             });
           });
