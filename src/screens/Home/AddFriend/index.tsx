@@ -44,7 +44,7 @@ const AddFriend = () => {
     profileUser?.listFriendInvitations?.filter(
       (item: any) => item.numberPhone === phoneNumber,
     ).length > 0;
-  console.log(isUser);
+  // console.log(isUser);
   const getFrendByPhoneNumber = async () => {
     firestore()
       .collection('Users')
@@ -64,8 +64,8 @@ const AddFriend = () => {
             profile = documentSnapshot.data();
             UserId = documentSnapshot.id;
           });
+          // console.log(profile);
           dispatch(addProfileFriend({...profile, UserId}));
-
           navigation.navigate(RouterName.Personal, {
             profile,
             UserId,

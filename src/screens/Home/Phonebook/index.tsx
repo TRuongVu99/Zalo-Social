@@ -4,11 +4,12 @@ import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import {useNavigation} from '@react-navigation/native';
-import {RootState} from '@store/index';
-import React, {useState} from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {AppDispatch, RootState} from '@store/index';
+import {getUserProfile} from '@store/slice/user/userSlice';
+import React, {useCallback, useState} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import UIButton from './components/UIButton';
 import styles from './styles';
 const data = [
@@ -35,6 +36,7 @@ const label = [
 ];
 const Phonebook = () => {
   const navigation = useNavigation<any>();
+  const dispatch = useDispatch<AppDispatch>();
   const {profileUser} = useSelector((state: RootState) => state.user);
   let status: any = '';
   profileUser?.listFriend?.map((user: any) => {
@@ -48,6 +50,11 @@ const Phonebook = () => {
   const [state, setState] = useState<string>(label[0].title);
   const ListFriend = profileUser?.listFriend?.filter(
     (item: any) => item.status === 3,
+  );
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getUserProfile({uid: profileUser?.uid}));
+    }, [ListFriend?.length]),
   );
 
   return (
@@ -73,8 +80,9 @@ const Phonebook = () => {
           </TouchableOpacity>
         ))}
       </View>
-      {data.map(item => (
+      {data.map((item, index) => (
         <UIButton
+          key={index}
           item={item}
           onPress={() =>
             navigation.navigate(RouterName.FriendRequest, {
@@ -93,8 +101,9 @@ const Phonebook = () => {
             borderBottomColor: Color.Gainsboro,
             borderBottomWidth: 0.5,
           }}>
-          {label.map((item: any) => (
+          {label.map((item: any, index: number) => (
             <TouchableOpacity
+              key={index}
               onPress={() => setState(item.title)}
               style={[
                 styles.label,

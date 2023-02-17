@@ -4,21 +4,47 @@ import Color from '@constants/Color';
 import FontSize from '@constants/FontSize';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum} from '@model/handelConfig';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
+  Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {arr, listFontFamily} from '../data';
+import {arr, listFontFamily, listIcon} from '../data';
 import RenderSelectFont from './RenderSelectFont';
 import Touch from './Touch';
-import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
+
+const minCols = 3;
+
+const calcNumColumns = (width: number) => {
+  const cols = width / 100;
+  const colsFloor = Math.floor(cols) > minCols ? Math.floor(cols) : minCols;
+  const colsMinusMargin = cols - 2 * colsFloor * 10;
+  if (colsMinusMargin < colsFloor && colsFloor > minCols) {
+    return colsFloor - 1;
+  } else return colsFloor;
+};
+const formatData = (data: any, numColumns: number) => {
+  const amountFullRows = Math.floor(data.length / numColumns);
+  let amountItemsLastRow = data.length - amountFullRows * numColumns;
+
+  while (amountItemsLastRow !== numColumns && amountItemsLastRow !== 0) {
+    data.push({key: `empty-${amountItemsLastRow}`, empty: true});
+    amountItemsLastRow++;
+  }
+  return data;
+};
 
 const PostStatus = () => {
   const inset = useSafeAreaInsets();
@@ -26,22 +52,71 @@ const PostStatus = () => {
   const [isSelectFont, setSelectFont] = useState<number>(0);
   const [font, setFont] = useState<any>(listFontFamily[0]);
   const [text, setText] = useState<string>('');
-  const getImageInAlbum = () => {
+  const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
+  const [listImages, setListImages] = useState<any>([]);
+  const {width} = useWindowDimensions();
+
+  const [numColumns, setNumColumns] = useState(calcNumColumns(width));
+
+  useEffect(() => {
+    setNumColumns(calcNumColumns(width));
+  }, [width]);
+  console.log(listImages);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
+      setPaddingBottom(false);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
+      setPaddingBottom(true);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+  const getImagesInAlbum = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then((images: ImageOrVideo) => {
-      console.log(images);
+      multiple: true,
+      includeBase64: true,
+      maxFiles: 10,
+    }).then((images: any) => {
+      setListImages([]);
+      const dataImages = images.map((image: any) => {
+        return `data:${image.mime};base64,${image.data}`;
+      });
+      setListImages(dataImages);
     });
   };
+
+  const length = listImages.length;
+  const FlatListImage = useCallback(() => {
+    return (
+      <FlatList
+        key={numColumns}
+        data={formatData(listImages, numColumns)}
+        numColumns={numColumns}
+        renderItem={({item}) => {
+          if (item?.empty) {
+            return <></>;
+          }
+          return (
+            <TouchableOpacity>
+              <Image source={{uri: item}} style={{width: 100, height: 100}} />
+            </TouchableOpacity>
+          );
+        }}
+      />
+    );
+  }, [listImages?.length]);
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}>
       <View style={styles.container}>
         <Header type={IHeaderEnum.PostStatus} />
-        <View>
+
+        <ScrollView>
           <TextInput
             caretHidden={true}
             multiline={true}
@@ -71,7 +146,8 @@ const PostStatus = () => {
             {text}
             <Cursor />
           </Text>
-        </View>
+          <View style={{flex: 1, marginTop: 10}}>{FlatListImage()}</View>
+        </ScrollView>
         <View style={styles.container} />
         <View style={styles.view1}>
           <FlatList
@@ -79,6 +155,7 @@ const PostStatus = () => {
             keyExtractor={(item: any) => item.key}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
             renderItem={({item}) => (
               <RenderSelectFont
                 onPress={() => {
@@ -91,14 +168,46 @@ const PostStatus = () => {
             )}
           />
         </View>
-        <View style={[styles.view1, {paddingBottom: inset.bottom}]}>
+
+        <View style={[styles.view1, {position: 'relative'}]}>
           {arr.map((items: any, key) => (
             <Touch
               key={key}
+              types={true}
               onPress={() => setIsSelect(items.id)}
               items={items}
               isSelect={isSelect}
             />
+          ))}
+        </View>
+        <View
+          style={[
+            styles.view1,
+            styles.view2,
+            {paddingBottom: paddingBottom ? inset.bottom : 5},
+          ]}>
+          <TouchableOpacity style={{marginRight: 100}}>
+            <Image source={listIcon[0].icon} style={{width: 27, height: 27}} />
+          </TouchableOpacity>
+          {listIcon.map((items: any, key) => (
+            <TouchableOpacity
+              key={key}
+              onPress={() => {
+                switch (items.id) {
+                  case 1:
+                    return null;
+                  case 2:
+                    return getImagesInAlbum();
+                  case 3:
+                    return getImagesInAlbum();
+                  default:
+                    return null;
+                }
+              }}>
+              {items.id !== 1 && (
+                <Image source={items.icon} style={{width: 30, height: 30}} />
+              )}
+            </TouchableOpacity>
           ))}
         </View>
       </View>
@@ -135,7 +244,14 @@ export const styles = StyleSheet.create({
   },
   view1: {
     flexDirection: 'row',
-    padding: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
     alignItems: 'center',
+  },
+  view2: {
+    borderTopWidth: 0.2,
+    borderTopColor: Color.Darkgray,
+    justifyContent: 'space-between',
+    marginBottom: Platform.OS === 'android' ? 5 : 0,
   },
 });

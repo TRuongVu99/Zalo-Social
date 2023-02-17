@@ -22,7 +22,7 @@ import {RootState} from '@store/index';
 import React, {useEffect, useState} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
-import {addUser} from '../store/slice/user/userSlice';
+import {addUser, getUserProfile} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
 const Stack = createNativeStackNavigator<any>();
 
@@ -37,19 +37,7 @@ const Application = () => {
     const uid = user?._user?.uid;
     try {
       if (user) {
-        firestore()
-          .collection('Users')
-          // Filter results
-          .where('uid', '==', uid)
-          .onSnapshot(querySnapshot => {
-            let profile: any = {};
-            querySnapshot.forEach(documentSnapshot => {
-              const UserId = documentSnapshot.id;
-              profile = {...documentSnapshot.data(), UserId};
-
-              dispatch(addUser(profile));
-            });
-          });
+        dispatch(getUserProfile({uid}));
       }
     } catch (error) {
       console.log(error);

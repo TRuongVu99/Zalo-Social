@@ -24,27 +24,27 @@ export const listIcon = [
   {
     key: Math.random(),
     id: 1,
-    icon: 'smile',
+    icon: Icon.emoji,
   },
   {
     key: Math.random(),
     id: 2,
-    icon: 'image',
+    icon: Icon.images,
   },
   {
     key: Math.random(),
     id: 3,
-    icon: 'youtube',
+    icon: Icon.videos,
   },
   {
     key: Math.random(),
     id: 4,
-    icon: 'link',
+    icon: Icon.link,
   },
   {
     key: Math.random(),
     id: 5,
-    icon: 'map-pin',
+    icon: Icon.pin,
   },
 ];
 export const listFontFamily = [
@@ -143,5 +143,45 @@ export const data = [
     id: 6,
     label: 'Bình luận nhiều',
     icon: Icon.comment,
+  },
+];
+export const optionChangeBackground = [
+  {
+    id: 0,
+    label: 'Ảnh bìa',
+  },
+  {
+    id: 1,
+    label: 'Xem ảnh bìa',
+  },
+  {
+    id: 2,
+    label: 'Chụp ảnh mới',
+  },
+  {
+    id: 3,
+    label: 'Chọn ảnh từ thiết bị',
+  },
+];
+export const optionChangeAvatar = [
+  {
+    id: 0,
+    label: 'Ảnh đại diện',
+  },
+  {
+    id: 1,
+    label: 'Xem ảnh đại diện',
+  },
+  {
+    id: 2,
+    label: 'Chụp ảnh mới',
+  },
+  {
+    id: 3,
+    label: 'Chọn ảnh từ thiết bị',
+  },
+  {
+    id: 4,
+    label: 'Chọn ảnh đại diện có sẵn',
   },
 ];

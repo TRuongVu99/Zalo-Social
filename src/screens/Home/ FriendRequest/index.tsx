@@ -4,11 +4,12 @@ import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum, IPeronalEnum, IRequestEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
-import {RootState} from '@store/index';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {AppDispatch, RootState} from '@store/index';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
+import {getUserProfile} from '@store/slice/user/userSlice';
 import {windowWidth} from '@utils/Dimensions';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   FlatList,
   Platform,
@@ -94,7 +95,7 @@ export const addFrendByPhoneNumber = async (
 const FriendRequest = ({route}: IFriendRequest) => {
   const {label} = route?.params;
   const inset = useSafeAreaInsets();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<any>();
   const listTitle = ['ĐÃ NHẬN  ', 'ĐÃ GỬI  '];
   const [selected, setSelected] = useState<string>('ĐÃ NHẬN  ');
@@ -120,7 +121,16 @@ const FriendRequest = ({route}: IFriendRequest) => {
   const listSent = profileUser?.listFriendInvitations?.filter(
     (item: any) => item.status === 4,
   );
-
+  console.log({profileUser});
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     dispatch(
+  //       getUserProfile({
+  //         uid: profileUser?.uid,
+  //       }),
+  //     );
+  //   }, [dataReceived]),
+  // );
   return (
     <View style={styles.container}>
       <Header
@@ -170,15 +180,28 @@ const FriendRequest = ({route}: IFriendRequest) => {
               };
               delete profileUserRecall?.listFriend;
               delete profileUserRecall?.listFriendInvitations;
-
-              handleConfirm(item.numberPhone, profileUser, profileUser.UserId);
-              handleConfirm(profileUser.numberPhone, item, item.UserId);
-              handleUnFriend(item.UserId, profileUserRecall);
-              addFrendByPhoneNumber(item.UserId, friend);
+              Promise.all([
+                handleConfirm(
+                  item.numberPhone,
+                  profileUser,
+                  profileUser.UserId,
+                ),
+                handleConfirm(profileUser.numberPhone, item, item.UserId),
+                handleUnFriend(item.UserId, profileUserRecall),
+                addFrendByPhoneNumber(item.UserId, friend),
+              ]).finally(() => {
+                dispatch(
+                  getUserProfile({
+                    uid: profileUser?.uid,
+                  }),
+                );
+              });
             }}
             onPressUser={() => {
               dispatch(addProfileFriend(item));
-              navigation.navigate(RouterName.PersonalFriendRequest);
+              navigation.navigate(RouterName.PersonalFriendRequest, {
+                profile: item,
+              });
             }}
             onPressReject={() => {
               const profileRecall = {
@@ -190,8 +213,16 @@ const FriendRequest = ({route}: IFriendRequest) => {
               delete profileRecall?.listFriendInvitations;
               // console.log(profileRecall);
               // console.log(item);
-              handleReject(profileUser.UserId, item);
-              handleUnFriend(item.UserId, profileRecall);
+              Promise.all([
+                handleReject(profileUser.UserId, item),
+                handleUnFriend(item.UserId, profileRecall),
+              ]).finally(() => {
+                dispatch(
+                  getUserProfile({
+                    uid: profileUser?.uid,
+                  }),
+                );
+              });
             }}
             onPressUserRecall={() => {
               dispatch(addProfileFriend(item));
@@ -210,10 +241,16 @@ const FriendRequest = ({route}: IFriendRequest) => {
               delete newprofileUsers?.listFriend;
               delete newprofileUsers?.listFriendInvitations;
 
-              // console.log(item);
-              // console.log(newprofileUsers);
-              handleReject(item.UserId, newprofileUsers);
-              handleUnFriend(profileUser.UserId, item);
+              Promise.all([
+                handleReject(item.UserId, newprofileUsers),
+                handleUnFriend(profileUser.UserId, item),
+              ]).finally(() => {
+                dispatch(
+                  getUserProfile({
+                    uid: profileUser?.uid,
+                  }),
+                );
+              });
             }}
           />
         )}

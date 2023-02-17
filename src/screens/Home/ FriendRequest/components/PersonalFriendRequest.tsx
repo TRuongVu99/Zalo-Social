@@ -25,8 +25,9 @@ import {IPeronalEnum} from '@model/handelConfig';
 import {addFrendByPhoneNumber, handleConfirm} from '../index';
 import {handleUnFriend} from '@screens/Home/ Personal';
 
-const PersonalFriendRequest = () => {
+const PersonalFriendRequest = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
+  const {profile} = route?.params;
   const dispatch = useDispatch<any>();
   const inset = useSafeAreaInsets();
   const {profileUser} = useSelector((state: RootState) => state.user);
@@ -88,7 +89,7 @@ const PersonalFriendRequest = () => {
                 ]}>
                 <Image
                   resizeMode="cover"
-                  source={image.background}
+                  source={{uri: profile?.background}}
                   style={styles.background}
                 />
 

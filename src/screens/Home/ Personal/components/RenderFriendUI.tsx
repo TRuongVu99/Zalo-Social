@@ -30,6 +30,7 @@ interface IRenderFriendUI {
   type: string;
   timeStamp?: string;
   typeUnFriend?: string;
+  urlBackground?: string;
 }
 const RenderFriendUI = ({
   urlAvatar,
@@ -42,6 +43,7 @@ const RenderFriendUI = ({
   onPressMessage,
   typeUnFriend,
   onPressUnFriend,
+  urlBackground,
 }: IRenderFriendUI) => {
   const inset = useSafeAreaInsets();
   const types = type === IPeronalEnum.Confirm || type === IButtonEnum.disable;
@@ -56,7 +58,9 @@ const RenderFriendUI = ({
         </TouchableOpacity>
       )}
       <ImageBackground
-        source={image.background}
+        source={{
+          uri: urlBackground,
+        }}
         resizeMode="cover"
         style={styles.background}>
         <Header
@@ -71,7 +75,10 @@ const RenderFriendUI = ({
       </ImageBackground>
       <View style={[styles.body]}>
         <View style={styles.borderAvatar}>
-          <Image source={{uri: urlAvatar}} style={styles.avatar} />
+          <Image
+            source={{uri: urlAvatar ? urlAvatar : image.avatarDefault}}
+            style={styles.avatar}
+          />
         </View>
         <TouchableOpacity style={{flexDirection: 'row'}}>
           <Text style={styles.userName}>{name}</Text>

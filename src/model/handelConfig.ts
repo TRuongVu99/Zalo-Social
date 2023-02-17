@@ -22,3 +22,7 @@ export enum IRequestEnum {
   Received = 'RECEIVED',
   Sent = 'SENT',
 }
+export enum IOptionEnum {
+  Avatar = 'Avatar',
+  BackGround = 'BackGround',
+}

@@ -16,7 +16,6 @@ import {
 } from '../ FriendRequest';
 import RenderFriendUI from './components/RenderFriendUI';
 import RenderUserUI from './components/RenderUserUI';
-import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
 interface IPersonal {
   route: any;
 }
@@ -38,26 +37,16 @@ export const handleUnFriend = async (
 };
 const Personal = ({route}: IPersonal) => {
   const {profileUser} = useSelector((state: RootState) => state.user);
-  const {profile, type, UserId, typeUnFriend} = route?.params;
+  const {profile, type, typeUnFriend} = route?.params;
   const [typeEnum, setTypeEnum] = useState<string>(IPeronalEnum.Confirm);
   const [typeUnFriendApp, setTypeUnFriend] = useState<string>(typeUnFriend);
-  console.log(UserId !== profileUser.UserId);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
   dispatch(addOption('fade'));
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
   );
-  const [avatar, setAvatar] = useState<string | undefined>(profileUser?.avatar);
-  const getImageInAlbum = () => {
-    ImagePicker.openPicker({
-      width: 300,
-      height: 400,
-      cropping: true,
-    }).then((images: ImageOrVideo) => {
-      setAvatar(images.path);
-    });
-  };
+
   const newProfileUser = {
     ...profileUser,
     timeStamp: moment().format('L'),
@@ -114,6 +103,7 @@ const Personal = ({route}: IPersonal) => {
     case IPeronalEnum.AddFriend:
       return (
         <RenderFriendUI
+          urlBackground={profile.background}
           typeUnFriend={typeUnFriendApp}
           type={IPeronalEnum.AddFriend}
           urlAvatar={profile.avatar}
@@ -146,6 +136,7 @@ const Personal = ({route}: IPersonal) => {
     case IPeronalEnum.Confirm:
       return (
         <RenderFriendUI
+          urlBackground={profile.background}
           urlAvatar={profile.avatar}
           name={profile.username}
           type={typeEnum}
@@ -186,14 +177,19 @@ const Personal = ({route}: IPersonal) => {
       );
     case IPeronalEnum.Friend:
       return (
-        <RenderUserUI urlAvatar={profile?.avatar} name={profile?.username} />
+        <RenderUserUI
+          urlAvatar={profile?.avatar}
+          name={profile?.username}
+          urlBackground={profile.background}
+          type={IPeronalEnum.Friend}
+        />
       );
     default:
       return (
         <RenderUserUI
-          urlAvatar={avatar}
+          urlAvatar={profileUser?.avatar}
           name={profileUser?.username}
-          onPressImage={() => getImageInAlbum()}
+          urlBackground={profileUser.background}
         />
       );
   }

@@ -51,4 +51,9 @@ export const Icon = {
   monitor: require('./monitor.png'),
   paintbrush: require('./paintbrush.png'),
   color: require('./color.png'),
+  link: require('./link.png'),
+  videos: require('./videos.png'),
+  emoji: require('./emoji.png'),
+  pin: require('./pin.png'),
+  images: require('./images.png'),
 };

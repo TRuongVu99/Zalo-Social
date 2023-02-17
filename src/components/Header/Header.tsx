@@ -35,6 +35,7 @@ import {
 } from 'react-native-popup-menu';
 import {renderers} from 'react-native-popup-menu';
 import {menu} from './menu';
+import {windowHeight, windowWidth} from '@utils/Dimensions';
 interface IHeader {
   type?: string;
   label?: string;
@@ -172,7 +173,9 @@ const Header = ({
             ]}
             onPress={onPressIconRight2}>
             {typeOption === IPeronalEnum.AddFriend ? (
-              <Menu>
+              <Menu
+                onOpen={() => setSelect(!isSelect)}
+                onClose={() => setSelect(!isSelect)}>
                 <MenuTrigger>
                   <Image
                     source={nameIconRight2}
@@ -202,6 +205,16 @@ const Header = ({
               <Image source={nameIconRight2} style={styles.styleiconRight} />
             )}
           </TouchableOpacity>
+          {!isSelect && (
+            <Image
+              style={{
+                width: windowWidth,
+                height: windowHeight,
+                position: 'absolute',
+                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+              }}
+            />
+          )}
         </View>
       );
     case IHeaderEnum.Search:
@@ -393,7 +406,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: 70,
-    marginRight: 50,
   },
   triangle: {
     position: 'absolute',
