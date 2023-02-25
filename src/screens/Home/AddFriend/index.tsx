@@ -7,6 +7,7 @@ import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {getStatus} from '@store/slice/contents/contentsSlice';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 import React, {useEffect, useState} from 'react';
 import {
@@ -26,7 +27,7 @@ import {options} from './data/options';
 const AddFriend = () => {
   const navigation = useNavigation<any>();
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
   const {profileUser} = useSelector((state: RootState) => state.user);
 
   const isFriendRequest =
@@ -119,6 +120,7 @@ const AddFriend = () => {
             disabled={phoneNumber.length < 10}
             onPress={() => {
               getFrendByPhoneNumber();
+              dispatch(getStatus({numberPhone: phoneNumber}));
             }}>
             <Text style={[styles.fontFamily, {color: 'white'}]}>Tìm</Text>
           </TouchableOpacity>

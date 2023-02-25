@@ -8,6 +8,7 @@ import Cursor from './Cursor';
 import UIButton from './UIButton';
 import UITab from './BottomTabBar';
 import ResultSearch from './ResultSearch';
+import Loading from './Loading';
 
 export {
   CustumInput,
@@ -20,4 +21,5 @@ export {
   UIButton,
   UITab,
   ResultSearch,
+  Loading,
 };

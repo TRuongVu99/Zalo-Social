@@ -23,4 +23,5 @@ export const RouterName = {
   TabbarFriend: 'TabbarFriend',
   PersonalFriendRequest: 'PersonalFriendRequest',
   PostStatus: 'PostStatus',
+  PreViewImage: 'PreViewImage',
 };

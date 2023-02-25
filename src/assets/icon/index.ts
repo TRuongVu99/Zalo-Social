@@ -56,4 +56,5 @@ export const Icon = {
   emoji: require('./emoji.png'),
   pin: require('./pin.png'),
   images: require('./images.png'),
+  comments: require('./comments.png'),
 };

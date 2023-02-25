@@ -1415,6 +1415,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@kanelloc/react-native-animated-header-scroll-view@^0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@kanelloc/react-native-animated-header-scroll-view/-/react-native-animated-header-scroll-view-0.11.1.tgz#00e1526b972a51051a572b74c2336e34b0d6be49"
+  integrity sha512-4aXNKxXI3yn4osJ52FLWeOthSsZ4sIl59zAsQjuhR8UAUQEVJbwwFOGr4EVtNb1B8KTrQYlWzNgFCwQfXqhkrg==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -1659,6 +1664,11 @@
   version "17.0.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-17.0.0.tgz#96d2410bf9b46c2fbf15d5db2dc721ebc9b5360e"
   integrity sha512-0/4UWq0LmIHmjXBDwtfMo1uxsM8cjD+2P8XOt8H+S/KKExXGpEBT7QQEdMXD98H5PmbMbBiywfA5RSsQAco63A==
+
+"@react-native-firebase/storage@^17.3.0":
+  version "17.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-17.3.0.tgz#21b2b766754c51e9da5ffd8a7880a50fe7cd4ce9"
+  integrity sha512-SsnEirsL4Vi5quvi56iFBA5s3WSNYo2QPkoemR6C/XuF7FAkAD8JXVaVIfHJs2B3DKXn5KSHnbzIgsLWF4o0Xg==
 
 "@react-native/assets@1.0.0":
   version "1.0.0"
@@ -6740,6 +6750,16 @@ react-native-codegen@^0.70.6:
     jscodeshift "^0.13.1"
     nullthrows "^1.1.1"
 
+react-native-error-boundary@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-error-boundary/-/react-native-error-boundary-1.2.1.tgz#795ca556fcc077794c8c77f2d449226b41dde822"
+  integrity sha512-Ae2mjXyCI84mwSKkgVSYPv1ZDlRVTZg9DwyxCHFtEfFkjNcBS8RlEcW7Fihns13lRdpmmQx/Gr2OFf5tfkih9g==
+
+react-native-fast-image@^8.6.3:
+  version "8.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz#6edc3f9190092a909d636d93eecbcc54a8822255"
+  integrity sha512-Sdw4ESidXCXOmQ9EcYguNY2swyoWmx53kym2zRsvi+VeFCHEdkO+WG1DK+6W81juot40bbfLNhkc63QnWtesNg==
+
 react-native-gradle-plugin@^0.70.3:
   version "0.70.3"
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz#cbcf0619cbfbddaa9128701aa2d7b4145f9c4fc8"
@@ -6749,6 +6769,13 @@ react-native-image-crop-picker@^0.33.2:
   version "0.33.4"
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.33.4.tgz#12c25f97f37596720348776809557b1f7552cdcf"
   integrity sha512-HHA1Optc5JhGVzS/+ctNBLDBbgR3AnxEg421LJN2GRL/KmsleKWHlIEOVEFO0DYu62iV4NC/2zRScQLih6Dv1w==
+
+react-native-indicators@^0.17.0:
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/react-native-indicators/-/react-native-indicators-0.17.0.tgz#92f95efaf5fb53be576dfe4e1980a25655a93f55"
+  integrity sha512-s23em477GHGxWeGczWrixScAZD6tQU4mx1fttlrwhEGKOxhBgp55Kh3RoD9Wj4yna4e5W35xQNoPqoJAT6QW5A==
+  dependencies:
+    prop-types "^15.5.10"
 
 react-native-pager-view@^6.1.2:
   version "6.1.2"

@@ -1,26 +1,18 @@
+import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
+import {windowWidth} from '@utils/Dimensions';
+import React from 'react';
 import {
-  Alert,
   GestureResponderEvent,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  Platform,
-  InteractionManager,
-  findNodeHandle,
-  Switch,
-  Image,
+  View,
 } from 'react-native';
-import React, {createRef, useState} from 'react';
-import {optionChangeBackground} from '../data';
-import Color from '@constants/Color';
-import FontSize from '@constants/FontSize';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {BlurView} from '@react-native-community/blur';
-import {windowWidth} from '@utils/Dimensions';
-import {fontFamily} from '@fonts/Font';
 
 interface IOpstion {
   onPress1?: (event: GestureResponderEvent) => void;
@@ -94,6 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 13,
     alignItems: 'center',
+    blurRadius: 10,
   },
   button: {
     width: windowWidth,

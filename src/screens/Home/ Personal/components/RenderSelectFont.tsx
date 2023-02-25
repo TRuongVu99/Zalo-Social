@@ -44,11 +44,12 @@ const styles = StyleSheet.create({
   touch: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 2,
+    marginHorizontal: 5,
     paddingHorizontal: 15,
-    paddingVertical: Platform.OS === 'ios' ? 8 : 5,
-    borderWidth: 1,
-    borderColor: Color.Darkgray,
+    paddingVertical: 6,
+    borderWidth: 2,
+    borderColor: Color.DimGray,
     borderRadius: 10,
+    backgroundColor: 'white',
   },
 });

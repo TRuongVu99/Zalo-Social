@@ -1,6 +1,9 @@
 import {configureStore} from '@reduxjs/toolkit';
 import {user} from './slice/user';
 import {friends} from './slice/friends';
+import {app} from './slice/app';
+import {message} from './slice/message';
+import {contents} from './slice/contents';
 import {profileFriend} from './slice/profileFriend';
 import logger from 'redux-logger';
 
@@ -9,6 +12,9 @@ export const store = configureStore({
     user,
     friends,
     profileFriend,
+    contents,
+    message,
+    app,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -26,6 +26,7 @@ import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import {fontFamily} from '../../assets/fonts/Font';
+import FastImage from 'react-native-fast-image';
 import {Color, FontSize} from '../../constants';
 import {
   Menu,
@@ -46,12 +47,15 @@ interface IHeader {
   onPress?: (event: GestureResponderEvent) => void;
   onPressIconRight1?: (event: GestureResponderEvent) => void;
   onPressIconRight2?: (event: GestureResponderEvent) => void;
+  onPressExit?: (event: GestureResponderEvent) => void;
+  onPostStatus?: (event: GestureResponderEvent) => void;
   styleIconRight?: StyleProp<ImageStyle>;
   buttonBack?: string;
   name?: string;
   StyleHeaderSetting?: ViewStyle;
   typeOption?: string;
   typePersonal?: string;
+  isPost?: boolean;
 }
 
 const Header = ({
@@ -64,14 +68,16 @@ const Header = ({
   onPress,
   onPressIconRight2,
   onPressIconRight1,
+  onPressExit,
   name,
   StyleHeaderSetting,
   typeOption,
   typePersonal,
+  isPost,
+  onPostStatus,
 }: IHeader) => {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<any>();
-  const {Popover, SlideInMenu, NotAnimatedContextMenu, ContextMenu} = renderers;
   const [isSelect, setSelect] = useState<boolean>(true);
   switch (type) {
     case IHeaderEnum.Register:
@@ -93,14 +99,16 @@ const Header = ({
           </TouchableOpacity>
           {typePersonal === IHeaderEnum.Personal && (
             <View style={styles.iconInPersonal}>
-              <TouchableOpacity onPress={onPressIconRight1}>
-                <IconFeather name={'phone'} size={24} color={'white'} />
+              <TouchableOpacity
+                style={{paddingHorizontal: 20}}
+                onPress={onPressIconRight1}>
+                <IconFeather name={'phone'} size={24} color={'black'} />
               </TouchableOpacity>
               <TouchableOpacity onPress={onPressIconRight2}>
                 <IconFeather
                   name={'more-horizontal'}
                   size={24}
-                  color={'white'}
+                  color={'black'}
                 />
               </TouchableOpacity>
             </View>
@@ -121,23 +129,29 @@ const Header = ({
           <TouchableOpacity
             style={styles.buttonRight}
             onPress={onPressIconRight1}>
-            <Image
+            <FastImage
               source={icon.telephone}
               style={[styles.styleiconRightMessage]}
+              tintColor={'white'}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttonRight}
             onPress={onPressIconRight1}>
-            <Image
+            <FastImage
               source={icon.videocall}
               style={[styles.styleiconRightMessage]}
+              tintColor={'white'}
             />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonRight, {paddingEnd: 0}]}
             onPress={onPressIconRight1}>
-            <Image source={icon.menu} style={[styles.styleiconRightMessage]} />
+            <FastImage
+              source={icon.menu}
+              style={[styles.styleiconRightMessage]}
+              tintColor={'white'}
+            />
           </TouchableOpacity>
         </View>
       );
@@ -164,7 +178,11 @@ const Header = ({
           <TouchableOpacity
             style={styles.buttonRight}
             onPress={onPressIconRight1}>
-            <Image source={nameIconRight1} style={styles.styleiconRight} />
+            <FastImage
+              source={nameIconRight1}
+              style={styles.styleiconRight}
+              tintColor={'white'}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -177,7 +195,8 @@ const Header = ({
                 onOpen={() => setSelect(!isSelect)}
                 onClose={() => setSelect(!isSelect)}>
                 <MenuTrigger>
-                  <Image
+                  <FastImage
+                    tintColor={'white'}
                     source={nameIconRight2}
                     style={styles.styleiconRight}
                   />
@@ -192,21 +211,34 @@ const Header = ({
                       }}
                       style={{flexDirection: 'row', alignItems: 'center'}}
                       key={item.id}>
-                      <Image source={item.icon} style={styles.icon} />
+                      <FastImage
+                        source={item.icon}
+                        style={styles.icon}
+                        tintColor={'gray'}
+                      />
                       <Text style={styles.text}>{item.text}</Text>
                       {item.id === 1 && (
-                        <Image source={Icon.triangle} style={styles.triangle} />
+                        <FastImage
+                          source={Icon.triangle}
+                          style={styles.triangle}
+                          tintColor={'white'}
+                        />
                       )}
                     </MenuOption>
                   ))}
                 </MenuOptions>
               </Menu>
             ) : (
-              <Image source={nameIconRight2} style={styles.styleiconRight} />
+              <FastImage
+                tintColor={'white'}
+                source={nameIconRight2}
+                style={styles.styleiconRight}
+              />
             )}
           </TouchableOpacity>
           {!isSelect && (
-            <Image
+            <FastImage
+              tintColor={'white'}
               style={{
                 width: windowWidth,
                 height: windowHeight,
@@ -250,7 +282,11 @@ const Header = ({
           <TouchableOpacity
             style={[styles.buttonRight, {marginLeft: 25}]}
             onPress={onPressIconRight2}>
-            <Image source={icon.qrcode} style={styles.styleiconRight} />
+            <FastImage
+              tintColor={'white'}
+              source={icon.qrcode}
+              style={styles.styleiconRight}
+            />
           </TouchableOpacity>
         </View>
       );
@@ -261,9 +297,7 @@ const Header = ({
             styles.headerPostStatus,
             {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
           ]}>
-          <TouchableOpacity
-            style={[styles.back]}
-            onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={[styles.back]} onPress={onPressExit}>
             <IconEvilIcons name="close" size={30} color={'black'} />
           </TouchableOpacity>
 
@@ -285,17 +319,7 @@ const Header = ({
             <Text style={styles.depcription}>Xem bởi bạn bè trên Zalo</Text>
           </TouchableOpacity>
           <View style={styles.iconInPersonal}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: Color.primary,
-                width: 70,
-                height: 32,
-                borderRadius: 20,
-                marginRight: 25,
-              }}>
+            <View style={styles.view1}>
               <Pressable
                 style={{
                   backgroundColor: isSelect ? 'white' : Color.primary,
@@ -317,24 +341,27 @@ const Header = ({
                 style={{
                   backgroundColor: !isSelect ? 'white' : Color.primary,
                   margin: 1,
-                  paddingVertical: 7.6,
+                  paddingVertical: 7.5,
                   paddingHorizontal: 9,
                   borderRadius: 20,
                 }}
                 onPress={() => setSelect(!isSelect)}>
-                <Image
+                <FastImage
                   source={Icon.paintbrush}
+                  tintColor={!isSelect ? Color.primary : Color.Gainsboro}
                   style={{
                     width: 15,
                     height: 15,
-                    tintColor: !isSelect ? Color.primary : Color.Gainsboro,
                   }}
                 />
               </Pressable>
             </View>
-
-            <TouchableOpacity style={{}} onPress={onPressIconRight1}>
-              <IconIonicons name={'send'} size={24} color={Color.disable} />
+            <TouchableOpacity style={{}} onPress={onPostStatus}>
+              <IconIonicons
+                name={'send'}
+                size={24}
+                color={isPost ? Color.primary : Color.disable}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -360,7 +387,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 10 : 3,
   },
   headerPostStatus: {
-    // backgroundColor: Color.primary,
+    backgroundColor: 'rgb(247, 249, 255)',
     flexDirection: 'row',
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -392,26 +419,23 @@ const styles = StyleSheet.create({
   styleiconRight: {
     width: 20,
     height: 20,
-    tintColor: 'white',
+
     marginLeft: 10,
   },
   styleiconRightMessage: {
     width: 25,
     height: 25,
-    tintColor: 'white',
     marginLeft: 10,
   },
   iconInPersonal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: 70,
   },
   triangle: {
     position: 'absolute',
     width: 20,
     height: 20,
-    tintColor: 'white',
     top: -13,
     right: 10,
   },
@@ -443,6 +467,16 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.primaryFont,
     color: 'gray',
     fontSize: FontSize.h6,
+  },
+  view1: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Color.primary,
+    width: 70,
+    height: 32,
+    borderRadius: 20,
+    marginRight: 25,
   },
 });
 

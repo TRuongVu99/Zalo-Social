@@ -15,15 +15,18 @@ import {RootState} from '@store/index';
 import {windowHeight, windowWidth} from '@utils/Dimensions';
 import {Color, FontSize, image} from '@constants';
 import {fontFamily} from '@fonts/Font';
-import firestore from '@react-native-firebase/firestore';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {RouterName} from '@navigation/rootName';
-import {addOption} from '@store/slice/user/userSlice';
+import {
+  addFrendByPhoneNumber,
+  addOption,
+  getUserProfile,
+  handleConfirm,
+  handleUnFriend,
+} from '@store/slice/user/userSlice';
 import {IPeronalEnum} from '@model/handelConfig';
-import {addFrendByPhoneNumber, handleConfirm} from '../index';
-import {handleUnFriend} from '@screens/Home/ Personal';
 
 const PersonalFriendRequest = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
@@ -37,21 +40,7 @@ const PersonalFriendRequest = ({route}: {route: any}) => {
   setTimeout(() => {
     dispatch(addOption('none'));
   }, 100);
-  const addListFrends = async (numberPhone: string) => {
-    const newUserData = profileUser.listFriend.map((user: any) => {
-      if (user.numberPhone === numberPhone) {
-        return {...user, status: 3};
-      }
-      return user;
-    });
-    try {
-      await firestore().collection('Users').doc(profileUser.UserId).update({
-        listFriend: newUserData,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
   const profileFriend = {
     ...profileUser,
     status: 3,
@@ -97,15 +86,16 @@ const PersonalFriendRequest = ({route}: {route: any}) => {
                   <View style={styles.borderRadius}>
                     <Pressable
                       onPress={async () => {
-                        try {
-                          navigation.pop();
-                          navigation.navigate(RouterName.Personal, {
-                            profile: item,
-                            type: IPeronalEnum.Confirm,
-                          });
-                        } catch (error) {
-                          console.log(error);
-                        }
+                        // try {
+                        //   navigation.pop();
+                        //   navigation.navigate(RouterName.Personal, {
+                        //     profile: item,
+                        //     type: IPeronalEnum.Confirm,
+                        //   });
+                        // } catch (error) {
+                        //   console.log(error);
+                        // }
+                        console.log({item});
                       }}>
                       <Image
                         source={{uri: item.avatar}}
@@ -134,9 +124,30 @@ const PersonalFriendRequest = ({route}: {route: any}) => {
                         delete profileUserRecall?.listFriend;
                         delete profileUserRecall?.listFriendInvitations;
 
-                        addListFrends(item.numberPhone);
-                        addFrendByPhoneNumber(item.UserId, profileFriend);
-                        handleUnFriend(item.UserId, profileUserRecall);
+                        dispatch(
+                          handleConfirm({
+                            numberPhone: profile.numberPhone,
+                            profileUser: profileUser,
+                            UserId: profileUser.UserId,
+                          }),
+                        );
+                        dispatch(
+                          addFrendByPhoneNumber({
+                            UserIdFriend: item?.UserId,
+                            friend: profileFriend,
+                          }),
+                        );
+                        dispatch(
+                          handleUnFriend({
+                            UserId: item?.UserId,
+                            profileUnFriend: profileUserRecall,
+                          }),
+                        );
+                        dispatch(
+                          getUserProfile({
+                            uid: profileUser?.uid,
+                          }),
+                        );
                         navigation.navigate(RouterName.Phonebook);
                       }}>
                       <Text style={[styles.labelButton, {color: 'white'}]}>

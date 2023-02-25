@@ -26,3 +26,9 @@ export enum IOptionEnum {
   Avatar = 'Avatar',
   BackGround = 'BackGround',
 }
+
+export enum IPreviewImageEnum {
+  More = 'More',
+  Photoshop = 'BackGround',
+  ImageOfStatus = 'ImageOfStatus',
+}

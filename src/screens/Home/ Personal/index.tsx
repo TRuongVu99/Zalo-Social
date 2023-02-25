@@ -1,52 +1,40 @@
 import {IButtonEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {addOption} from '@store/slice/user/userSlice';
-import {windowHeight} from '@utils/Dimensions';
-import moment from 'moment';
-import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
 import {
   addFrendByPhoneNumber,
+  addOption,
+  getUserProfile,
   handleConfirm,
   handleReject,
-} from '../ FriendRequest';
+  handleUnFriend,
+  sendFriendInvitation,
+} from '@store/slice/user/userSlice';
+import {windowHeight} from '@utils/Dimensions';
+import moment from 'moment';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import RenderFriendUI from './components/RenderFriendUI';
 import RenderUserUI from './components/RenderUserUI';
 interface IPersonal {
   route: any;
 }
-export const handleUnFriend = async (
-  UserId: string | undefined,
-  profileUnFriend: any,
-) => {
-  try {
-    await firestore()
-      .collection('Users')
-      .doc(UserId)
-      .update({
-        listFriendInvitations:
-          firestore.FieldValue.arrayRemove(profileUnFriend),
-      });
-  } catch (err) {
-    console.log(err);
-  }
-};
+
 const Personal = ({route}: IPersonal) => {
   const {profileUser} = useSelector((state: RootState) => state.user);
-  const {profile, type, typeUnFriend} = route?.params;
+  const {profile, type, typeUnFriend, loading} = route?.params;
   const [typeEnum, setTypeEnum] = useState<string>(IPeronalEnum.Confirm);
   const [typeUnFriendApp, setTypeUnFriend] = useState<string>(typeUnFriend);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
-  dispatch(addOption('fade'));
+  if (type === IPeronalEnum.Confirm) {
+    dispatch(addOption('fade'));
+  }
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
   );
-
   const newProfileUser = {
     ...profileUser,
     timeStamp: moment().format('L'),
@@ -70,35 +58,6 @@ const Personal = ({route}: IPersonal) => {
   };
   delete newprofileFriend?.listFriend;
   delete newprofileFriend?.listFriendInvitations;
-
-  const addFrendByPhoneNumbers = async () => {
-    firestore()
-      .collection('Users')
-      .doc(profileFriend?.UserId)
-      .update({
-        listFriend: firestore.FieldValue.arrayUnion(newProfileUser),
-      })
-      .then(() => {
-        console.log('User updated!');
-      });
-  };
-  const sendFriendInvitations = async () => {
-    try {
-      firestore()
-        .collection('Users')
-        .doc(profileUser?.UserId)
-        .update({
-          listFriendInvitations:
-            firestore.FieldValue.arrayUnion(newprofileFriend),
-        })
-        .then(() => {
-          console.log(`Đã gửi lời mời kết bạn tới ${profileFriend.username}`);
-        });
-    } catch (error) {
-      console.log({error});
-    }
-  };
-
   switch (type) {
     case IPeronalEnum.AddFriend:
       return (
@@ -109,9 +68,24 @@ const Personal = ({route}: IPersonal) => {
           urlAvatar={profile.avatar}
           name={profile.username}
           onPressAddFriend={() => {
-            addFrendByPhoneNumbers();
-            sendFriendInvitations();
+            dispatch(
+              addFrendByPhoneNumber({
+                UserIdFriend: profileFriend?.UserId,
+                friend: newProfileUser,
+              }),
+            );
+            dispatch(
+              sendFriendInvitation({
+                UserId: profileUser?.UserId,
+                newprofileFriend,
+              }),
+            );
             setTypeUnFriend(IPeronalEnum.UnFriend);
+            dispatch(
+              getUserProfile({
+                uid: profileUser?.uid,
+              }),
+            );
           }}
           onPressMessage={() => {
             navigation.navigate(RouterName.Message, {
@@ -128,8 +102,23 @@ const Personal = ({route}: IPersonal) => {
             delete profileRecall?.listFriend;
             delete profileRecall?.listFriendInvitations;
             setTypeUnFriend(IPeronalEnum.AddFriend);
-            handleUnFriend(profileUser.UserId, profile);
-            handleReject(profileFriend.UserId, profileRecall);
+            dispatch(
+              handleUnFriend({
+                UserId: profileUser?.UserId,
+                profileUnFriend: profile,
+              }),
+            );
+            dispatch(
+              handleReject({
+                UserId: profileFriend?.UserId,
+                profileReject: profileRecall,
+              }),
+            );
+            dispatch(
+              getUserProfile({
+                uid: profileUser?.uid,
+              }),
+            );
           }}
         />
       );
@@ -148,9 +137,26 @@ const Personal = ({route}: IPersonal) => {
             };
             delete Friend?.listFriend;
             delete Friend?.listFriendInvitations;
-            handleConfirm(profile.numberPhone, profileUser, profileUser.UserId);
-            handleUnFriend(profile.UserId, profileUserRecall);
-            addFrendByPhoneNumber(profileFriend.UserId, Friend);
+
+            dispatch(
+              handleConfirm({
+                numberPhone: profile.numberPhone,
+                profileUser: profileUser,
+                UserId: profileUser.UserId,
+              }),
+            );
+            dispatch(
+              handleUnFriend({
+                UserId: profile?.UserId,
+                profileUnFriend: profileUserRecall,
+              }),
+            );
+            dispatch(
+              addFrendByPhoneNumber({
+                UserIdFriend: profileFriend?.UserId,
+                friend: Friend,
+              }),
+            );
 
             navigation.navigate(RouterName.Phonebook);
           }}
@@ -162,8 +168,18 @@ const Personal = ({route}: IPersonal) => {
             };
             delete profileRecall?.listFriend;
             delete profileRecall?.listFriendInvitations;
-            handleReject(profileUser.UserId, profile);
-            handleUnFriend(profileFriend.UserId, profileRecall);
+            dispatch(
+              handleReject({
+                UserId: profileUser?.UserId,
+                profileReject: profile,
+              }),
+            );
+            dispatch(
+              handleUnFriend({
+                UserId: profileFriend?.UserId,
+                profileUnFriend: profileRecall,
+              }),
+            );
 
             setTypeEnum(IButtonEnum.disable);
           }}
@@ -182,6 +198,13 @@ const Personal = ({route}: IPersonal) => {
           name={profile?.username}
           urlBackground={profile.background}
           type={IPeronalEnum.Friend}
+          profileFriend={profileFriend}
+          profile={newProfileUser}
+          onPressMessage={() => {
+            navigation.navigate(RouterName.Message, {
+              profileFriend,
+            });
+          }}
         />
       );
     default:
@@ -190,6 +213,8 @@ const Personal = ({route}: IPersonal) => {
           urlAvatar={profileUser?.avatar}
           name={profileUser?.username}
           urlBackground={profileUser.background}
+          loading={loading}
+          profile={newProfileUser}
         />
       );
   }

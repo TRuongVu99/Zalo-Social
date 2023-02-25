@@ -7,11 +7,13 @@ import {fontFamily} from '@fonts/Font';
 import {IButtonEnum, IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-const Login = () => {
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+const Login = ({route}: {route: any}) => {
+  console.log(route.params);
   const navigation = useNavigation<any>();
   const [focus, setFocus] = useState<boolean>(true);
   const [numberPhone, setNumber] = useState<string>('');
@@ -32,9 +34,17 @@ const Login = () => {
           console.log('Success');
         });
     } catch (err) {
-      console.log({err});
+      Alert.alert(`Số điện thoại ${numberPhone} chưa đăng ký`, 'Đăng ký ngay', [
+        {
+          text: 'Huỷ',
+        },
+        {
+          text: 'Đăng ký',
+        },
+      ]);
     }
   }
+
   return (
     <View style={styles.container}>
       <Header type={IHeaderEnum.Register} label={'Đăng nhập'} />

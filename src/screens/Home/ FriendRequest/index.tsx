@@ -3,13 +3,18 @@ import Color from '@constants/Color';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum, IPeronalEnum, IRequestEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/firestore';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '@store/index';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
-import {getUserProfile} from '@store/slice/user/userSlice';
+import {
+  addFrendByPhoneNumber,
+  getUserProfile,
+  handleConfirm,
+  handleReject,
+  handleUnFriend,
+} from '@store/slice/user/userSlice';
 import {windowWidth} from '@utils/Dimensions';
-import React, {useCallback, useState} from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Platform,
@@ -20,78 +25,11 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
-import {handleUnFriend} from '../ Personal';
 import RenderUI from './components/RenderUI';
 interface IFriendRequest {
   route: any;
 }
-export const handleConfirm = async (
-  numberPhone?: string | undefined,
-  profileUser?: any,
-  UserId?: string | undefined,
-) => {
-  const newUserData = profileUser.listFriend.map((user: any) => {
-    if (user.numberPhone === numberPhone) {
-      return {...user, status: 3};
-    }
-    return user;
-  });
-  try {
-    await firestore().collection('Users').doc(UserId).update({
-      listFriend: newUserData,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-export const handleReject = async (
-  UserId: string | undefined,
-  profileReject: any,
-) => {
-  try {
-    await firestore()
-      .collection('Users')
-      .doc(UserId)
-      .update({
-        listFriend: firestore.FieldValue.arrayRemove(profileReject),
-      });
-  } catch (err) {
-    console.log(err);
-  }
-};
-export const handleReCall = async (
-  numberPhone: string | undefined,
-  profileUser: any,
-  UserId: string | undefined,
-) => {
-  const newUserData = profileUser.listFriend.map((user: any) => {
-    if (user.numberPhone === numberPhone) {
-      return {...user, status: 5};
-    }
-    return user;
-  });
-  try {
-    await firestore().collection('Users').doc(UserId).update({
-      listFriend: newUserData,
-    });
-  } catch (err) {
-    console.log(err);
-  }
-};
-export const addFrendByPhoneNumber = async (
-  UserIdFriend: string,
-  friend: any,
-) => {
-  firestore()
-    .collection('Users')
-    .doc(UserIdFriend)
-    .update({
-      listFriend: firestore.FieldValue.arrayUnion(friend),
-    })
-    .then(() => {
-      console.log('User updated!');
-    });
-};
+
 const FriendRequest = ({route}: IFriendRequest) => {
   const {label} = route?.params;
   const inset = useSafeAreaInsets();
@@ -122,15 +60,6 @@ const FriendRequest = ({route}: IFriendRequest) => {
     (item: any) => item.status === 4,
   );
   console.log({profileUser});
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     dispatch(
-  //       getUserProfile({
-  //         uid: profileUser?.uid,
-  //       }),
-  //     );
-  //   }, [dataReceived]),
-  // );
   return (
     <View style={styles.container}>
       <Header
@@ -180,22 +109,33 @@ const FriendRequest = ({route}: IFriendRequest) => {
               };
               delete profileUserRecall?.listFriend;
               delete profileUserRecall?.listFriendInvitations;
-              Promise.all([
-                handleConfirm(
-                  item.numberPhone,
-                  profileUser,
-                  profileUser.UserId,
-                ),
-                handleConfirm(profileUser.numberPhone, item, item.UserId),
-                handleUnFriend(item.UserId, profileUserRecall),
-                addFrendByPhoneNumber(item.UserId, friend),
-              ]).finally(() => {
+              console.log({item});
+              dispatch(
+                handleConfirm({
+                  numberPhone: item.numberPhone,
+                  profileUser: profileUser,
+                  UserId: profileUser.UserId,
+                }),
+              );
+              dispatch(
+                handleUnFriend({
+                  UserId: item?.UserId,
+                  profileUnFriend: profileUserRecall,
+                }),
+              );
+              dispatch(
+                addFrendByPhoneNumber({
+                  UserIdFriend: item?.UserId,
+                  friend,
+                }),
+              );
+              setTimeout(() => {
                 dispatch(
                   getUserProfile({
                     uid: profileUser?.uid,
                   }),
                 );
-              });
+              }, 500);
             }}
             onPressUser={() => {
               dispatch(addProfileFriend(item));
@@ -211,18 +151,27 @@ const FriendRequest = ({route}: IFriendRequest) => {
               };
               delete profileRecall?.listFriend;
               delete profileRecall?.listFriendInvitations;
-              // console.log(profileRecall);
-              // console.log(item);
-              Promise.all([
-                handleReject(profileUser.UserId, item),
-                handleUnFriend(item.UserId, profileRecall),
-              ]).finally(() => {
+
+              dispatch(
+                handleReject({
+                  UserId: profileUser?.UserId,
+                  profileReject: item,
+                }),
+              );
+              dispatch(
+                handleUnFriend({
+                  UserId: item?.UserId,
+                  profileUnFriend: profileRecall,
+                }),
+              );
+
+              setTimeout(() => {
                 dispatch(
                   getUserProfile({
                     uid: profileUser?.uid,
                   }),
                 );
-              });
+              }, 500);
             }}
             onPressUserRecall={() => {
               dispatch(addProfileFriend(item));
@@ -241,16 +190,27 @@ const FriendRequest = ({route}: IFriendRequest) => {
               delete newprofileUsers?.listFriend;
               delete newprofileUsers?.listFriendInvitations;
 
-              Promise.all([
-                handleReject(item.UserId, newprofileUsers),
-                handleUnFriend(profileUser.UserId, item),
-              ]).finally(() => {
+              dispatch(
+                handleReject({
+                  UserId: item?.UserId,
+                  profileReject: newprofileUsers,
+                }),
+              );
+              // handleReject(item.UserId, newprofileUsers),
+              dispatch(
+                handleUnFriend({
+                  UserId: profileUser?.UserId,
+                  profileUnFriend: item,
+                }),
+              );
+              // handleUnFriend(profileUser.UserId, item),
+              setTimeout(() => {
                 dispatch(
                   getUserProfile({
                     uid: profileUser?.uid,
                   }),
                 );
-              });
+              }, 500);
             }}
           />
         )}

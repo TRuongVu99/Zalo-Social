@@ -20,6 +20,8 @@ import {fontFamily} from '@fonts/Font';
 import Color from '@constants/Color';
 import FontSize from '@constants/FontSize';
 import UIButton from '@components/UIButton';
+import FastImage from 'react-native-fast-image';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const data = [
   {
@@ -100,7 +102,11 @@ const renderItem = ({item}: {item: any}) => {
               : 0,
         },
       ]}>
-      <Image source={item.icon} style={styles.icon} />
+      <FastImage
+        source={item.icon}
+        style={styles.icon}
+        tintColor={Color.blue}
+      />
       <View style={styles.container}>
         <Text style={[styles.labelStyle, styles.userName]}>{item.label}</Text>
         {item.descriptions !== null && (
@@ -117,6 +123,7 @@ const renderItem = ({item}: {item: any}) => {
 };
 const Setting = () => {
   const navigation = useNavigation<any>();
+  const {bottom} = useSafeAreaInsets();
   return (
     <View style={styles.container}>
       <Header
@@ -136,7 +143,7 @@ const Setting = () => {
         extraData={(item: any) => item.label}
         ListFooterComponent={
           <UIButton
-            styleUIButton={{marginHorizontal: 80}}
+            styleUIButton={{marginHorizontal: 80, marginBottom: bottom}}
             label={'Đăng xuất'}
             styleLabel={{fontSize: FontSize.h5}}
             onPress={() => {
@@ -177,7 +184,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 25,
     height: 25,
-    tintColor: Color.blue,
+
     marginHorizontal: 18,
     alignSelf: 'center',
   },

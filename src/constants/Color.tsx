@@ -12,4 +12,7 @@ export default {
   confirm: 'rgba(0, 128, 255, 0.1)',
   disable: 'rgba(0, 120, 255, 0.5)',
   paintbrush: 'rgb(133, 193, 255)',
+  white: 'rgba(255, 255, 255, 0.8)',
+  heart: 'rgb(208, 0, 20)',
+  message: 'rgb(200,  240, 250)',
 };

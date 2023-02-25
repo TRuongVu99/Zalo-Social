@@ -8,7 +8,14 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '@store/index';
 import {getUserProfile} from '@store/slice/user/userSlice';
 import React, {useCallback, useState} from 'react';
-import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import UIButton from './components/UIButton';
 import styles from './styles';
@@ -54,7 +61,7 @@ const Phonebook = () => {
   useFocusEffect(
     useCallback(() => {
       dispatch(getUserProfile({uid: profileUser?.uid}));
-    }, [ListFriend?.length]),
+    }, []),
   );
 
   return (
@@ -119,7 +126,7 @@ const Phonebook = () => {
                   color: state === item.title ? Color.DimGray : 'gray',
                 }}>
                 {item.title}
-                {item.id === 1 && <Text>{ListFriend.length}</Text>}
+                {item.id === 1 && <Text>{ListFriend?.length}</Text>}
               </Text>
             </TouchableOpacity>
           ))}

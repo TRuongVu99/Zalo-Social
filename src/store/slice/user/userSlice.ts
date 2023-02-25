@@ -1,14 +1,7 @@
-import {data} from './../../../screens/Home/ Personal/data/index';
-import {
-  createSlice,
-  configureStore,
-  createAsyncThunk,
-  PayloadAction,
-  AnyAction,
-} from '@reduxjs/toolkit';
-import firestore, {firebase} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
-interface IUser {
+export interface IUser {
   profileUser: {
     username?: string | undefined;
     numberPhone?: string | undefined;
@@ -51,22 +44,103 @@ export const getUserProfile = createAsyncThunk(
     return dataUser;
   },
 );
+export const sendFriendInvitation = createAsyncThunk(
+  'user/sendFriendInvitation',
+  async (params: any, thunkAPI) => {
+    firestore()
+      .collection('Users')
+      .doc(params?.UserId)
+      .update({
+        listFriendInvitations: firestore.FieldValue.arrayUnion(
+          params.newprofileFriend,
+        ),
+      })
+      .then(() => {
+        console.log(`Đã gửi lời mời kết bạn `);
+      });
+  },
+);
+
 interface IAddFrendByPhoneNumber {
   UserIdFriend: string;
   friend: any;
 }
 export const addFrendByPhoneNumber = createAsyncThunk(
   'user/addFrendByPhoneNumber',
-  async (params: any, thunkAPI) => {
+  async (params: IAddFrendByPhoneNumber, thunkAPI) => {
     const result = firestore()
       .collection('Users')
-      .doc(params.UserIdFriend as string)
+      .doc(params.UserIdFriend)
       .update({
         listFriend: firestore.FieldValue.arrayUnion(params.friend),
       })
       .then(() => {
         console.log('User updated!');
       });
+  },
+);
+interface IHandleUnFriend {
+  UserId: string | undefined;
+  profileUnFriend: any;
+}
+export const handleUnFriend = createAsyncThunk(
+  'user/handleUnFriend',
+  async (params: IHandleUnFriend, thunkAPI) => {
+    firestore()
+      .collection('Users')
+      .doc(params.UserId)
+      .update({
+        listFriendInvitations: firestore.FieldValue.arrayRemove(
+          params.profileUnFriend,
+        ),
+      })
+      .then(() => {
+        console.log('User updated!');
+      });
+  },
+);
+
+interface IHandleReject {
+  UserId: string | undefined;
+  profileReject: any;
+}
+
+export const handleReject = createAsyncThunk(
+  'user/handleReject',
+  async (params: IHandleReject, thunkAPI) => {
+    firestore()
+      .collection('Users')
+      .doc(params.UserId)
+      .update({
+        listFriend: firestore.FieldValue.arrayRemove(params.profileReject),
+      })
+      .then(() => {
+        console.log('Reject');
+      });
+  },
+);
+interface IHandleConfirm {
+  numberPhone?: string | undefined;
+  profileUser?: any;
+  UserId?: string | undefined;
+}
+
+export const handleConfirm = createAsyncThunk(
+  'user/handleReject',
+  async (params: IHandleConfirm, thunkAPI) => {
+    const newUserData = params.profileUser.listFriend.map((user: any) => {
+      if (user.numberPhone === params.numberPhone) {
+        return {...user, status: 3};
+      }
+      return user;
+    });
+    try {
+      await firestore().collection('Users').doc(params.UserId).update({
+        listFriend: newUserData,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   },
 );
 

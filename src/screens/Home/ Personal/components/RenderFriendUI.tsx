@@ -19,6 +19,9 @@ import {
 import moment from 'moment';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from '@icon/index';
+import {AnimatedScrollView} from '@kanelloc/react-native-animated-header-scroll-view';
+import HeaderNavbar from './HeaderNavbar';
+import TopNavBar from './TopNavBar';
 interface IRenderFriendUI {
   urlAvatar: string | undefined;
   name: string | undefined;
@@ -46,9 +49,109 @@ const RenderFriendUI = ({
   urlBackground,
 }: IRenderFriendUI) => {
   const inset = useSafeAreaInsets();
-  const types = type === IPeronalEnum.Confirm || type === IButtonEnum.disable;
+  const types =
+    type === IPeronalEnum.Confirm ||
+    type === IButtonEnum.disable ||
+    type === IPeronalEnum.Friend;
   return (
     <View style={styles.container}>
+      <AnimatedScrollView
+        style={styles.container}
+        headerMaxHeight={270}
+        topBarHeight={Platform.OS === 'ios' ? 90 : 70}
+        HeaderNavbarComponent={<HeaderNavbar type={IHeaderEnum.Register} />}
+        TopNavBarComponent={
+          <TopNavBar
+            avatar={urlAvatar ? urlAvatar : image.avatarDefault}
+            userName={name}
+            type={IHeaderEnum.Register}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+        headerImage={{
+          uri: urlBackground ? urlBackground : image.background,
+        }}>
+        <View style={[styles.body]}>
+          <View style={styles.borderAvatar}>
+            <Image
+              source={{uri: urlAvatar ? urlAvatar : image.avatarDefault}}
+              style={styles.avatar}
+            />
+          </View>
+          <TouchableOpacity style={{flexDirection: 'row'}}>
+            <Text style={styles.userName}>{name}</Text>
+            <IconAntDesign name={'edit'} size={22} style={styles.edit} />
+          </TouchableOpacity>
+          {type === IPeronalEnum.Confirm && (
+            <View style={styles.view}>
+              <Text style={styles.text}>
+                {`Từ số điện thoại - ${moment(
+                  timeStamp,
+                  'MM/DD/YYYY',
+                ).fromNow()}`}
+              </Text>
+
+              <View style={styles.row}>
+                <TouchableOpacity style={[styles.button, styles.reject]}>
+                  <Text
+                    style={[styles.FontFamily, styles.textReject]}
+                    onPress={onPressReject}>
+                    Từ chối
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.confirm]}
+                  onPress={onPressConfirm}>
+                  <Text style={[styles.FontFamily, styles.textConfirm]}>
+                    Đồng ý
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          {type === IPeronalEnum.Confirm && (
+            <Text style={styles.depcription}>
+              Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
+            </Text>
+          )}
+          {type === IPeronalEnum.AddFriend && (
+            <View style={[styles.row, {top: -70}]}>
+              <TouchableOpacity
+                style={[
+                  styles.message2,
+                  {
+                    paddingHorizontal:
+                      typeUnFriend === IPeronalEnum.UnFriend ? 70 : 100,
+                  },
+                ]}
+                onPress={onPressMessage}>
+                <IconAntDesign name={'message1'} size={20} color={Color.blue} />
+
+                <Text style={[styles.textMessage, {color: Color.blue}]}>
+                  Nhắn tin
+                </Text>
+              </TouchableOpacity>
+              {typeUnFriend === IPeronalEnum.AddFriend && (
+                <TouchableOpacity
+                  style={styles.addFriend}
+                  onPress={onPressAddFriend}>
+                  <Image
+                    source={Icon.addUser}
+                    style={{width: 18, height: 18}}
+                  />
+                </TouchableOpacity>
+              )}
+              {typeUnFriend === IPeronalEnum.UnFriend && (
+                <TouchableOpacity
+                  style={styles.addFriend}
+                  onPress={onPressUnFriend}>
+                  <Text>Huỷ kết bạn</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+        </View>
+      </AnimatedScrollView>
       {types && (
         <TouchableOpacity
           style={[styles.button, styles.message, {marginBottom: inset.bottom}]}
@@ -57,99 +160,6 @@ const RenderFriendUI = ({
           <Text style={styles.textMessage}>Nhắn tin</Text>
         </TouchableOpacity>
       )}
-      <ImageBackground
-        source={{
-          uri: urlBackground,
-        }}
-        resizeMode="cover"
-        style={styles.background}>
-        <Header
-          StyleHeaderSetting={{
-            backgroundColor: 'transparent',
-            paddingVertical: 40,
-            paddingTop: Platform.OS === 'android' ? 40 : inset.top * 1.15,
-          }}
-          type={IHeaderEnum.Register}
-          typePersonal={IHeaderEnum.Personal}
-        />
-      </ImageBackground>
-      <View style={[styles.body]}>
-        <View style={styles.borderAvatar}>
-          <Image
-            source={{uri: urlAvatar ? urlAvatar : image.avatarDefault}}
-            style={styles.avatar}
-          />
-        </View>
-        <TouchableOpacity style={{flexDirection: 'row'}}>
-          <Text style={styles.userName}>{name}</Text>
-          <IconAntDesign name={'edit'} size={22} style={styles.edit} />
-        </TouchableOpacity>
-        {type === IPeronalEnum.Confirm && (
-          <View style={styles.view}>
-            <Text style={styles.text}>
-              {`Từ số điện thoại - ${moment(
-                timeStamp,
-                'MM/DD/YYYY',
-              ).fromNow()}`}
-            </Text>
-
-            <View style={styles.row}>
-              <TouchableOpacity style={[styles.button, styles.reject]}>
-                <Text
-                  style={[styles.FontFamily, styles.textReject]}
-                  onPress={onPressReject}>
-                  Từ chối
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.confirm]}
-                onPress={onPressConfirm}>
-                <Text style={[styles.FontFamily, styles.textConfirm]}>
-                  Đồng ý
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-        {type === IPeronalEnum.Confirm && (
-          <Text style={styles.depcription}>
-            Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
-          </Text>
-        )}
-        {type === IPeronalEnum.AddFriend && (
-          <View style={[styles.row, {top: -70}]}>
-            <TouchableOpacity
-              style={[
-                styles.message2,
-                {
-                  paddingHorizontal:
-                    typeUnFriend === IPeronalEnum.UnFriend ? 70 : 100,
-                },
-              ]}
-              onPress={onPressMessage}>
-              <IconAntDesign name={'message1'} size={20} color={Color.blue} />
-
-              <Text style={[styles.textMessage, {color: Color.blue}]}>
-                Nhắn tin
-              </Text>
-            </TouchableOpacity>
-            {typeUnFriend === IPeronalEnum.AddFriend && (
-              <TouchableOpacity
-                style={styles.addFriend}
-                onPress={onPressAddFriend}>
-                <Image source={Icon.addUser} style={{width: 18, height: 18}} />
-              </TouchableOpacity>
-            )}
-            {typeUnFriend === IPeronalEnum.UnFriend && (
-              <TouchableOpacity
-                style={styles.addFriend}
-                onPress={onPressUnFriend}>
-                <Text>Huỷ kết bạn</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-      </View>
     </View>
   );
 };
@@ -181,7 +191,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   FontFamily: {
-    fontFamily: fontFamily.PoppinsRegular,
+    fontFamily: fontFamily.primaryFont,
     // fontSize: FontSize.h5,
   },
   reject: {
@@ -213,13 +223,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   text: {
-    fontFamily: fontFamily.PoppinsRegular,
+    fontFamily: fontFamily.primaryFont,
     fontSize: FontSize.h6 * 1.1,
     color: 'gray',
     paddingBottom: 10,
   },
   depcription: {
-    fontFamily: fontFamily.PoppinsRegular,
+    fontFamily: fontFamily.primaryFont,
     textAlign: 'center',
     paddingHorizontal: 20,
     top: -65,
