@@ -4,31 +4,31 @@ import OTPInput from '@components/OTPInput';
 import UiValidate from '@components/UiValidate';
 import {Color, FontSize} from '@constants';
 import {IHeaderEnum} from '@model/handelConfig';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {RootState} from '@store';
 import {useClearByFocusCell} from '@utils/useClearByFocusCell';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
-import {RootState} from '@store';
 export const keySaveUser = 'keySaveUser';
 export const keySaveAccount = 'keySaveAccount';
-import auth from '@react-native-firebase/auth';
 
 // export const {addUser} = counterSlice.actions;
+const countTime = 60;
 const ConfirmOTP = ({route}: {route: any}) => {
   const navigation = useNavigation<any>();
   const [otp, setOTP] = useState<string>('');
+  const [count, setCount] = useState<number>(countTime);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value: otp,
     setValue: setOTP,
@@ -36,6 +36,27 @@ const ConfirmOTP = ({route}: {route: any}) => {
   const {confirm, numberPhone, isLogin} = route.params;
   const {profileUser} = useSelector((state: RootState) => state.user);
   const {username} = profileUser;
+  useEffect(() => {
+    if (count === 0) return;
+    const interval = setInterval(() => {
+      setCount(prev => {
+        if (prev === 1) clearInterval(interval);
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [count]);
+
+  const resendOTP = () => {
+    auth()
+      .verifyPhoneNumber(numberPhone)
+      .then(value => {
+        console.log({value});
+      })
+      .catch(err => {
+        console.log({err});
+      });
+  };
 
   async function confirmCode(code: string) {
     try {
@@ -95,10 +116,18 @@ const ConfirmOTP = ({route}: {route: any}) => {
             )}
           />
           <View style={{flexDirection: 'row', paddingVertical: 30}}>
-            <Text style={{color: Color.DimGray}}>Gửi lại mã</Text>
-            <TouchableOpacity>
-              <Text style={styles.time}>00:25</Text>
+            <TouchableOpacity
+              disabled={count !== 0}
+              onPress={() => {
+                resendOTP();
+                setCount(countTime);
+              }}>
+              <Text style={{color: Color.DimGray}}>Gửi lại mã</Text>
             </TouchableOpacity>
+
+            <Text style={styles.time}>{`00:${
+              count > 9 ? count : '0' + count
+            }`}</Text>
           </View>
           <UIButton
             disabled={otp.length !== 6}

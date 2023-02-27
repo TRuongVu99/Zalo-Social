@@ -119,6 +119,9 @@ const Phonebook = () => {
                   backgroundColor:
                     state === item.title ? Color.reject : 'white',
                 },
+                index === label?.length - 1 && {
+                  marginLeft: 10,
+                },
               ]}>
               <Text
                 style={{

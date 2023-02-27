@@ -60,6 +60,7 @@ const Login = ({route}: {route: any}) => {
           keyboardType="number-pad"
           onFocus={() => setFocus(false)}
           onBlur={() => setFocus(true)}
+          maxLength={10}
         />
       </View>
       <TouchableOpacity
