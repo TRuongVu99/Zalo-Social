@@ -28,7 +28,11 @@ const Register = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Header type={IHeaderEnum.Register} label={'Tạo tài khoản'} />
+        <Header
+          type={IHeaderEnum.Register}
+          label={'Tạo tài khoản'}
+          onPressExit={() => navigation.goBack()}
+        />
         <View style={styles.view1}>
           <Text style={styles.label}>Tên Zalo</Text>
           <CustumInput

@@ -13,7 +13,7 @@ import {
 } from '@store/slice/user/userSlice';
 import {windowHeight} from '@utils/Dimensions';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import RenderFriendUI from './components/RenderFriendUI';
@@ -32,6 +32,7 @@ const Personal = ({route}: IPersonal) => {
   if (type === IPeronalEnum.Confirm) {
     dispatch(addOption('fade'));
   }
+
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
   );
@@ -212,7 +213,7 @@ const Personal = ({route}: IPersonal) => {
         <RenderUserUI
           urlAvatar={profileUser?.avatar}
           name={profileUser?.username}
-          urlBackground={profileUser.background}
+          urlBackground={profileUser?.background}
           loading={loading}
           profile={newProfileUser}
         />

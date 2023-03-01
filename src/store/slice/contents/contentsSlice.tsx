@@ -87,7 +87,7 @@ export const likeStatus = createAsyncThunk(
     firestore()
       .collection('Status')
       .doc(params.numberPhone)
-      .update({
+      .set({
         listStatusContents: newContent,
       })
       .then(() => {
@@ -104,10 +104,10 @@ export const likeStatus = createAsyncThunk(
 export const sentComment = createAsyncThunk(
   'contents/sentComment',
   async (params: ICreateContent) => {
-    const content = params?.contents;
-    const newContent = params?.dataContents?.listStatusContents?.map(
+    const contents = params?.contents;
+    const newContents = params?.dataContents?.listStatusContents?.map(
       (item: any) => {
-        if (JSON.stringify(item) === JSON.stringify(content)) {
+        if (JSON.stringify(item) === JSON.stringify(contents)) {
           return {...item, comments: params.newComment};
         }
         return item;
@@ -116,15 +116,15 @@ export const sentComment = createAsyncThunk(
     firestore()
       .collection('Status')
       .doc(params.numberPhone)
-      .update({
-        listStatusContents: newContent,
+      .set({
+        listStatusContents: newContents,
       })
       .then(() => {
-        console.log('Comment thành công');
+        console.log('oke');
       })
       .catch(err => {
-        console.log('Comment thất bại');
-        console.log(err);
+        console.log('that bai');
+        console.log({err});
       });
   },
 );
@@ -207,6 +207,7 @@ export const counterSlice = createSlice({
     builder.addCase(getStatus.fulfilled, (state: any, action) => {
       state.dataContents = action.payload;
     });
+
     //rejected
     builder.addCase(likeStatus.rejected, err => {
       console.log(err);

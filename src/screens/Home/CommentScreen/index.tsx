@@ -26,7 +26,7 @@ import FontSize from '@constants/FontSize';
 import UIButton from '@components/UIButton';
 import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   getStatus,
   likeStatus,
@@ -46,11 +46,18 @@ import {
 import ImageView from 'react-native-image-viewing';
 import Platform from '@utils/Platform';
 import HeaderViewing from '../ Personal/components/HeaderViewing';
+import {RootState} from '@store/index';
+import CustomInput from './components/CustomInput';
 
 const CommentScreen = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
-  const {data, profile, newProfileUser, profileFriend, type, dataContents} =
-    route?.params;
+  const {dataContents} = useSelector((state: RootState) => state.contents);
+  const {profile, newProfileUser, profileFriend, type, index} = route?.params;
+
+  const arrs = dataContents?.listStatusContents?.filter(
+    (a: any, i: number) => index === i,
+  );
+  const data = arrs[0];
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
   const isLikeUser = data?.likes?.some(
@@ -62,7 +69,16 @@ const CommentScreen = ({route}: {route: any}) => {
   const [visible, setIsVisible] = useState(false);
   const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
   const [commentApp, setComment] = useState<string>('');
-  const dataComment = {...newProfileUser, comment: commentApp};
+  useEffect(() => {
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+      }),
+    );
+  }, []);
   const onPressUnLike = async () => {
     const newLike = [...data?.likes];
     const arr = newLike.filter(
@@ -117,7 +133,9 @@ const CommentScreen = ({route}: {route: any}) => {
   };
   const onComments = async () => {
     const newComment = [...data?.comments];
+    const dataComment = {...newProfileUser, comment: commentApp};
     newComment.push(dataComment);
+
     await dispatch(
       sentComment({
         dataContents,
@@ -126,9 +144,8 @@ const CommentScreen = ({route}: {route: any}) => {
             ? profileFriend.numberPhone
             : profile.numberPhone,
         contents: data,
-        likeStatus: true,
         profile: newProfileUser,
-        newComment,
+        newComment: newComment,
       }),
     ).unwrap();
     dispatch(
@@ -139,16 +156,21 @@ const CommentScreen = ({route}: {route: any}) => {
             : profile.numberPhone,
       }),
     );
+    dispatch(
+      getStatus({
+        numberPhone: profileFriend.numberPhone,
+      }),
+    );
   };
   const datas = data?.media?.map((img: any) => {
     return {uri: img};
   });
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
-      setPaddingBottom(false);
+      setPaddingBottom(true);
     });
     const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
-      setPaddingBottom(true);
+      setPaddingBottom(false);
     });
   }, []);
   return (
@@ -160,6 +182,17 @@ const CommentScreen = ({route}: {route: any}) => {
           label={'Bình luận'}
           type={IHeaderEnum.Register}
           typePersonal={IHeaderEnum.Comment}
+          onPressExit={async () => {
+            await dispatch(
+              getStatus({
+                numberPhone:
+                  type === IPeronalEnum.Friend
+                    ? profileFriend.numberPhone
+                    : profile.numberPhone,
+              }),
+            ).unwrap();
+            navigation.goBack();
+          }}
           onPress={() => {
             navigation.navigate(RouterName.SearchScreen);
           }}
@@ -216,7 +249,7 @@ const CommentScreen = ({route}: {route: any}) => {
                     style={styles.comment}
                     tintColor={'white'}
                   />
-                  <Text style={styles.likes}>{data.comments.length}</Text>
+                  <Text style={styles.likes}>{data.comments?.length}</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -278,7 +311,9 @@ const CommentScreen = ({route}: {route: any}) => {
             {data?.media.length === 1 ? (
               <RenderImage1
                 ListImage={data?.media}
-                onPressImg={() => setIsVisible(true)}
+                onPressImg={() => {
+                  setIsVisible(true);
+                }}
               />
             ) : data?.media.length === 2 ? (
               <RenderImage2
@@ -306,47 +341,67 @@ const CommentScreen = ({route}: {route: any}) => {
                 setQuantity(like ? quantity - 1 : quantity + 1);
                 like ? onPressUnLike() : onPressLike();
               }}
-              style={styles.heart}>
+              style={[styles.heart, styles.heart2]}>
               {!like ? (
-                <IconFontAwesome name={'heart-o'} size={24} color={'black'} />
+                <IconFontAwesome name={'heart-o'} size={22} color={'black'} />
               ) : (
-                <IconAntDesign name={'heart'} size={24} color={Color.heart} />
+                <IconAntDesign name={'heart'} size={22} color={Color.heart} />
               )}
+              <Text style={styles.like}>{quantity}</Text>
             </TouchableOpacity>
-
-            <Text style={styles.like}>{quantity}</Text>
+          </View>
+          <View>
+            {data?.comments?.map((comment: any) => (
+              <View style={{flexDirection: 'row', paddingBottom: 10}}>
+                <TouchableOpacity>
+                  <FastImage
+                    source={{uri: comment.avatar}}
+                    style={styles.avatar2}
+                  />
+                </TouchableOpacity>
+                <View style={[styles.container, {marginRight: 20}]}>
+                  <View style={styles.row}>
+                    <Text style={[styles.userName, {flex: 1}]}>
+                      {comment.username}
+                    </Text>
+                    <TouchableOpacity>
+                      <IconFontAwesome
+                        name={'heart-o'}
+                        size={19}
+                        color={Color.icon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.commentText}>{comment.comment}</Text>
+                  <View style={styles.row}>
+                    <Text style={styles.description}>{comment.timeStamp}</Text>
+                    {comment.UserId !== profile.UserId && (
+                      <TouchableOpacity>
+                        <Text
+                          style={[
+                            styles.userName,
+                            {fontSize: FontSize.h5 * 0.9, marginLeft: 20},
+                          ]}>
+                          Trả lời
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                </View>
+              </View>
+            ))}
           </View>
         </ScrollView>
-        <View
-          style={[
-            styles.viewTextInput,
-            {paddingBottom: paddingBottom ? bottom * 1.2 : 0},
-          ]}>
-          <TouchableOpacity>
-            <IconSimple name={'emotsmile'} size={26} color={Color.DimGray} />
-          </TouchableOpacity>
-          <TextInput
-            value={commentApp}
-            multiline={true}
-            placeholder="Nhập bình luận"
-            onChangeText={(text: string) => setComment(text)}
-            style={styles.textInput}
-          />
-          <TouchableOpacity style={{marginHorizontal: 20}}>
-            <IconSimple name={'picture'} size={26} color={Color.DimGray} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setComment('');
-              onComments();
-            }}>
-            <IconIonicons
-              name={'send'}
-              size={26}
-              color={commentApp !== '' ? Color.primary : Color.disable}
-            />
-          </TouchableOpacity>
-        </View>
+        <CustomInput
+          onChangeText={(text: string) => setComment(text)}
+          onPress={() => {
+            setComment('');
+            onComments();
+            Keyboard.dismiss();
+          }}
+          commentApp={commentApp}
+          paddingBottom={paddingBottom}
+        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -372,7 +427,18 @@ const styles = StyleSheet.create({
     color: Color.icon,
     fontSize: FontSize.h5 * 0.85,
   },
-  userName: {fontSize: FontSize.h4 * 0.95},
+  userName: {
+    fontSize: FontSize.h5,
+    fontFamily: fontFamily.RobotoMedium,
+    color: Color.DimGray,
+  },
+  commentText: {
+    fontSize: FontSize.h5,
+    fontFamily: fontFamily.PoppinsRegular,
+    color: Color.textComment,
+    marginRight: 30,
+    paddingVertical: 5,
+  },
   icon: {
     width: 25,
     height: 25,
@@ -447,5 +513,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.2,
     paddingHorizontal: 10,
     borderTopColor: Color.Darkgray,
+  },
+  heart2: {marginLeft: 20, marginBottom: 20, marginTop: 5},
+  avatar2: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginHorizontal: 20,
   },
 });

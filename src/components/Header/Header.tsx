@@ -90,11 +90,7 @@ const Header = ({
             {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
             StyleHeaderSetting,
           ]}>
-          <TouchableOpacity
-            style={[styles.back]}
-            onPress={() => {
-              navigation.goBack();
-            }}>
+          <TouchableOpacity style={[styles.back]} onPress={onPressExit}>
             <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
           </TouchableOpacity>
           <Text style={styles.label}>{label}</Text>

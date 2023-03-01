@@ -1,37 +1,37 @@
-import Header from '@components/Header';
 import {Color, FontSize, image} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
-import {
-  IHeaderEnum,
-  IOptionEnum,
-  IPeronalEnum,
-  IPreviewImageEnum,
-} from '@model/handelConfig';
+import {AnimatedScrollView} from '@kanelloc/react-native-animated-header-scroll-view';
+import {IOptionEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {useNavigation} from '@react-navigation/core';
 import {AppDispatch, RootState} from '@store/index';
+import {
+  deleteStatus,
+  getStatus,
+  likeStatus,
+} from '@store/slice/contents/contentsSlice';
+import {getUserProfile} from '@store/slice/user/userSlice';
 import {windowHeight, windowWidth} from '@utils/Dimensions';
+import moment from 'moment';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {
   Alert,
   FlatList,
   GestureResponderEvent,
-  Image,
-  ImageBackground,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconEntypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   data,
@@ -39,25 +39,10 @@ import {
   optionChangeBackground,
   optionStatus,
 } from '../data';
-import Opstion from './Opstion';
-import isIos from '@utils/Platform';
-import isAndroid from '@utils/Platform';
-import RenderStatus from './RenderStatus';
-import FastImage from 'react-native-fast-image';
-import {getUserProfile, IUser} from '@store/slice/user/userSlice';
-import {
-  deletePost,
-  deleteStatus,
-  getStatus,
-  likeStatus,
-  setLikePost,
-} from '@store/slice/contents/contentsSlice';
-import {AnimatedScrollView} from '@kanelloc/react-native-animated-header-scroll-view';
 import HeaderNavbar from './HeaderNavbar';
+import Opstion from './Opstion';
+import RenderStatus from './RenderStatus';
 import TopNavBar from './TopNavBar';
-import moment from 'moment';
-import ImageView from 'react-native-image-viewing';
-import {startLoading} from '@store/slice/app/appSlice';
 interface IRenderUserUI {
   urlAvatar: string | undefined;
   name: string | undefined;
@@ -101,11 +86,13 @@ const RenderUserUI = ({
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-  useLayoutEffect(() => {
+
+  useEffect(() => {
     if (type === IPeronalEnum.Friend) {
       dispatch(getStatus({numberPhone: profileFriend.numberPhone}));
     }
   }, []);
+
   const dataStatus = [...dataContents?.listStatusContents];
   if (Loading) {
     setTimeout(() => {
@@ -125,6 +112,31 @@ const RenderUserUI = ({
       dispatch(getUserProfile({uid: profileUser?.uid}));
     }
   };
+  const updateAvatarListFriend = async (avatar: string) => {
+    const listUserIdFriends = profileUser?.listFriend?.map((item: any) => {
+      return item.UserId;
+    });
+    for (let i = 0; i < listUserIdFriends.length; ++i) {
+      await firestore()
+        .collection('Users')
+        .doc(listUserIdFriends[i])
+        .get()
+        .then(item => {
+          const listFriends = item?.data();
+          firestore()
+            .collection('Users')
+            .doc(listUserIdFriends[i])
+            .update({
+              listFriend: listFriends?.listFriend?.map((items: any) => {
+                if (items.UserId === profileUser.UserId) {
+                  return {...items, avatar};
+                }
+                return items;
+              }),
+            });
+        });
+    }
+  };
   const updateBackground = async (background: string) => {
     try {
       await firestore()
@@ -137,27 +149,78 @@ const RenderUserUI = ({
       dispatch(getUserProfile({uid: profileUser?.uid}));
     }
   };
+  const updateBackgroundListFriend = async (background: string) => {
+    const listUserIdFriends = profileUser?.listFriend?.map((item: any) => {
+      return item.UserId;
+    });
+    for (let i = 0; i < listUserIdFriends.length; ++i) {
+      await firestore()
+        .collection('Users')
+        .doc(listUserIdFriends[i])
+        .get()
+        .then(item => {
+          const listFriends = item?.data();
+          firestore()
+            .collection('Users')
+            .doc(listUserIdFriends[i])
+            .update({
+              listFriend: listFriends?.listFriend?.map((items: any) => {
+                if (items.UserId === profileUser.UserId) {
+                  return {...items, background};
+                }
+                return items;
+              }),
+            });
+        });
+    }
+  };
+
   const getImageInAlbum = () => {
     ImagePicker.openPicker({
       width: 400,
       height: 400,
       cropping: true,
       includeBase64: true,
-    }).then((images: any) => {
-      updateAvatar(`data:${images.mime};base64,${images.data}`);
+    }).then(async (images: any) => {
       setIsSelect(false);
+      await UploadMediaToStorage(images.path);
+      GetURLMediaToStorage(images.path);
     });
   };
+
   const getBackgroundInAlbum = () => {
     ImagePicker.openPicker({
       width: 500,
       height: 400,
       includeBase64: true,
       cropping: true,
-    }).then((images: any) => {
-      updateBackground(`data:${images.mime};base64,${images.data}`);
+    }).then(async (images: any) => {
       setIsSelect(false);
+      await UploadMediaToStorage(images.path);
+      GetURLMediaToStorage(images.path, 'background');
     });
+  };
+  const UploadMediaToStorage = async (imageAp: string) => {
+    await storage()
+      .ref(imageAp.substring(imageAp.lastIndexOf('/') + 1))
+      .putFile(Platform.OS === 'ios' ? imageAp.replace('file://', '') : imageAp)
+      .then(() => console.log('Đăng ảnh thành công'))
+      .catch(() => console.log('Đăng ảnh thất bại'));
+  };
+
+  const GetURLMediaToStorage = async (imageApp: string, typeUrl?: string) => {
+    await storage()
+      .ref(imageApp.substring(imageApp.lastIndexOf('/') + 1))
+      .getDownloadURL()
+      .then((imageURL: string) => {
+        typeUrl === 'background'
+          ? updateBackground(imageURL)
+          : updateAvatar(imageURL);
+        updateBackgroundListFriend(imageURL);
+        updateAvatarListFriend(imageURL);
+        console.log('Tải URL thành công');
+      })
+      .catch(() => console.log('Tải URL thất bại'));
   };
   const openCamera = () => {
     ImagePicker.openCamera({
@@ -282,15 +345,14 @@ const RenderUserUI = ({
               />
             </Pressable>
             <Text style={styles.userName}>{name}</Text>
-            {(type === IPeronalEnum.Friend &&
-              dataContents?.listStatusContents?.length === 0) ||
-              (dataContents?.listStatusContents === undefined &&
-                type === IPeronalEnum.Friend && (
-                  <Text
-                    style={[styles.depcription, styles.textDepcriptionFriend]}>
-                    Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
-                  </Text>
-                ))}
+            {type === IPeronalEnum.Friend &&
+              dataContents?.listStatusContents?.length === 0 &&
+              type === IPeronalEnum.Friend && (
+                <Text
+                  style={[styles.depcription, styles.textDepcriptionFriend]}>
+                  Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
+                </Text>
+              )}
             {type !== IPeronalEnum.Friend && (
               <>
                 <TouchableOpacity style={styles.depcription}>
@@ -335,9 +397,9 @@ const RenderUserUI = ({
             )}
           </View>
           {dataContents?.listStatusContents?.length > 0 &&
-            dataStatus?.reverse()?.map((item: any, key: any, index: any) => (
+            dataStatus?.reverse()?.map((item: any, index: any) => (
               <View
-                key={item.dayOfPostStatus.hour}
+                key={item?.dayOfPostStatus?.hour}
                 style={{marginLeft: 25, marginRight: 10}}>
                 <View style={styles.day}>
                   <Text
@@ -421,7 +483,15 @@ const RenderUserUI = ({
                     setTypeOpstion(IOptionEnum.HandleStatus);
                     setItem({item, index});
                   }}
-                  onPressComments={() => {
+                  onPressComments={async () => {
+                    await dispatch(
+                      getStatus({
+                        numberPhone:
+                          type === IPeronalEnum.Friend
+                            ? profileFriend.numberPhone
+                            : profile.numberPhone,
+                      }),
+                    );
                     navigation.navigate(RouterName.CommentScreen, {
                       data: item,
                       profile: profileUser,
@@ -429,6 +499,7 @@ const RenderUserUI = ({
                       profileFriend,
                       type,
                       dataContents,
+                      index,
                     });
                   }}
                 />

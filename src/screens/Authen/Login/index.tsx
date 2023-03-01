@@ -47,7 +47,11 @@ const Login = ({route}: {route: any}) => {
 
   return (
     <View style={styles.container}>
-      <Header type={IHeaderEnum.Register} label={'Đăng nhập'} />
+      <Header
+        type={IHeaderEnum.Register}
+        label={'Đăng nhập'}
+        onPressExit={() => navigation.goBack()}
+      />
       <UiValidate
         isValid={true}
         notification={'Vui lòng nhập số điện thoại và mật khẩu để đăng nhập'}

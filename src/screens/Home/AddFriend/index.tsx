@@ -86,7 +86,11 @@ const AddFriend = () => {
   };
   return (
     <View style={styles.container}>
-      <Header type={IHeaderEnum.Register} label={'Thêm bạn'} />
+      <Header
+        type={IHeaderEnum.Register}
+        label={'Thêm bạn'}
+        onPressExit={() => navigation.goBack()}
+      />
 
       <View style={styles.view1}>
         <Text style={[styles.fontFamily, styles.text]}>

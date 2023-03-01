@@ -130,6 +130,7 @@ const Setting = () => {
         label={'Cài đặt'}
         type={IHeaderEnum.Register}
         name={'search1'}
+        onPressExit={() => navigation.goBack()}
         onPress={() => {
           navigation.navigate(RouterName.SearchScreen);
         }}
