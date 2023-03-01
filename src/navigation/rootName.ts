@@ -24,4 +24,5 @@ export const RouterName = {
   PersonalFriendRequest: 'PersonalFriendRequest',
   PostStatus: 'PostStatus',
   PreViewImage: 'PreViewImage',
+  CommentScreen: 'CommentScreen',
 };

@@ -6770,6 +6770,11 @@ react-native-image-crop-picker@^0.33.2:
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.33.4.tgz#12c25f97f37596720348776809557b1f7552cdcf"
   integrity sha512-HHA1Optc5JhGVzS/+ctNBLDBbgR3AnxEg421LJN2GRL/KmsleKWHlIEOVEFO0DYu62iV4NC/2zRScQLih6Dv1w==
 
+react-native-image-viewing@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-viewing/-/react-native-image-viewing-0.2.2.tgz#fb26e57d7d3d9ce4559a3af3d244387c0367242b"
+  integrity sha512-osWieG+p/d2NPbAyonOMubttajtYEYiRGQaJA54slFxZ69j1V4/dCmcrVQry47ktVKy8/qpFwCpW1eT6MH5T2Q==
+
 react-native-indicators@^0.17.0:
   version "0.17.0"
   resolved "https://registry.yarnpkg.com/react-native-indicators/-/react-native-indicators-0.17.0.tgz#92f95efaf5fb53be576dfe4e1980a25655a93f55"

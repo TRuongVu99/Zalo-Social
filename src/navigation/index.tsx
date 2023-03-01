@@ -2,7 +2,7 @@ import BottomTabBar from '@components/BottomTabBar';
 import {Loading} from '@components';
 import PreViewImage from '@components/PreViewImage';
 import auth from '@react-native-firebase/auth';
-import firestore, {firebase} from '@react-native-firebase/firestore';
+import {firebase} from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConfirmOTP from '@screens/Authen/ConfirmOTP';
@@ -21,13 +21,12 @@ import OptionMessage from '@screens/Home/OptionMessage';
 import SearchScreen from '@screens/Home/SearchScreen';
 import Setting from '@screens/Home/Setting';
 import {AppDispatch, RootState} from '@store/index';
-import {getMessageAll, getMessages} from '@store/slice/message/messageSlice';
-// import {getMessage1} from '@store/slice/message/messageSlice';
 import React, {useEffect, useState} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
 import {getUserProfile} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
+import CommentScreen from '@screens/Home/CommentScreen';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -38,28 +37,7 @@ const Application = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   firebase.auth().settings.appVerificationDisabledForTesting = true;
-  // useEffect(() => {
-  //   getMessage1(profileUser.numberPhone);
-  // }, []);
 
-  function allMessages() {
-    const subscriber = firestore()
-      .collection('Message')
-      .onSnapshot(querySnapshot => {
-        const data: any = [];
-        querySnapshot.forEach(documentSnapshot => {
-          data.push(documentSnapshot.data());
-        });
-        dispatch(getMessageAll(data));
-      });
-
-    // Stop listening for updates when no longer required
-    return () => subscriber();
-  }
-
-  useEffect(() => {
-    allMessages();
-  }, []);
   async function onAuthStateChanged(user: any) {
     setUser(user);
     const uid = user?._user?.uid;
@@ -131,6 +109,10 @@ const Application = () => {
                 component={OptionMessage}
               />
               <Stack.Screen name={RouterName.Setting} component={Setting} />
+              <Stack.Screen
+                name={RouterName.CommentScreen}
+                component={CommentScreen}
+              />
               <Stack.Screen name={RouterName.AddFriend} component={AddFriend} />
               <Stack.Screen name={RouterName.Personal} component={Personal} />
               <Stack.Screen

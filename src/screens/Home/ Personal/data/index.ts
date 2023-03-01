@@ -185,3 +185,23 @@ export const optionChangeAvatar = [
     label: 'Chọn ảnh đại diện có sẵn',
   },
 ];
+export const optionStatus = [
+  {
+    id: 0,
+    label: 'Chỉnh sửa quyền xem',
+    depcription: 'Tất cả bạn bè',
+    icon: Icon.friends,
+  },
+  {
+    id: 1,
+    label: 'Chỉnh sửa bài đăng',
+    depcription: 'Bao gồm quyền xem bài đăng, nội dung ảnh/video,...',
+    icon: Icon.editing,
+  },
+  {
+    id: 2,
+    label: 'Xoá bài đăng',
+    depcription: 'Xoá bài đăng này của bạn',
+    icon: Icon.delete,
+  },
+];

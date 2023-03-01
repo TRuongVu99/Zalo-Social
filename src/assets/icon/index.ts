@@ -57,4 +57,8 @@ export const Icon = {
   pin: require('./pin.png'),
   images: require('./images.png'),
   comments: require('./comments.png'),
+  delete: require('./delete.png'),
+  editing: require('./editing.png'),
+  friends: require('./friends.png'),
+  more: require('./more.png'),
 };

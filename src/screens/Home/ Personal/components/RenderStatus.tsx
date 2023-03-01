@@ -1,30 +1,34 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {windowWidth} from '@utils/Dimensions';
-import FastImage from 'react-native-fast-image';
-import FontSize from '@constants/FontSize';
 import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
 import {fontFamily} from '@fonts/Font';
+import {Icon} from '@icon/index';
+import {setLikePost} from '@store/slice/contents/contentsSlice';
+import {windowWidth} from '@utils/Dimensions';
+import React, {useState} from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch} from '@store/index';
-import {
-  deleteStatus,
-  getStatus,
-  likeStatus,
-  setLikePost,
-} from '@store/slice/contents/contentsSlice';
-import {IUser} from '@store/slice/user/userSlice';
-import {Icon} from '@icon/index';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch} from 'react-redux';
+
+import ImageView from 'react-native-image-viewing';
+import HeaderViewing from './HeaderViewing';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Platform from '@utils/Platform';
+
 interface IRenderStatus {
   data: {
     comments: any | undefined;
     likes: any | undefined;
-    media: Array<string> | undefined;
+    media: Array<string>;
     dayOfPostStatus: {
       day: any | undefined;
       hour: any | undefined;
@@ -35,45 +39,31 @@ interface IRenderStatus {
     };
     textContent: string;
   };
-  numberPhone: string | undefined;
   profile: any;
   onPressLike: () => void;
   onPressUnLike: () => void;
-  like?: boolean;
-  indexApp?: boolean;
-  newLikes?: any;
-  dataContents?: any;
+  onPressOption: () => void;
+  onPressComments: () => void;
   newProfileUser?: any;
 }
 const RenderStatus = ({
   data,
-  numberPhone,
   profile,
   onPressLike,
   onPressUnLike,
-  like,
-  indexApp,
-  newLikes,
-  dataContents,
   newProfileUser,
+  onPressOption,
+  onPressComments,
 }: IRenderStatus) => {
-  const [isLike, setLike] = useState<any>();
   const dispatch = useDispatch();
-  // data?.likes?.map((items: any, index: number) => {
-  //   if (
-  //     items?.numberPhone !== numberPhone ||
-  //     items?.numberPhone === numberPhone
-  //   ) {
-  //     console.log({items});
-  //   }
-  // });
+  const inset = useSafeAreaInsets();
+  const [indexs, setIndex] = useState<any>();
+  const [visible, setIsVisible] = useState(false);
   const isLikeUser = data?.likes?.some(
     (item: any) => item?.uid === profile?.uid,
   );
-  console.log({
-    isLikeUser,
-    data: data?.likes,
-    uid: profile,
+  const datas = data?.media?.map((img: any) => {
+    return {uri: img};
   });
   return (
     <View style={styles.container}>
@@ -90,6 +80,10 @@ const RenderStatus = ({
       <View style={{flexDirection: 'row'}}>
         {data?.media?.map((item: string, index: number, key: any) => (
           <TouchableOpacity
+            onPress={() => {
+              setIsVisible(true);
+              setIndex(index);
+            }}
             key={index}
             style={[styles.photo, {marginLeft: index === 0 ? 10 : 5}]}>
             {index < 3 && (
@@ -98,13 +92,71 @@ const RenderStatus = ({
                 style={styles.image}
               />
             )}
+            {data?.media?.length > 3 && index === 2 && (
+              <View style={styles.viewAbsolute}>
+                <Text style={styles.textAbsolute}>
+                  {`+ ${data?.media?.length - 3}`}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         ))}
       </View>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <ImageView
+        images={datas}
+        imageIndex={indexs}
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}
+        HeaderComponent={() => (
+          <HeaderViewing onPressClose={() => setIsVisible(false)} />
+        )}
+        FooterComponent={() => (
+          <>
+            <View style={styles.content}>
+              <Text style={styles.textContents}>{data?.textContent}</Text>
+            </View>
+            <View
+              style={[
+                styles.iconLeft,
+                {paddingBottom: Platform.isIos ? inset.bottom * 1.2 : 20},
+              ]}>
+              <TouchableOpacity
+                key={data.dayOfPostStatus.hour}
+                onPress={() => {
+                  dispatch(
+                    setLikePost({
+                      isLike: isLikeUser,
+                      data: data,
+                      uid: profile?.uid,
+                      newProfileUser,
+                    }),
+                  );
+                  isLikeUser ? onPressUnLike() : onPressLike();
+                }}
+                style={styles.heart}>
+                {!isLikeUser ? (
+                  <IconFontAwesome name={'heart-o'} size={24} color={'white'} />
+                ) : (
+                  <IconAntDesign name={'heart'} size={24} color={Color.heart} />
+                )}
+                <Text style={styles.likes}>{data.likes.length}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.row}>
+                <FastImage
+                  source={Icon.comments}
+                  style={styles.comment}
+                  tintColor={'white'}
+                />
+                <Text style={styles.likes}>{data.comments.length}</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
+      />
+      <View style={styles.row}>
         <View style={styles.iconLeft}>
           <TouchableOpacity
-            key={data.dayOfPostStatus.hour}
             onPress={() => {
               dispatch(
                 setLikePost({
@@ -122,14 +174,13 @@ const RenderStatus = ({
             ) : (
               <IconAntDesign name={'heart'} size={20} color={Color.heart} />
             )}
+            <Text style={styles.like}>{data.likes.length}</Text>
           </TouchableOpacity>
 
-          <Text style={styles.like}>{data.likes.length}</Text>
-
-          <TouchableOpacity>
+          <TouchableOpacity onPress={onPressComments} style={styles.row}>
             <FastImage source={Icon.comments} style={styles.comments} />
+            <Text style={styles.like}>{data.comments.length}</Text>
           </TouchableOpacity>
-          <Text style={styles.like}>{data.comments.length}</Text>
         </View>
         <TouchableOpacity>
           <IconMaterial
@@ -140,7 +191,7 @@ const RenderStatus = ({
           />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPressOption}>
           <IconIonicons
             name={'ellipsis-horizontal'}
             size={20}
@@ -168,14 +219,22 @@ const styles = StyleSheet.create({
   textContent: {
     fontSize: FontSize.h4,
     marginLeft: 10,
+    color: 'white',
+  },
+  textContents: {
+    fontFamily: fontFamily.primaryFont,
+    fontSize: FontSize.h4 * 0.9,
+    color: 'white',
   },
   photo: {marginVertical: 10},
   image: {width: windowWidth * 0.28, height: windowWidth * 0.28},
   iconLeft: {flexDirection: 'row', flex: 1, alignItems: 'center'},
   comments: {width: 21, height: 21, marginLeft: 20},
+  comment: {width: 28, height: 28, marginLeft: 20},
   heart: {
     marginLeft: 10,
     flexDirection: 'row',
+    alignItems: 'center',
   },
   like: {
     fontFamily: fontFamily.primaryFont,
@@ -183,17 +242,31 @@ const styles = StyleSheet.create({
     fontSize: FontSize.h4 * 0.9,
     marginHorizontal: 5,
   },
+  likes: {
+    fontFamily: fontFamily.primaryFont,
+    color: 'white',
+    fontSize: FontSize.h4,
+    marginHorizontal: 8,
+  },
+  content: {
+    marginVertical: 30,
+    paddingBottom: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Color.DimGray,
+    marginHorizontal: 10,
+  },
+  viewAbsolute: {
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    position: 'absolute',
+
+    width: windowWidth * 0.28,
+    height: windowWidth * 0.28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textAbsolute: {
+    color: 'white',
+    fontSize: FontSize.h2,
+  },
+  row: {flexDirection: 'row', alignItems: 'center'},
 });
-// () => {
-//   setTimeout(() => {
-//     dispatch(
-//       likeStatus({
-//         numberPhone: numberPhone,
-//         contents: data,
-//         likeStatus: likes,
-//         newLikes,
-//       }),
-//     );
-//     dispatch(getStatus({numberPhone: numberPhone}));
-//   });
-// }

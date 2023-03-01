@@ -1,3 +1,4 @@
+import {handleConfirm} from './../store/slice/user/userSlice';
 /* eslint-disable prettier/prettier */
 export enum IHeaderEnum {
   Home = 'HOME',
@@ -6,6 +7,7 @@ export enum IHeaderEnum {
   Search = 'SEARCH',
   Personal = 'PERSONAL',
   PostStatus = 'PostStatus',
+  Comment = 'COMMENT',
 }
 
 export enum IButtonEnum {
@@ -25,6 +27,7 @@ export enum IRequestEnum {
 export enum IOptionEnum {
   Avatar = 'Avatar',
   BackGround = 'BackGround',
+  HandleStatus = 'HandleStatus',
 }
 
 export enum IPreviewImageEnum {

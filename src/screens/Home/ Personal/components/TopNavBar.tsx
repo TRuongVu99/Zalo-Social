@@ -9,6 +9,7 @@ import FastImage from 'react-native-fast-image';
 import Color from '@constants/Color';
 import isAndroid from '@utils/Platform';
 import {IHeaderEnum} from '@model/handelConfig';
+import {Icon} from '@icon/index';
 
 interface ITopNavBar {
   avatar?: string;
@@ -43,11 +44,10 @@ const TopNavBar = ({avatar, userName, type}: ITopNavBar) => {
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
-          <IconFeather
-            name={'more-horizontal'}
-            size={24}
-            color={'black'}
-            style={styles.icon}
+          <FastImage
+            source={Icon.more}
+            tintColor={'black'}
+            style={{width: 30, height: 30}}
           />
         </TouchableOpacity>
       </View>

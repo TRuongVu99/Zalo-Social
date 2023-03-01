@@ -13,3 +13,4 @@ export * from './Home/SearchScreen';
 export * from './Home/Message';
 export * from './Home/Setting';
 export * from './Home/OptionMessage';
+export * from './Home/CommentScreen';

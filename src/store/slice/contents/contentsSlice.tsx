@@ -48,6 +48,7 @@ interface ICreateContent {
   profile?: any;
   newLikes?: any;
   dataContents?: any;
+  newComment?: any;
 }
 export const updateContent = createAsyncThunk(
   'contents/updateContent',
@@ -100,6 +101,33 @@ export const likeStatus = createAsyncThunk(
       });
   },
 );
+export const sentComment = createAsyncThunk(
+  'contents/sentComment',
+  async (params: ICreateContent) => {
+    const content = params?.contents;
+    const newContent = params?.dataContents?.listStatusContents?.map(
+      (item: any) => {
+        if (JSON.stringify(item) === JSON.stringify(content)) {
+          return {...item, comments: params.newComment};
+        }
+        return item;
+      },
+    );
+    firestore()
+      .collection('Status')
+      .doc(params.numberPhone)
+      .update({
+        listStatusContents: newContent,
+      })
+      .then(() => {
+        console.log('Comment thành công');
+      })
+      .catch(err => {
+        console.log('Comment thất bại');
+        console.log(err);
+      });
+  },
+);
 export const deleteStatus = createAsyncThunk(
   'contents/deleteStatus',
   async (params: ICreateContent) => {
@@ -134,6 +162,9 @@ export const counterSlice = createSlice({
     },
     createContent: (state, action) => {
       state.statusContents = action.payload;
+    },
+    deletePost: (state, action) => {
+      state.dataContents.listStatusContents.splice(action.payload, 1);
     },
     setLikePost: (state, action) => {
       const {isLike, data, uid, newProfileUser} = action.payload;
@@ -188,6 +219,7 @@ export const {
   resetListImages,
   createContent,
   setLikePost,
+  deletePost,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

@@ -1,0 +1,451 @@
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+  Image,
+  Alert,
+  Pressable,
+  ScrollView,
+  Keyboard,
+  TextInput,
+  KeyboardAvoidingView,
+} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import Header from '@components/Header';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {Icon} from '@icon/index';
+import {RouterName} from '@navigation/rootName';
+import {useNavigation} from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import {fontFamily} from '@fonts/Font';
+import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
+import UIButton from '@components/UIButton';
+import FastImage from 'react-native-fast-image';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
+import {
+  getStatus,
+  likeStatus,
+  sentComment,
+} from '@store/slice/contents/contentsSlice';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
+import {
+  RenderImage1,
+  RenderImage2,
+  RenderImage3,
+  RenderImage4,
+} from '@components/RenderImage';
+import ImageView from 'react-native-image-viewing';
+import Platform from '@utils/Platform';
+import HeaderViewing from '../ Personal/components/HeaderViewing';
+
+const CommentScreen = ({route}: {route: any}) => {
+  const dispatch = useDispatch<any>();
+  const {data, profile, newProfileUser, profileFriend, type, dataContents} =
+    route?.params;
+  const navigation = useNavigation<any>();
+  const {bottom} = useSafeAreaInsets();
+  const isLikeUser = data?.likes?.some(
+    (item: any) => item?.uid === profile?.uid,
+  );
+  const [like, setLike] = useState<boolean>(isLikeUser);
+  const [quantity, setQuantity] = useState<number>(data.likes.length);
+  const [indexs, setIndex] = useState<any>();
+  const [visible, setIsVisible] = useState(false);
+  const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
+  const [commentApp, setComment] = useState<string>('');
+  const dataComment = {...newProfileUser, comment: commentApp};
+  const onPressUnLike = async () => {
+    const newLike = [...data?.likes];
+    const arr = newLike.filter(
+      (item1: any) => item1.numberPhone !== profile.numberPhone,
+    );
+    await dispatch(
+      likeStatus({
+        dataContents,
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+        contents: data,
+        likeStatus: false,
+        profile: newProfileUser,
+        newLikes: arr,
+      }),
+    ).unwrap();
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+      }),
+    );
+  };
+  const onPressLike = async () => {
+    const newLikes = [...data?.likes];
+    newLikes.push(newProfileUser);
+    await dispatch(
+      likeStatus({
+        dataContents,
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+        contents: data,
+        likeStatus: true,
+        profile: newProfileUser,
+        newLikes,
+      }),
+    ).unwrap();
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+      }),
+    );
+  };
+  const onComments = async () => {
+    const newComment = [...data?.comments];
+    newComment.push(dataComment);
+    await dispatch(
+      sentComment({
+        dataContents,
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+        contents: data,
+        likeStatus: true,
+        profile: newProfileUser,
+        newComment,
+      }),
+    ).unwrap();
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profile.numberPhone,
+      }),
+    );
+  };
+  const datas = data?.media?.map((img: any) => {
+    return {uri: img};
+  });
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
+      setPaddingBottom(false);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
+      setPaddingBottom(true);
+    });
+  }, []);
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.isIos ? 'padding' : undefined}
+      style={styles.container}>
+      <View style={styles.container}>
+        <Header
+          label={'Bình luận'}
+          type={IHeaderEnum.Register}
+          typePersonal={IHeaderEnum.Comment}
+          onPress={() => {
+            navigation.navigate(RouterName.SearchScreen);
+          }}
+          StyleHeaderSetting={{
+            paddingVertical: Platform.isAndroid ? 14 : 10,
+          }}
+        />
+
+        <ImageView
+          images={datas}
+          imageIndex={indexs}
+          visible={visible}
+          onRequestClose={() => setIsVisible(false)}
+          HeaderComponent={() => (
+            <HeaderViewing onPressClose={() => setIsVisible(false)} />
+          )}
+          FooterComponent={() => (
+            <>
+              <View style={styles.content}>
+                <Text style={styles.textContents}>{data?.textContent}</Text>
+              </View>
+              <View
+                style={[
+                  styles.iconLeft,
+                  {paddingBottom: Platform.isIos ? bottom * 1.2 : 20},
+                ]}>
+                <TouchableOpacity
+                  key={data.dayOfPostStatus.hour}
+                  onPress={() => {
+                    setLike(!like);
+                    setQuantity(like ? quantity - 1 : quantity + 1);
+                    like ? onPressUnLike() : onPressLike();
+                  }}
+                  style={styles.heart}>
+                  {!isLikeUser ? (
+                    <IconFontAwesome
+                      name={'heart-o'}
+                      size={24}
+                      color={'white'}
+                    />
+                  ) : (
+                    <IconAntDesign
+                      name={'heart'}
+                      size={24}
+                      color={Color.heart}
+                    />
+                  )}
+                  <Text style={styles.likes}>{quantity}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.row}>
+                  <FastImage
+                    source={Icon.comments}
+                    style={styles.comment}
+                    tintColor={'white'}
+                  />
+                  <Text style={styles.likes}>{data.comments.length}</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        />
+
+        <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.view1}>
+            <FastImage
+              source={{
+                uri:
+                  type === IPeronalEnum.Friend
+                    ? profileFriend.avatar
+                    : profile?.avatar,
+              }}
+              style={styles.avatar}
+            />
+            <View style={{paddingLeft: 20}}>
+              <Text style={styles.labelStyle}>
+                {type === IPeronalEnum.Friend
+                  ? profileFriend.username
+                  : profile.username}
+              </Text>
+              <View style={styles.row}>
+                <Text style={styles.description}>
+                  {data?.dayOfPostStatus?.day}
+                </Text>
+                <IconAntDesign
+                  name={'minus'}
+                  size={16}
+                  color={Color.icon}
+                  style={styles.minus}
+                />
+                <IconMaterial
+                  name={'account-multiple'}
+                  size={16}
+                  color={Color.Darkgray}
+                />
+                <Text style={styles.description}>Tất cả bạn bè</Text>
+              </View>
+            </View>
+          </View>
+          <Text
+            style={[
+              styles.textContent,
+              {
+                fontFamily: data?.stylesText?.fontFamily,
+                color: data?.stylesText?.color,
+              },
+            ]}>
+            {data?.textContent}
+          </Text>
+
+          <View
+            style={{
+              alignItems: 'center',
+              paddingVertical: 15,
+            }}>
+            {data?.media.length === 1 ? (
+              <RenderImage1
+                ListImage={data?.media}
+                onPressImg={() => setIsVisible(true)}
+              />
+            ) : data?.media.length === 2 ? (
+              <RenderImage2
+                ListImage={data?.media}
+                onPressImg={() => setIsVisible(true)}
+              />
+            ) : data?.media.length > 2 && data?.media.length < 5 ? (
+              <RenderImage3
+                ListImage={data?.media}
+                onPressImg={() => setIsVisible(true)}
+              />
+            ) : data?.media.length > 4 ? (
+              <RenderImage4
+                ListImage={data?.media}
+                onPressImg={() => setIsVisible(true)}
+              />
+            ) : (
+              <View />
+            )}
+          </View>
+          <View style={styles.row}>
+            <TouchableOpacity
+              onPress={() => {
+                setLike(!like);
+                setQuantity(like ? quantity - 1 : quantity + 1);
+                like ? onPressUnLike() : onPressLike();
+              }}
+              style={styles.heart}>
+              {!like ? (
+                <IconFontAwesome name={'heart-o'} size={24} color={'black'} />
+              ) : (
+                <IconAntDesign name={'heart'} size={24} color={Color.heart} />
+              )}
+            </TouchableOpacity>
+
+            <Text style={styles.like}>{quantity}</Text>
+          </View>
+        </ScrollView>
+        <View
+          style={[
+            styles.viewTextInput,
+            {paddingBottom: paddingBottom ? bottom * 1.2 : 0},
+          ]}>
+          <TouchableOpacity>
+            <IconSimple name={'emotsmile'} size={26} color={Color.DimGray} />
+          </TouchableOpacity>
+          <TextInput
+            value={commentApp}
+            multiline={true}
+            placeholder="Nhập bình luận"
+            onChangeText={(text: string) => setComment(text)}
+            style={styles.textInput}
+          />
+          <TouchableOpacity style={{marginHorizontal: 20}}>
+            <IconSimple name={'picture'} size={26} color={Color.DimGray} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setComment('');
+              onComments();
+            }}>
+            <IconIonicons
+              name={'send'}
+              size={26}
+              color={commentApp !== '' ? Color.primary : Color.disable}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+export default CommentScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scroll: {
+    backgroundColor: 'white',
+  },
+  labelStyle: {
+    fontFamily: fontFamily.RobotoMedium,
+    color: Color.DimGray,
+    fontSize: FontSize.h4 * 0.9,
+    marginBottom: 5,
+  },
+  description: {
+    fontFamily: fontFamily.primaryFont,
+    color: Color.icon,
+    fontSize: FontSize.h5 * 0.85,
+  },
+  userName: {fontSize: FontSize.h4 * 0.95},
+  icon: {
+    width: 25,
+    height: 25,
+
+    marginHorizontal: 18,
+    alignSelf: 'center',
+  },
+  item: {
+    paddingVertical: 20,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  view1: {
+    flexDirection: 'row',
+    padding: 20,
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 55,
+    height: 55,
+    borderRadius: 55 / 2,
+  },
+  heart: {
+    marginLeft: 10,
+    flexDirection: 'row',
+  },
+  like: {
+    fontFamily: fontFamily.primaryFont,
+    color: Color.DimGray,
+    fontSize: FontSize.h4,
+    marginHorizontal: 5,
+  },
+  minus: {paddingHorizontal: 5},
+  textContent: {
+    fontSize: FontSize.h4,
+    marginLeft: 10,
+  },
+  row: {flexDirection: 'row', alignItems: 'center'},
+  likes: {
+    fontFamily: fontFamily.primaryFont,
+    color: 'white',
+    fontSize: FontSize.h4,
+    marginHorizontal: 8,
+  },
+  content: {
+    marginVertical: 30,
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Color.DimGray,
+    marginHorizontal: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  comment: {width: 28, height: 28, marginLeft: 20},
+  textContents: {
+    fontFamily: fontFamily.primaryFont,
+    fontSize: FontSize.h4 * 0.9,
+    color: 'white',
+  },
+  iconLeft: {flexDirection: 'row', flex: 1, alignItems: 'center'},
+  textInput: {
+    flex: 1,
+    paddingVertical: Platform.isIos ? 5 : 10,
+    fontSize: FontSize.h5,
+    paddingHorizontal: 10,
+  },
+  viewTextInput: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Platform.isIos ? 10 : 0,
+    borderTopWidth: 0.2,
+    paddingHorizontal: 10,
+    borderTopColor: Color.Darkgray,
+  },
+});
