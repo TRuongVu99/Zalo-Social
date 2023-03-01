@@ -1,4 +1,5 @@
 import Header from '@components/Header';
+import StatusBar, {Constants} from '@components/StatusBar';
 import Color from '@constants/Color';
 import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
@@ -155,6 +156,11 @@ const Phonebook = () => {
           extraData={(item: any) => item.uid}
         />
       </View>
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
     </View>
   );
 };

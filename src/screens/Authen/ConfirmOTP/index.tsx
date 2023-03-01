@@ -47,9 +47,14 @@ const ConfirmOTP = ({route}: {route: any}) => {
     return () => clearInterval(interval);
   }, [count]);
 
+  const formatNumberPhone: string =
+    numberPhone[0] === '0'
+      ? `+84${numberPhone.slice(1, numberPhone.length)}`
+      : `+84${numberPhone}`;
+
   const resendOTP = () => {
     auth()
-      .verifyPhoneNumber(numberPhone)
+      .verifyPhoneNumber(formatNumberPhone)
       .then(value => {
         console.log({value});
       })

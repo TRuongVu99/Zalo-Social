@@ -6,6 +6,7 @@ export enum IHeaderEnum {
   Search = 'SEARCH',
   Personal = 'PERSONAL',
   PostStatus = 'PostStatus',
+  QRCode = 'QRCode',
 }
 
 export enum IButtonEnum {

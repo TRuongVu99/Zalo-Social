@@ -14,7 +14,7 @@ import Header from '@components/Header';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
 import UserData from '@data/UserData';
-import {FontSize} from '@constants';
+import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
@@ -22,7 +22,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '@store/index';
 import firestore from '@react-native-firebase/firestore';
 import {getMessages} from '@store/slice/message/messageSlice';
-
+import StatusBar, {Constants} from '@components/StatusBar';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
@@ -70,19 +70,26 @@ const Home: React.FC = () => {
       </TouchableOpacity>
     );
   };
+  const onQRCode = async () => {
+    navigation.navigate(RouterName.QRCodeScan);
+  };
   return (
-    <TouchableNativeFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Header
-          placeholder={'Tìm kiếm'}
-          type={IHeaderEnum.Home}
-          nameIconRight1={Icon.qrcode}
-          nameIconRight2={Icon.plus}
-          typeOption={IPeronalEnum.AddFriend}
-        />
-        <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
-      </View>
-    </TouchableNativeFeedback>
+    <View style={styles.container}>
+      <Header
+        placeholder={'Tìm kiếm'}
+        type={IHeaderEnum.Home}
+        nameIconRight1={Icon.qrcode}
+        nameIconRight2={Icon.plus}
+        typeOption={IPeronalEnum.AddFriend}
+        onPressIconRight1={() => onQRCode()}
+      />
+      <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
+    </View>
   );
 };
 

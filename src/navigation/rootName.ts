@@ -24,4 +24,6 @@ export const RouterName = {
   PersonalFriendRequest: 'PersonalFriendRequest',
   PostStatus: 'PostStatus',
   PreViewImage: 'PreViewImage',
+  QRCode: 'QRCode',
+  QRCodeScan: 'QRCodeScan',
 };

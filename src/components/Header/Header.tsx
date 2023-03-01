@@ -1,6 +1,5 @@
 import {
   GestureResponderEvent,
-  Image,
   ImageStyle,
   Platform,
   Pressable,
@@ -17,26 +16,25 @@ import {Icon, Icon as icon} from '@icon/index';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
+import {windowHeight, windowWidth} from '@utils/Dimensions';
 import React, {useState} from 'react';
+import FastImage from 'react-native-fast-image';
+import {
+  Menu,
+  MenuOption,
+  MenuOptions,
+  MenuTrigger,
+} from 'react-native-popup-menu';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icons from 'react-native-vector-icons/AntDesign';
 import IconEntypo from 'react-native-vector-icons/Entypo';
-import IconFeather from 'react-native-vector-icons/Feather';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
+import IconFeather from 'react-native-vector-icons/Feather';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import {fontFamily} from '../../assets/fonts/Font';
-import FastImage from 'react-native-fast-image';
 import {Color, FontSize} from '../../constants';
-import {
-  Menu,
-  MenuOptions,
-  MenuOption,
-  MenuTrigger,
-} from 'react-native-popup-menu';
-import {renderers} from 'react-native-popup-menu';
 import {menu} from './menu';
-import {windowHeight, windowWidth} from '@utils/Dimensions';
 interface IHeader {
   type?: string;
   label?: string;
@@ -364,6 +362,20 @@ const Header = ({
               />
             </TouchableOpacity>
           </View>
+        </View>
+      );
+    case IHeaderEnum.QRCode:
+      return (
+        <View
+          style={[
+            styles.header,
+            {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 15},
+          ]}>
+          <TouchableOpacity style={[styles.back]} onPress={onPress}>
+            <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
+          </TouchableOpacity>
+          <Text style={[styles.label, {textAlign: 'center'}]}>{label}</Text>
+          <View style={styles.back} />
         </View>
       );
     default:
