@@ -8,10 +8,13 @@ use_frameworks!
 use_modular_headers!
 target 'TestApp' do
 
+
   pod 'Firebase', :modular_headers => true
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
+  pod 'MLKitVision', :podspec => 'MLKitVision.podspec.json'
+  pod 'MLKitCommon', :podspec => 'MLKitCommon.podspec.json'
 
   config = use_native_modules!
 
@@ -38,7 +41,7 @@ target 'TestApp' do
     inherit! :complete
     # Pods for testing
   end
-
+  
   # use_flipper!()
   post_install do |installer|
     react_native_post_install(installer)
