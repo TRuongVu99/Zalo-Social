@@ -4,8 +4,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Keyboard,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Color from '@constants/Color';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
@@ -18,20 +19,24 @@ interface ICustomInput {
   onPress: () => void;
   onChangeText: (text: string) => void;
   commentApp: string;
-  paddingBottom: boolean;
 }
-const CustomInput = ({
-  onChangeText,
-  onPress,
-  commentApp,
-  paddingBottom,
-}: ICustomInput) => {
+const CustomInput = ({onChangeText, onPress, commentApp}: ICustomInput) => {
   const {bottom} = useSafeAreaInsets();
+  const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
+      setPaddingBottom(false);
+    });
+    const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
+      setPaddingBottom(true);
+    });
+  }, []);
+  console.log({paddingBottom});
   return (
     <View
       style={[
         styles.viewTextInput,
-        {paddingBottom: !paddingBottom ? bottom * 1.2 : bottom * 0.3},
+        {paddingBottom: paddingBottom ? bottom * 1.2 : 10},
       ]}>
       <TouchableOpacity>
         <IconSimple name={'emotsmile'} size={26} color={Color.DimGray} />

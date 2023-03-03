@@ -27,6 +27,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getUserProfile} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
 import CommentScreen from '@screens/Home/CommentScreen';
+import {
+  getAllStatus,
+  getNewAllStatus,
+} from '@store/slice/contents/contentsSlice';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -34,7 +38,6 @@ const Application = () => {
   const [userApp, setUser] = useState<any>();
   const {option} = useSelector((state: RootState) => state.user);
   const {loadingApp} = useSelector((state: RootState) => state?.app);
-
   const dispatch = useDispatch<AppDispatch>();
   firebase.auth().settings.appVerificationDisabledForTesting = true;
 
@@ -44,7 +47,10 @@ const Application = () => {
 
     try {
       if (user) {
-        dispatch(getUserProfile({uid}));
+        const response = await dispatch(getUserProfile({uid})).unwrap();
+        if (Object.keys(response).length > 0) {
+          dispatch(getAllStatus({profileUser: response}));
+        }
       }
     } catch (error) {
       console.log(error);

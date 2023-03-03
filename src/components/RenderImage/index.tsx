@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 1.5,
   },
   image1: {
-    width: windowWidth,
+    width: windowWidth * 0.99,
     height: windowWidth,
-    margin: 1.5,
+    // margin: 1.5,
   },
 });

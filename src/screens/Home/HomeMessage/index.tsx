@@ -59,18 +59,16 @@ const Home: React.FC = () => {
     );
   };
   return (
-    <TouchableNativeFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Header
-          placeholder={'Tìm kiếm'}
-          type={IHeaderEnum.Home}
-          nameIconRight1={Icon.qrcode}
-          nameIconRight2={Icon.plus}
-          typeOption={IPeronalEnum.AddFriend}
-        />
-        <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
-      </View>
-    </TouchableNativeFeedback>
+    <View style={styles.container}>
+      <Header
+        placeholder={'Tìm kiếm'}
+        type={IHeaderEnum.Home}
+        nameIconRight1={Icon.qrcode}
+        nameIconRight2={Icon.plus}
+        typeOption={IPeronalEnum.AddFriend}
+      />
+      <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
+    </View>
   );
 };
 

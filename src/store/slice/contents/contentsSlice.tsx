@@ -14,6 +14,7 @@ interface IFriend {
     };
   };
   dataContents?: any;
+  AllStatus?: any;
 }
 
 const initialState: IFriend = {
@@ -22,6 +23,7 @@ const initialState: IFriend = {
   dataContents: {
     listStatusContents: [],
   },
+  AllStatus: [],
 };
 
 export const getStatus = createAsyncThunk(
@@ -38,6 +40,30 @@ export const getStatus = createAsyncThunk(
       });
 
     return data;
+  },
+);
+export const getAllStatus = createAsyncThunk(
+  'contents/getAllStatus',
+  async (params: any) => {
+    const listFriends = params.profileUser?.listFriend;
+
+    const data: any = [];
+    for (let i = 0; i < listFriends.length; ++i) {
+      await firestore()
+        .collection('Status')
+        .doc(listFriends[i].numberPhone)
+        .get()
+        .then(querySnapshot => {
+          const arr = querySnapshot
+            .data()
+            ?.listStatusContents.map((items: any) => {
+              return {...items, profile: listFriends[i]};
+            });
+          data.push(arr);
+        })
+        .catch(err => console.log({err}));
+    }
+    return data.flat(Infinity);
   },
 );
 
@@ -130,7 +156,7 @@ export const sentComment = createAsyncThunk(
 );
 export const deleteStatus = createAsyncThunk(
   'contents/deleteStatus',
-  async (params: ICreateContent) => {
+  async (params: ICreateContent, {dispatch}) => {
     firestore()
       .collection('Status')
       .doc(params.numberPhone)
@@ -139,6 +165,11 @@ export const deleteStatus = createAsyncThunk(
       })
       .then(() => {
         console.log('Delete status thành công');
+        dispatch(
+          getStatus({
+            numberPhone: params.numberPhone,
+          }),
+        );
       })
       .catch(err => {
         console.log('Delete status thất bại');
@@ -163,8 +194,8 @@ export const counterSlice = createSlice({
     createContent: (state, action) => {
       state.statusContents = action.payload;
     },
-    deletePost: (state, action) => {
-      state.dataContents.listStatusContents.splice(action.payload, 1);
+    getNewAllStatus: (state, action) => {
+      state.AllStatus.concat(action.payload);
     },
     setLikePost: (state, action) => {
       const {isLike, data, uid, newProfileUser} = action.payload;
@@ -207,7 +238,9 @@ export const counterSlice = createSlice({
     builder.addCase(getStatus.fulfilled, (state: any, action) => {
       state.dataContents = action.payload;
     });
-
+    builder.addCase(getAllStatus.fulfilled, (state: any, action) => {
+      state.AllStatus = action.payload;
+    });
     //rejected
     builder.addCase(likeStatus.rejected, err => {
       console.log(err);
@@ -220,7 +253,7 @@ export const {
   resetListImages,
   createContent,
   setLikePost,
-  deletePost,
+  getNewAllStatus,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

@@ -13,7 +13,7 @@ import {
 } from '@store/slice/user/userSlice';
 import {windowHeight} from '@utils/Dimensions';
 import moment from 'moment';
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import RenderFriendUI from './components/RenderFriendUI';
@@ -29,9 +29,11 @@ const Personal = ({route}: IPersonal) => {
   const [typeUnFriendApp, setTypeUnFriend] = useState<string>(typeUnFriend);
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
-  if (type === IPeronalEnum.Confirm) {
-    dispatch(addOption('fade'));
-  }
+  useEffect(() => {
+    if (type === IPeronalEnum.Confirm) {
+      dispatch(addOption('fade'));
+    }
+  }, []);
 
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
@@ -43,6 +45,7 @@ const Personal = ({route}: IPersonal) => {
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
+  console.log('kaka', profileUser, newProfileUser);
 
   const profileUserRecall = {
     ...profileUser,
@@ -59,6 +62,7 @@ const Personal = ({route}: IPersonal) => {
   };
   delete newprofileFriend?.listFriend;
   delete newprofileFriend?.listFriendInvitations;
+
   switch (type) {
     case IPeronalEnum.AddFriend:
       return (
@@ -219,7 +223,18 @@ const Personal = ({route}: IPersonal) => {
         />
       );
   }
+  // return (
+  //   <RenderUserUI
+  //     urlAvatar={profileUser?.avatar}
+  //     name={profileUser?.username}
+  //     urlBackground={profileUser?.background}
+  //     loading={loading}
+  //     profile={newProfileUser}
+  //   />
+  // );
 };
+
+export default Personal;
 
 const styles = StyleSheet.create({
   container: {
@@ -234,4 +249,3 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 });
-export default Personal;

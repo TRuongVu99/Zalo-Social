@@ -67,16 +67,18 @@ const RenderStatus = ({
   });
   return (
     <View style={styles.container}>
-      <Text
-        style={[
-          styles.textContent,
-          {
-            fontFamily: data?.stylesText?.fontFamily,
-            color: data?.stylesText?.color,
-          },
-        ]}>
-        {data?.textContent}
-      </Text>
+      {data?.textContent !== '' && (
+        <Text
+          style={[
+            styles.textContent,
+            {
+              fontFamily: data?.stylesText?.fontFamily,
+              color: data?.stylesText?.color,
+            },
+          ]}>
+          {data?.textContent}
+        </Text>
+      )}
       <View style={{flexDirection: 'row'}}>
         {data?.media?.map((item: string, index: number, key: any) => (
           <TouchableOpacity

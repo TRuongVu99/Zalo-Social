@@ -16,7 +16,7 @@ import {
 import {getUserProfile} from '@store/slice/user/userSlice';
 import {windowHeight, windowWidth} from '@utils/Dimensions';
 import moment from 'moment';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   FlatList,
@@ -86,7 +86,7 @@ const RenderUserUI = ({
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-
+  console.log('lala');
   useEffect(() => {
     if (type === IPeronalEnum.Friend) {
       dispatch(getStatus({numberPhone: profileFriend.numberPhone}));
@@ -94,12 +94,16 @@ const RenderUserUI = ({
   }, []);
 
   const dataStatus = [...dataContents?.listStatusContents];
-  if (Loading) {
-    setTimeout(() => {
-      dispatch(getStatus({numberPhone: profileUser.numberPhone}));
-      setLoading(false);
-    }, loading?.timeOut);
-  }
+
+  useEffect(() => {
+    if (Loading) {
+      setTimeout(() => {
+        dispatch(getStatus({numberPhone: profileUser.numberPhone}));
+        setLoading(false);
+      }, loading?.timeOut);
+    }
+  }, [Loading]);
+
   const updateAvatar = async (avatar: string) => {
     try {
       await firestore()
@@ -232,7 +236,125 @@ const RenderUserUI = ({
       updateAvatar(`data:${images.mime};base64,${images.data}`);
     });
   };
+  const uriImage = useMemo(() => {
+    return urlBackground ? urlBackground : image.background;
+  }, [urlBackground]);
+  const onPressOption = (item, index) => {
+    setIsSelect(true);
+    setOpstion(optionStatus);
+    setTypeOpstion(IOptionEnum.HandleStatus);
+    setItem({item, index});
+  };
+  const RenderItemStatus = ({
+    item,
+    index,
+    onPressOption,
+  }: {
+    item: any;
+    index: number;
+    onPressOption: (item, index) => void;
+  }) => {
+    return (
+      <View
+        key={item?.dayOfPostStatus?.hour}
+        style={{marginLeft: 25, marginRight: 10}}>
+        <View style={styles.day}>
+          <Text
+            style={{
+              fontSize: FontSize.h5,
+              color: 'black',
+              paddingHorizontal: 10,
+            }}>
+            {moment(item?.dayOfPostStatus?.day, 'MM/DD/YYYY').format(
+              'DD [tháng] MM, YYYY',
+            )}
+          </Text>
+        </View>
+        <RenderStatus
+          data={item}
+          profile={profile}
+          newProfileUser={newProfileUser}
+          onPressLike={() => {
+            const newLikes = [...item?.likes];
+            newLikes.push(newProfileUser);
 
+            setTimeout(() => {
+              dispatch(
+                likeStatus({
+                  dataContents,
+                  numberPhone:
+                    type === IPeronalEnum.Friend
+                      ? profileFriend.numberPhone
+                      : profileUser.numberPhone,
+                  contents: item,
+                  likeStatus: true,
+                  profile: profile,
+                  newLikes,
+                }),
+              );
+              dispatch(
+                getStatus({
+                  numberPhone:
+                    type === IPeronalEnum.Friend
+                      ? profileFriend.numberPhone
+                      : profileUser.numberPhone,
+                }),
+              );
+            }, 500);
+          }}
+          onPressUnLike={async () => {
+            const newLike = [...item?.likes];
+            const arr = newLike.filter(
+              (item1: any) => item1.numberPhone !== profileUser.numberPhone,
+            );
+            await dispatch(
+              likeStatus({
+                dataContents,
+                numberPhone:
+                  type === IPeronalEnum.Friend
+                    ? profileFriend.numberPhone
+                    : profileUser.numberPhone,
+                contents: item,
+                likeStatus: false,
+                profile: profile,
+                newLikes: arr,
+              }),
+            ).unwrap();
+            dispatch(
+              getStatus({
+                numberPhone:
+                  type === IPeronalEnum.Friend
+                    ? profileFriend.numberPhone
+                    : profileUser.numberPhone,
+              }),
+            );
+          }}
+          onPressOption={() => {
+            onPressOption(item, index);
+          }}
+          onPressComments={async () => {
+            await dispatch(
+              getStatus({
+                numberPhone:
+                  type === IPeronalEnum.Friend
+                    ? profileFriend.numberPhone
+                    : profile.numberPhone,
+              }),
+            );
+            navigation.navigate(RouterName.CommentScreen, {
+              data: item,
+              profile: profileUser,
+              newProfileUser,
+              profileFriend,
+              type,
+              dataContents,
+              index,
+            });
+          }}
+        />
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       <AnimatedScrollView
@@ -249,7 +371,7 @@ const RenderUserUI = ({
                   : profileUser?.username
               }
             />
-            {isSelect && (
+            {/* {isSelect && (
               <FastImage
                 style={{
                   width: windowWidth,
@@ -258,7 +380,7 @@ const RenderUserUI = ({
                   backgroundColor: 'rgba(0, 0, 0, 0.2)',
                 }}
               />
-            )}
+            )} */}
           </>
         }
         showsVerticalScrollIndicator={false}
@@ -274,7 +396,7 @@ const RenderUserUI = ({
             />
           )
         }
-        headerImage={{uri: urlBackground ? urlBackground : image.background}}>
+        headerImage={{uri: uriImage}}>
         <View>
           {type !== IPeronalEnum.Friend && (
             <Opstion
@@ -308,11 +430,6 @@ const RenderUserUI = ({
                             contents: itemApp.item,
                           }),
                         ).unwrap();
-                        dispatch(
-                          getStatus({
-                            numberPhone: profileUser.numberPhone,
-                          }),
-                        );
                       },
                     },
                     {
@@ -398,112 +515,13 @@ const RenderUserUI = ({
           </View>
           {dataContents?.listStatusContents?.length > 0 &&
             dataStatus?.reverse()?.map((item: any, index: any) => (
-              <View
-                key={item?.dayOfPostStatus?.hour}
-                style={{marginLeft: 25, marginRight: 10}}>
-                <View style={styles.day}>
-                  <Text
-                    style={{
-                      fontSize: FontSize.h5,
-                      color: 'black',
-                      paddingHorizontal: 10,
-                    }}>
-                    {`${item?.dayOfPostStatus?.day.slice(
-                      3,
-                      5,
-                    )} tháng ${item?.dayOfPostStatus?.day.slice(
-                      0,
-                      2,
-                    )}, ${item?.dayOfPostStatus?.day.slice(6, 10)}`}
-                  </Text>
-                </View>
-                <RenderStatus
-                  data={item}
-                  profile={profile}
-                  newProfileUser={newProfileUser}
-                  onPressLike={() => {
-                    const newLikes = [...item?.likes];
-                    newLikes.push(newProfileUser);
-
-                    setTimeout(() => {
-                      dispatch(
-                        likeStatus({
-                          dataContents,
-                          numberPhone:
-                            type === IPeronalEnum.Friend
-                              ? profileFriend.numberPhone
-                              : profileUser.numberPhone,
-                          contents: item,
-                          likeStatus: true,
-                          profile: profile,
-                          newLikes,
-                        }),
-                      );
-                      dispatch(
-                        getStatus({
-                          numberPhone:
-                            type === IPeronalEnum.Friend
-                              ? profileFriend.numberPhone
-                              : profileUser.numberPhone,
-                        }),
-                      );
-                    }, 500);
-                  }}
-                  onPressUnLike={async () => {
-                    const newLike = [...item?.likes];
-                    const arr = newLike.filter(
-                      (item1: any) =>
-                        item1.numberPhone !== profileUser.numberPhone,
-                    );
-                    await dispatch(
-                      likeStatus({
-                        dataContents,
-                        numberPhone:
-                          type === IPeronalEnum.Friend
-                            ? profileFriend.numberPhone
-                            : profileUser.numberPhone,
-                        contents: item,
-                        likeStatus: false,
-                        profile: profile,
-                        newLikes: arr,
-                      }),
-                    ).unwrap();
-                    dispatch(
-                      getStatus({
-                        numberPhone:
-                          type === IPeronalEnum.Friend
-                            ? profileFriend.numberPhone
-                            : profileUser.numberPhone,
-                      }),
-                    );
-                  }}
-                  onPressOption={() => {
-                    setIsSelect(true);
-                    setOpstion(optionStatus);
-                    setTypeOpstion(IOptionEnum.HandleStatus);
-                    setItem({item, index});
-                  }}
-                  onPressComments={async () => {
-                    await dispatch(
-                      getStatus({
-                        numberPhone:
-                          type === IPeronalEnum.Friend
-                            ? profileFriend.numberPhone
-                            : profile.numberPhone,
-                      }),
-                    );
-                    navigation.navigate(RouterName.CommentScreen, {
-                      data: item,
-                      profile: profileUser,
-                      newProfileUser,
-                      profileFriend,
-                      type,
-                      dataContents,
-                      index,
-                    });
-                  }}
-                />
-              </View>
+              <RenderItemStatus
+                item={item}
+                index={index}
+                onPressOption={() => {
+                  onPressOption(item, index);
+                }}
+              />
             ))}
         </View>
         {isSelect && (

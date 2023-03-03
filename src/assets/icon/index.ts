@@ -61,4 +61,6 @@ export const Icon = {
   editing: require('./editing.png'),
   friends: require('./friends.png'),
   more: require('./more.png'),
+  videoplayer: require('./video-player.png'),
+  album: require('./album.png'),
 };

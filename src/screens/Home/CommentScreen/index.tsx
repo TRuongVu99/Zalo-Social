@@ -1,52 +1,42 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  Image,
-  Alert,
-  Pressable,
-  ScrollView,
-  Keyboard,
-  TextInput,
-  KeyboardAvoidingView,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
 import Header from '@components/Header';
-import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
-import {Icon} from '@icon/index';
-import {RouterName} from '@navigation/rootName';
-import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import {fontFamily} from '@fonts/Font';
-import Color from '@constants/Color';
-import FontSize from '@constants/FontSize';
-import UIButton from '@components/UIButton';
-import FastImage from 'react-native-fast-image';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  getStatus,
-  likeStatus,
-  sentComment,
-} from '@store/slice/contents/contentsSlice';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 import {
   RenderImage1,
   RenderImage2,
   RenderImage3,
   RenderImage4,
 } from '@components/RenderImage';
-import ImageView from 'react-native-image-viewing';
-import Platform from '@utils/Platform';
-import HeaderViewing from '../ Personal/components/HeaderViewing';
+import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
+import {fontFamily} from '@fonts/Font';
+import {Icon} from '@icon/index';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {RouterName} from '@navigation/rootName';
+import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {
+  getStatus,
+  likeStatus,
+  sentComment,
+} from '@store/slice/contents/contentsSlice';
+import Platform from '@utils/Platform';
+import React, {useEffect, useState} from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import ImageView from 'react-native-image-viewing';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
+import HeaderViewing from '../ Personal/components/HeaderViewing';
 import CustomInput from './components/CustomInput';
 
 const CommentScreen = ({route}: {route: any}) => {
@@ -54,9 +44,9 @@ const CommentScreen = ({route}: {route: any}) => {
   const {dataContents} = useSelector((state: RootState) => state.contents);
   const {profile, newProfileUser, profileFriend, type, index} = route?.params;
 
-  const arrs = dataContents?.listStatusContents?.filter(
-    (a: any, i: number) => index === i,
-  );
+  const arrs = [...dataContents?.listStatusContents]
+    ?.reverse()
+    .filter((a: any, i: number) => index === i);
   const data = arrs[0];
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
@@ -67,7 +57,6 @@ const CommentScreen = ({route}: {route: any}) => {
   const [quantity, setQuantity] = useState<number>(data.likes.length);
   const [indexs, setIndex] = useState<any>();
   const [visible, setIsVisible] = useState(false);
-  const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
   const [commentApp, setComment] = useState<string>('');
   useEffect(() => {
     dispatch(
@@ -165,17 +154,11 @@ const CommentScreen = ({route}: {route: any}) => {
   const datas = data?.media?.map((img: any) => {
     return {uri: img};
   });
-  useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
-      setPaddingBottom(true);
-    });
-    const hideSubscription = Keyboard.addListener('keyboardWillHide', () => {
-      setPaddingBottom(false);
-    });
-  }, []);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
+      enabled
       style={styles.container}>
       <View style={styles.container}>
         <Header
@@ -400,7 +383,6 @@ const CommentScreen = ({route}: {route: any}) => {
             Keyboard.dismiss();
           }}
           commentApp={commentApp}
-          paddingBottom={paddingBottom}
         />
       </View>
     </KeyboardAvoidingView>
