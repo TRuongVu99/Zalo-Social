@@ -115,6 +115,10 @@ export const counterSlice = createSlice({
     getMessageAll: (state, action) => {
       state.MessageAll = action.payload;
     },
+    resetMessage: state => {
+      state.Messages = {};
+      state.MessageAll = [];
+    },
   },
   extraReducers(builder) {
     //fulfilled
@@ -123,6 +127,6 @@ export const counterSlice = createSlice({
     });
   },
 });
-export const {getMessages, getMessageAll} = counterSlice.actions;
+export const {getMessages, getMessageAll, resetMessage} = counterSlice.actions;
 
 export default counterSlice.reducer;

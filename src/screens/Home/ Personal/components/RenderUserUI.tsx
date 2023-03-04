@@ -16,13 +16,14 @@ import {
 import {getUserProfile} from '@store/slice/user/userSlice';
 import {windowHeight, windowWidth} from '@utils/Dimensions';
 import moment from 'moment';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Alert,
   FlatList,
   GestureResponderEvent,
   Platform,
   Pressable,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -79,6 +80,7 @@ const RenderUserUI = ({
   const [itemApp, setItem] = useState<any>();
   const [Loading, setLoading] = useState<boolean | undefined>(loading?.status);
   const [typeOpstion, setTypeOpstion] = useState<string>('');
+  const [refreshing, setRefreshing] = useState(false);
   const newProfileUser = {
     ...profileUser,
     timeStamp: moment().format('L'),
@@ -86,7 +88,6 @@ const RenderUserUI = ({
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-  console.log('lala');
   useEffect(() => {
     if (type === IPeronalEnum.Friend) {
       dispatch(getStatus({numberPhone: profileFriend.numberPhone}));
@@ -98,11 +99,30 @@ const RenderUserUI = ({
   useEffect(() => {
     if (Loading) {
       setTimeout(() => {
-        dispatch(getStatus({numberPhone: profileUser.numberPhone}));
+        dispatch(
+          getStatus({
+            numberPhone: profileUser.numberPhone,
+          }),
+        );
         setLoading(false);
       }, loading?.timeOut);
     }
   }, [Loading]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profileFriend.numberPhone
+            : profileUser.numberPhone,
+      }),
+    );
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const updateAvatar = async (avatar: string) => {
     try {
@@ -239,7 +259,7 @@ const RenderUserUI = ({
   const uriImage = useMemo(() => {
     return urlBackground ? urlBackground : image.background;
   }, [urlBackground]);
-  const onPressOption = (item, index) => {
+  const onPressOptions = (item: any, index: number) => {
     setIsSelect(true);
     setOpstion(optionStatus);
     setTypeOpstion(IOptionEnum.HandleStatus);
@@ -252,7 +272,7 @@ const RenderUserUI = ({
   }: {
     item: any;
     index: number;
-    onPressOption: (item, index) => void;
+    onPressOption: (item: any, index: number) => void;
   }) => {
     return (
       <View
@@ -358,6 +378,9 @@ const RenderUserUI = ({
   return (
     <View style={styles.container}>
       <AnimatedScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         headerMaxHeight={270}
         topBarHeight={Platform.OS === 'ios' ? 90 : 70}
         HeaderNavbarComponent={<HeaderNavbar />}
@@ -371,7 +394,7 @@ const RenderUserUI = ({
                   : profileUser?.username
               }
             />
-            {/* {isSelect && (
+            {isSelect && (
               <FastImage
                 style={{
                   width: windowWidth,
@@ -380,7 +403,7 @@ const RenderUserUI = ({
                   backgroundColor: 'rgba(0, 0, 0, 0.2)',
                 }}
               />
-            )} */}
+            )}
           </>
         }
         showsVerticalScrollIndicator={false}
@@ -392,11 +415,14 @@ const RenderUserUI = ({
                 setIsSelect(true);
                 setOpstion(optionChangeBackground);
                 setTypeOpstion(IOptionEnum.Avatar);
-              }}
-            />
+              }}>
+              <FastImage
+                source={{uri: uriImage}}
+                style={{width: '100%', height: '100%'}}
+              />
+            </Pressable>
           )
-        }
-        headerImage={{uri: uriImage}}>
+        }>
         <View>
           {type !== IPeronalEnum.Friend && (
             <Opstion
@@ -414,7 +440,7 @@ const RenderUserUI = ({
               }}
               onPress2={() => openCamera()}
               onDeleteStatus={async () => {
-                await setIsSelect(false);
+                setIsSelect(false);
                 Alert.alert(
                   'Xoá bài đăng này',
                   'Bạn có thể chỉnh sửa nội dung bài viết này thay vì xoá nó',
@@ -519,7 +545,7 @@ const RenderUserUI = ({
                 item={item}
                 index={index}
                 onPressOption={() => {
-                  onPressOption(item, index);
+                  onPressOptions(item, index);
                 }}
               />
             ))}
@@ -639,8 +665,9 @@ const styles = StyleSheet.create({
   },
   backgroundChange: {
     flex: 1,
-    height: 100,
-    marginTop: 100,
+    // height: 100,
+    // marginTop: 100,
+    // backgroundColor: 'red',
   },
   button: {
     paddingVertical: 8,

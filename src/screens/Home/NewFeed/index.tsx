@@ -33,6 +33,7 @@ import {
   getStatus,
   likeStatus,
   sentComment,
+  setLikePost,
 } from '@store/slice/contents/contentsSlice';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -65,79 +66,76 @@ const NewFeed = () => {
   // const [itemApp, setItem] = useState<any>();
   const [refreshing, setRefreshing] = useState(false);
   const [like, setLike] = useState<boolean>(true);
+  const newProfileUser = {
+    ...profileUser,
+    timeStamp: moment().format('L'),
+    status: 2,
+  };
+  delete newProfileUser?.listFriendInvitations;
+  delete newProfileUser?.listFriend;
+
   useEffect(() => {
     dispatch(getAllStatus({profileUser}));
-    dispatch(
-      getStatus({
-        numberPhone: profileUser.numberPhone,
-      }),
-    );
   }, []);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(getAllStatus({profileUser}));
-    dispatch(
-      getStatus({
-        numberPhone: profileUser.numberPhone,
-      }),
-    );
+
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  // const onPressUnLike = async () => {
-  //   const newLike = [...data?.likes];
-  //   const arr = newLike.filter(
-  //     (item1: any) => item1.numberPhone !== profile.numberPhone,
-  //   );
-  //   await dispatch(
-  //     likeStatus({
-  //       dataContents,
-  //       numberPhone:
-  //         type === IPeronalEnum.Friend
-  //           ? profileFriend.numberPhone
-  //           : profile.numberPhone,
-  //       contents: data,
-  //       likeStatus: false,
-  //       profile: newProfileUser,
-  //       newLikes: arr,
-  //     }),
-  //   ).unwrap();
-  //   dispatch(
-  //     getStatus({
-  //       numberPhone:
-  //         type === IPeronalEnum.Friend
-  //           ? profileFriend.numberPhone
-  //           : profile.numberPhone,
-  //     }),
-  //   );
-  // };
-  // const onPressLike = async () => {
-  //   const newLikes = [...data?.likes];
-  //   newLikes.push(newProfileUser);
-  //   await dispatch(
-  //     likeStatus({
-  //       dataContents,
-  //       numberPhone:
-  //         type === IPeronalEnum.Friend
-  //           ? profileFriend.numberPhone
-  //           : profile.numberPhone,
-  //       contents: data,
-  //       likeStatus: true,
-  //       profile: newProfileUser,
-  //       newLikes,
-  //     }),
-  //   ).unwrap();
-  //   dispatch(
-  //     getStatus({
-  //       numberPhone:
-  //         type === IPeronalEnum.Friend
-  //           ? profileFriend.numberPhone
-  //           : profile.numberPhone,
-  //     }),
-  //   );
-  // };
-  const data = dataContents.listStatusContents.concat(AllStatus);
+  const onPressUnLike = async (item: any) => {
+    const newLike = [...item?.likes];
+    const arr = newLike.filter(
+      (item1: any) => item1.numberPhone !== profileUser.numberPhone,
+    );
+    const items = {...item};
+    delete items.profile;
+    // console.log({items});
+    console.log({arr});
+    await dispatch(
+      getStatus({numberPhone: item?.profile.numberPhone}),
+    ).unwrap();
+    setTimeout(() => {
+      dispatch(
+        likeStatus({
+          dataContents: dataContents,
+          numberPhone: item?.profile.numberPhone,
+          contents: item,
+          likeStatus: false,
+          newLikes: arr,
+        }),
+      );
+      // dispatch(getAllStatus({profileUser}));
+    }, 2000);
+  };
+  const onPressLike = async (item: any) => {
+    const newLikes = [...item?.likes];
+    newLikes.push(newProfileUser);
+    // const items = {...item};
+    // delete items.profile;
+    dispatch(getStatus({numberPhone: item?.profile.numberPhone}));
+    console.log({numberPhone: item?.profile.numberPhone});
+    setTimeout(() => {
+      // dispatch(
+      //   likeStatus({
+      //     dataContents: dataContents,
+      //     numberPhone: item?.profile.numberPhone,
+
+      //     contents: item,
+      //     likeStatus: true,
+      //     profile: newProfileUser,
+      //     newLikes,
+      //   }),
+      // );
+      console.log({dataContents});
+    }, 2000);
+    // console.log({dataContents});
+    // console.log({numberPhone: item?.profile.numberPhone});
+
+    // dispatch(getAllStatus({profileUser}));
+  };
 
   const renderUI = (item: any, index: number) => {
     const datas = item?.media?.map((img: any, id: number) => {
@@ -205,18 +203,12 @@ const NewFeed = () => {
         <View style={styles.view1}>
           <FastImage
             source={{
-              uri: item?.profile?.avatar
-                ? item.profile.avatar
-                : profileUser.avatar,
+              uri: item.profile.avatar,
             }}
             style={styles.avatar}
           />
           <View style={{paddingLeft: 20}}>
-            <Text style={styles.labelStyle}>
-              {item?.profile?.username
-                ? item.profile.username
-                : profileUser.username}
-            </Text>
+            <Text style={styles.labelStyle}>{item.profile.username}</Text>
             <View style={styles.row}>
               <Text style={styles.description}>{item.dayOfPostStatus.day}</Text>
             </View>
@@ -279,15 +271,19 @@ const NewFeed = () => {
         <View style={[styles.iconLeft]}>
           <TouchableOpacity
             onPress={() => {
-              // dispatch(
-              //   setLikePost({
-              //     isLike: isLikeUser,
-              //     data: data,
-              //     uid: profile?.uid,
-              //     newProfileUser,
-              //   }),
-              // );
-              // isLikeUser ? onPressUnLike() : onPressLike();
+              const items = {...item};
+              delete items.profile;
+              console.log({isLikeUser});
+              dispatch(
+                setLikePost({
+                  isLike: isLikeUser,
+                  data: item,
+                  uid: profileUser?.uid,
+                  newProfileUser,
+                  type: 'newFeed',
+                }),
+              );
+              isLikeUser ? onPressUnLike(item) : onPressLike(item);
             }}
             style={styles.heart}>
             {!isLikeUser ? (
@@ -298,7 +294,29 @@ const NewFeed = () => {
             <Text style={styles.likes}>{item.likes.length}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.row}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={async () => {
+              const items = {...item};
+              delete items.profile;
+              if (item?.profile) {
+                await dispatch(
+                  getStatus({
+                    numberPhone: item?.profile.numberPhone,
+                  }),
+                );
+              }
+
+              navigation.navigate(RouterName.CommentScreen, {
+                items,
+                profile: profileUser,
+                newProfileUser,
+                profileFriend: item?.profile,
+                type:
+                  item?.profile !== undefined ? IPeronalEnum.Friend : 'user',
+                index,
+              });
+            }}>
             <FastImage
               source={Icon.comments}
               style={styles.comment}
@@ -355,7 +373,7 @@ const NewFeed = () => {
           />
         </View>
         <FlatList
-          data={data}
+          data={[...AllStatus].reverse()}
           renderItem={({item, index}) => renderUI(item, index)}
         />
       </ScrollView>

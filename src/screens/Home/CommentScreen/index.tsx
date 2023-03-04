@@ -14,6 +14,7 @@ import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
 import {
+  getAllStatus,
   getStatus,
   likeStatus,
   sentComment,
@@ -42,22 +43,30 @@ import CustomInput from './components/CustomInput';
 const CommentScreen = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
   const {dataContents} = useSelector((state: RootState) => state.contents);
-  const {profile, newProfileUser, profileFriend, type, index} = route?.params;
+  const {profileUser} = useSelector((state: RootState) => state.user);
+  const {profile, newProfileUser, profileFriend, type, index, items} =
+    route?.params;
 
+  console.log({items});
   const arrs = [...dataContents?.listStatusContents]
     ?.reverse()
     .filter((a: any, i: number) => index === i);
-  const data = arrs[0];
+  const data = arrs ? items : arrs[0];
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
   const isLikeUser = data?.likes?.some(
     (item: any) => item?.uid === profile?.uid,
   );
   const [like, setLike] = useState<boolean>(isLikeUser);
-  const [quantity, setQuantity] = useState<number>(data.likes.length);
+  const [quantity, setQuantity] = useState<number>(
+    data?.likes?.length !== undefined
+      ? data?.likes?.length
+      : items?.likes.length,
+  );
   const [indexs, setIndex] = useState<any>();
   const [visible, setIsVisible] = useState(false);
   const [commentApp, setComment] = useState<string>('');
+
   useEffect(() => {
     dispatch(
       getStatus({
@@ -98,6 +107,7 @@ const CommentScreen = ({route}: {route: any}) => {
   const onPressLike = async () => {
     const newLikes = [...data?.likes];
     newLikes.push(newProfileUser);
+
     await dispatch(
       likeStatus({
         dataContents,
@@ -174,6 +184,7 @@ const CommentScreen = ({route}: {route: any}) => {
                     : profile.numberPhone,
               }),
             ).unwrap();
+            await dispatch(getAllStatus({profileUser})).unwrap();
             navigation.goBack();
           }}
           onPress={() => {

@@ -141,6 +141,7 @@ const PostStatus = ({route}: {route: any}) => {
                       },
                       comments: [],
                       likes: [],
+                      id: Date.now(),
                     },
                   }),
                 ).unwrap();

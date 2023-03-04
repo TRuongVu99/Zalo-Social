@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 10,
     marginHorizontal: 15,
-    borderWidth: 0.5,
     borderRadius: 60 / 2,
   },
   viewMessage: {

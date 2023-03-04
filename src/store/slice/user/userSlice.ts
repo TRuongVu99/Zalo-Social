@@ -154,6 +154,10 @@ export const counterSlice = createSlice({
     addOption: (state, action) => {
       state.option = action.payload;
     },
+
+    resetUser: state => {
+      state.profileUser = {};
+    },
   },
   extraReducers(builder) {
     //fulfilled
@@ -162,6 +166,6 @@ export const counterSlice = createSlice({
     });
   },
 });
-export const {addUser, addOption} = counterSlice.actions;
+export const {addUser, addOption, resetUser} = counterSlice.actions;
 
 export default counterSlice.reducer;

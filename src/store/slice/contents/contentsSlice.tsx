@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import moment from 'moment';
 import {endLoading, startLoading} from '../app/appSlice';
 
 interface IFriend {
@@ -12,6 +13,7 @@ interface IFriend {
       day: string;
       hour: string;
     };
+    id?: any;
   };
   dataContents?: any;
   AllStatus?: any;
@@ -46,8 +48,28 @@ export const getAllStatus = createAsyncThunk(
   'contents/getAllStatus',
   async (params: any) => {
     const listFriends = params.profileUser?.listFriend;
-
+    const newProfileUser = {
+      ...params.profileUser,
+      timeStamp: moment().format('L'),
+      status: 2,
+    };
+    delete newProfileUser?.listFriendInvitations;
+    delete newProfileUser?.listFriend;
     const data: any = [];
+    await firestore()
+      .collection('Status')
+      .doc(params.profileUser.numberPhone)
+      .get()
+      .then(querySnapshot =>
+        data.push(
+          querySnapshot?.data()?.listStatusContents.map((items: any) => {
+            return {...items, profile: newProfileUser};
+          }),
+        ),
+      )
+      .catch(_err => {
+        console.log('Get Thất bại');
+      });
     for (let i = 0; i < listFriends.length; ++i) {
       await firestore()
         .collection('Status')
@@ -63,6 +85,7 @@ export const getAllStatus = createAsyncThunk(
         })
         .catch(err => console.log({err}));
     }
+
     return data.flat(Infinity);
   },
 );
@@ -104,27 +127,33 @@ export const likeStatus = createAsyncThunk(
     const content = params?.contents;
     const newContent = params?.dataContents?.listStatusContents?.map(
       (item: any) => {
-        if (JSON.stringify(item) === JSON.stringify(content)) {
+        // if (JSON.stringify(item) === JSON.stringify(content)) {
+        //   return {...item, likes: params.newLikes};
+        // }
+        if (item.id === content.id) {
           return {...item, likes: params.newLikes};
         }
         return item;
       },
     );
-    firestore()
-      .collection('Status')
-      .doc(params.numberPhone)
-      .set({
-        listStatusContents: newContent,
-      })
-      .then(() => {
-        params.likeStatus
-          ? console.log('Like status')
-          : console.log('Unlike status');
-      })
-      .catch(err => {
-        console.log('Like status thất bại');
-        console.log(err);
-      });
+    console.log({newContent});
+    console.log({content});
+
+    // firestore()
+    //   .collection('Status')
+    //   .doc(params.numberPhone)
+    //   .set({
+    //     listStatusContents: newContent,
+    //   })
+    //   .then(() => {
+    //     params.likeStatus
+    //       ? console.log('Like status')
+    //       : console.log('Unlike status');
+    //   })
+    //   .catch(err => {
+    //     console.log('Like status thất bại');
+    //     console.log(err);
+    //   });
   },
 );
 export const sentComment = createAsyncThunk(
@@ -188,6 +217,10 @@ export const counterSlice = createSlice({
     resetListImages: state => {
       state.listImages = [];
     },
+    resetStatus: state => {
+      state.dataContents = [];
+      state.AllStatus = [];
+    },
     removeImageInList: (state, action) => {
       state.listImages.splice(action.payload, 1);
     },
@@ -198,22 +231,24 @@ export const counterSlice = createSlice({
       state.AllStatus.concat(action.payload);
     },
     setLikePost: (state, action) => {
-      const {isLike, data, uid, newProfileUser} = action.payload;
+      const {isLike, data, uid, newProfileUser, type} = action.payload;
+      const arr =
+        type === 'newFeed'
+          ? state.AllStatus
+          : state.dataContents.listStatusContents;
       if (isLike) {
         const arrLike = data?.likes?.filter(
           (item: any, indexs: number) => item.uid !== uid,
         );
-        const mapArray = state.dataContents.listStatusContents.map(
-          (item: any) => {
-            if (
-              item.dayOfPostStatus?.hour === data?.dayOfPostStatus?.hour &&
-              item.dayOfPostStatus?.day === data?.dayOfPostStatus?.day
-            ) {
-              item.likes = arrLike;
-            }
-            return item;
-          },
-        );
+        const mapArray = arr.map((item: any) => {
+          if (
+            item.dayOfPostStatus?.hour === data?.dayOfPostStatus?.hour &&
+            item.dayOfPostStatus?.day === data?.dayOfPostStatus?.day
+          ) {
+            item.likes = arrLike;
+          }
+          return item;
+        });
         state.dataContents = {
           ...state.dataContents,
           listStatusContents: mapArray,
@@ -221,7 +256,7 @@ export const counterSlice = createSlice({
       } else {
         let newLikes = [...data?.likes];
         newLikes.push(newProfileUser);
-        state.dataContents.listStatusContents.map((item: any) => {
+        arr.map((item: any) => {
           if (
             item.dayOfPostStatus?.hour === data?.dayOfPostStatus?.hour &&
             item.dayOfPostStatus?.day === data?.dayOfPostStatus?.day
@@ -254,6 +289,7 @@ export const {
   createContent,
   setLikePost,
   getNewAllStatus,
+  resetStatus,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

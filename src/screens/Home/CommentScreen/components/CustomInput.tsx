@@ -31,7 +31,6 @@ const CustomInput = ({onChangeText, onPress, commentApp}: ICustomInput) => {
       setPaddingBottom(true);
     });
   }, []);
-  console.log({paddingBottom});
   return (
     <View
       style={[
