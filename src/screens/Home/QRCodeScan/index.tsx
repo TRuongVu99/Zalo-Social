@@ -1,46 +1,108 @@
 import StatusBar, {Constants} from '@components/StatusBar';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import * as React from 'react';
+import {RNCamera} from 'react-native-camera';
 
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {useCameraDevices} from 'react-native-vision-camera';
-import {Camera} from 'react-native-vision-camera';
-import {useScanBarcodes, BarcodeFormat} from 'vision-camera-code-scanner';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+
 import IconEntypo from 'react-native-vector-icons/Entypo';
+import {RouterName} from '@navigation/rootName';
+import {useDispatch, useSelector} from 'react-redux';
+import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
+import {RootState} from '@store/index';
+import {IPeronalEnum} from '@model/handelConfig';
 
 export default function App() {
   const [hasPermission, setHasPermission] = React.useState(false);
-  const devices = useCameraDevices();
-  const device = devices.back;
+  const navigation = useNavigation<any>();
   const isFocused = useIsFocused();
-  const navigation = useNavigation();
+  const dispatch = useDispatch<any>();
+  const {profileUser} = useSelector((state: RootState) => state.user);
 
-  const [frameProcessor, barcodes] = useScanBarcodes(
-    [BarcodeFormat.ALL_FORMATS],
-    {checkInverted: true},
-  );
+  const getFriendByPhoneNumber = async (phoneNumber: string) => {
+    const isFriendRequest =
+      profileUser?.listFriend?.filter(
+        (item: any) => item.numberPhone === phoneNumber && item.status === 2,
+      ).length > 0;
+    const isFriend =
+      profileUser?.listFriend?.filter(
+        (item: any) => item.numberPhone === phoneNumber && item.status === 3,
+      ).length > 0;
+    const isUser = profileUser.numberPhone === phoneNumber;
+    const isSentInvitation =
+      profileUser?.listFriendInvitations?.filter(
+        (item: any) => item.numberPhone === phoneNumber,
+      ).length > 0;
 
-  React.useEffect(() => {
-    (async () => {
-      const status = await Camera.requestCameraPermission();
-      setHasPermission(status === 'authorized');
-    })();
-  }, []);
-
-  React.useEffect(() => {
-    console.log(barcodes);
-  }, [barcodes]);
-
-  return device != null && hasPermission && isFocused ? (
+    firestore()
+      .collection('Users')
+      .where('numberPhone', '==', phoneNumber)
+      .get()
+      .then(querySnapshot => {
+        let profile: any = {};
+        let UserId: string = '';
+        if (querySnapshot.size === 0) {
+          Alert.alert(
+            'Thông báo',
+            'Số điện thoại chưa đăng ký tài khoản hoặc không cho phép tìm kiếm',
+            [{text: 'Đóng', onPress: () => navigation.goBack()}],
+          );
+          navigation.goBack();
+          return;
+        } else {
+          querySnapshot.forEach(documentSnapshot => {
+            profile = documentSnapshot.data();
+            UserId = documentSnapshot.id;
+          });
+          // console.log(profile);
+          dispatch(addProfileFriend({...profile, UserId}));
+          navigation.navigate(RouterName.Personal, {
+            profile,
+            UserId,
+            type: isFriendRequest
+              ? IPeronalEnum.Confirm
+              : isFriend
+              ? IPeronalEnum.Friend
+              : isUser
+              ? null
+              : IPeronalEnum.AddFriend,
+            typeUnFriend: isSentInvitation
+              ? IPeronalEnum.UnFriend
+              : IPeronalEnum.AddFriend,
+            isFromQRcode: true,
+          });
+        }
+      });
+  };
+  return isFocused ? (
     <>
       <StatusBar mode={Constants.statusBar.dark} navigation={navigation} />
 
-      <Camera
-        style={StyleSheet.absoluteFill}
-        device={device}
-        isActive={true}
-        frameProcessor={frameProcessor}
-        frameProcessorFps={5}
+      <RNCamera
+        // ref={ref => {
+        //   this.camera = ref;
+        // }}
+        style={styles.preview}
+        type={RNCamera.Constants.Type.back}
+        flashMode={RNCamera.Constants.FlashMode.on}
+        androidCameraPermissionOptions={{
+          title: 'Permission to use camera',
+          message: 'We need your permission to use your camera',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+        androidRecordAudioPermissionOptions={{
+          title: 'Permission to use audio recording',
+          message: 'We need your permission to use your audio',
+          buttonPositive: 'Ok',
+          buttonNegative: 'Cancel',
+        }}
+        onGoogleVisionBarcodesDetected={({barcodes}) => {
+          if (barcodes[0]?.data && barcodes[0]?.data?.length === 10) {
+            return getFriendByPhoneNumber(barcodes[0]?.data);
+          }
+        }}
       />
       <TouchableOpacity
         style={{position: 'absolute', top: 16, left: 16, zIndex: 99}}
@@ -82,5 +144,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
 });

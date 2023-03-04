@@ -57,6 +57,7 @@ interface IRenderUserUI {
   };
   profile?: any;
   profileFriend?: any;
+  isFromQRcode?: boolean;
 }
 
 const RenderUserUI = ({
@@ -69,6 +70,7 @@ const RenderUserUI = ({
   loading,
   profile,
   profileFriend,
+  isFromQRcode,
 }: IRenderUserUI) => {
   const navigation = useNavigation<any>();
   const inset = useSafeAreaInsets();
@@ -164,7 +166,7 @@ const RenderUserUI = ({
       <AnimatedScrollView
         headerMaxHeight={270}
         topBarHeight={Platform.OS === 'ios' ? 90 : 70}
-        HeaderNavbarComponent={<HeaderNavbar />}
+        HeaderNavbarComponent={<HeaderNavbar isFromQRcode={isFromQRcode} />}
         TopNavBarComponent={
           <TopNavBar
             avatar={urlAvatar ? urlAvatar : image.background}

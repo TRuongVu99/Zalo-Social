@@ -26,7 +26,7 @@ interface IPersonal {
 
 const Personal = ({route}: IPersonal) => {
   const {profileUser} = useSelector((state: RootState) => state.user);
-  const {profile, type, typeUnFriend, loading} = route?.params;
+  const {profile, type, typeUnFriend, loading, isFromQRcode} = route?.params;
   const [typeEnum, setTypeEnum] = useState<string>(IPeronalEnum.Confirm);
   const [typeUnFriendApp, setTypeUnFriend] = useState<string>(typeUnFriend);
   const navigation = useNavigation<any>();
@@ -71,6 +71,7 @@ const Personal = ({route}: IPersonal) => {
             type={IPeronalEnum.AddFriend}
             urlAvatar={profile.avatar}
             name={profile.username}
+            isFromQRcode={isFromQRcode}
             onPressAddFriend={() => {
               dispatch(
                 addFrendByPhoneNumber({
@@ -137,6 +138,7 @@ const Personal = ({route}: IPersonal) => {
             name={profile.username}
             type={typeEnum}
             timeStamp={profile.timeStamp}
+            isFromQRcode={isFromQRcode}
             onPressConfirm={() => {
               const Friend = {
                 ...profileUser,
@@ -210,6 +212,7 @@ const Personal = ({route}: IPersonal) => {
             type={IPeronalEnum.Friend}
             profileFriend={profileFriend}
             profile={newProfileUser}
+            isFromQRcode={isFromQRcode}
             onPressMessage={() => {
               navigation.navigate(RouterName.Message, {
                 profileFriend,
@@ -227,6 +230,7 @@ const Personal = ({route}: IPersonal) => {
             urlBackground={profileUser.background}
             loading={loading}
             profile={newProfileUser}
+            isFromQRcode={isFromQRcode}
           />
           <StatusBar mode={Constants.statusBar.dark} navigation={navigation} />
         </>
