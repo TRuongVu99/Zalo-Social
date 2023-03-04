@@ -28,6 +28,9 @@ import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
 import {getUserProfile} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
+import {StackAnimationTypes} from 'react-native-screens';
+import QRCodeScreen from '@screens/Home/MyQRCode';
+import QRCodeScan from '@screens/Home/QRCodeScan';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -37,7 +40,7 @@ const Application = () => {
   const {loadingApp} = useSelector((state: RootState) => state?.app);
 
   const dispatch = useDispatch<AppDispatch>();
-  firebase.auth().settings.appVerificationDisabledForTesting = true;
+  // firebase.auth().settings.appVerificationDisabledForTesting = true;
   // useEffect(() => {
   //   getMessage1(profileUser.numberPhone);
   // }, []);
@@ -160,12 +163,21 @@ const Application = () => {
               />
               <Stack.Screen
                 options={{
-                  animation: option,
+                  animation: option as StackAnimationTypes,
                   presentation: 'transparentModal',
                   fullScreenGestureEnabled: true,
                 }}
                 name={RouterName.PersonalFriendRequest}
                 component={PersonalFriendRequest}
+              />
+              <Stack.Screen name={RouterName.QRCode} component={QRCodeScreen} />
+              <Stack.Screen
+                name={RouterName.QRCodeScan}
+                component={QRCodeScan}
+                options={{
+                  animation: 'none',
+                  presentation: 'transparentModal',
+                }}
               />
             </>
           )}

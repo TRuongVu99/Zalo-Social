@@ -1,5 +1,6 @@
-import CustumInput from '@components/CustumInput';
+import CustomInput from '@components/CustomInput';
 import Header from '@components/Header';
+import StatusBar, {Constants} from '@components/StatusBar';
 import UIButton from '@components/UIButton';
 import UiValidate from '@components/UiValidate';
 import {Color, FontSize} from '@constants';
@@ -53,13 +54,14 @@ const Login = ({route}: {route: any}) => {
         notification={'Vui lòng nhập số điện thoại và mật khẩu để đăng nhập'}
       />
       <View style={styles.textInput}>
-        <CustumInput
+        <CustomInput
           onChangText={text => setNumber(text)}
           containerTextInput={styles.line}
           placeholder={'Số điện thoại'}
           keyboardType="number-pad"
           onFocus={() => setFocus(false)}
           onBlur={() => setFocus(true)}
+          maxLength={10}
         />
       </View>
       <TouchableOpacity
@@ -80,6 +82,11 @@ const Login = ({route}: {route: any}) => {
           <Text style={styles.textBottom}>Các câu hỏi thường gặp</Text>
         </TouchableOpacity>
       )}
+      <StatusBar
+        mode={Constants.statusBar.dark}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
     </View>
   );
 };

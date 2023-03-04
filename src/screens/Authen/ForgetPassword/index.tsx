@@ -11,7 +11,7 @@ import React, {useState} from 'react';
 import Header from '@components/Header';
 import {IButtonEnum, IHeaderEnum} from '@model/handelConfig';
 import UiValidate from '@components/UiValidate';
-import CustumInput from '@components/CustumInput';
+import CustomInput from '@components/CustomInput';
 import UIButton from '@components/UIButton';
 interface IForgetPassword {
   navigation: any;
@@ -45,7 +45,7 @@ const ForgetPassword = ({navigation}: IForgetPassword) => {
           isValid={true}
           notification={'Nhập số điện thoại để nhận mã xác nhận '}
         />
-        <CustumInput
+        <CustomInput
           onChangText={text => setNumberPhone(text)}
           placeholder={'Số điện thoại'}
           keyboardType="number-pad"

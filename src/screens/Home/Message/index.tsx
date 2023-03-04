@@ -1,20 +1,15 @@
 import Header from '@components/Header';
+import StatusBar, {Constants} from '@components/StatusBar';
 import {Color, FontSize} from '@constants';
-import DataMesseger from '@data/DataMesseger';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/storage';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {
-  getMessage,
-  getMessages,
-  sentMessage,
-} from '@store/slice/message/messageSlice';
+import {sentMessage} from '@store/slice/message/messageSlice';
 import Platform from '@utils/Platform';
 import moment from 'moment';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -172,6 +167,11 @@ const Message = ({route}: {route: any}) => {
             </>
           )}
         </View>
+        <StatusBar
+          mode={Constants.statusBar.light}
+          navigation={navigation}
+          backgroundColor={Color.primary}
+        />
       </View>
     </KeyboardAvoidingView>
   );

@@ -1,18 +1,13 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Keyboard,
-  Alert,
-  TouchableNativeFeedbackBase,
-} from 'react-native';
-import React from 'react';
 import Header from '@components/Header';
-import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
-import {RouterName} from '@navigation/rootName';
+import {IHeaderEnum} from '@model/handelConfig';
+import React from 'react';
+import {
+  Keyboard,
+  StyleSheet,
+  TouchableNativeFeedback,
+  View,
+} from 'react-native';
 interface IPhoneBook {
   navigation: any;
 }

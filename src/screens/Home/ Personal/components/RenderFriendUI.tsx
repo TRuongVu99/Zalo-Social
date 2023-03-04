@@ -34,6 +34,7 @@ interface IRenderFriendUI {
   timeStamp?: string;
   typeUnFriend?: string;
   urlBackground?: string;
+  isFromQRcode?: boolean;
 }
 const RenderFriendUI = ({
   urlAvatar,
@@ -47,6 +48,7 @@ const RenderFriendUI = ({
   typeUnFriend,
   onPressUnFriend,
   urlBackground,
+  isFromQRcode,
 }: IRenderFriendUI) => {
   const inset = useSafeAreaInsets();
   const types =
@@ -59,7 +61,12 @@ const RenderFriendUI = ({
         style={styles.container}
         headerMaxHeight={270}
         topBarHeight={Platform.OS === 'ios' ? 90 : 70}
-        HeaderNavbarComponent={<HeaderNavbar type={IHeaderEnum.Register} />}
+        HeaderNavbarComponent={
+          <HeaderNavbar
+            type={IHeaderEnum.Register}
+            isFromQRcode={isFromQRcode}
+          />
+        }
         TopNavBarComponent={
           <TopNavBar
             avatar={urlAvatar ? urlAvatar : image.avatarDefault}

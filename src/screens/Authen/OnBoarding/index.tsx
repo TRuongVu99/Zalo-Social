@@ -18,6 +18,7 @@ import Swiper from 'react-native-swiper';
 import {Icon} from '@icon/index';
 import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
+import StatusBar, {Constants} from '@components/StatusBar';
 
 export const keySaveData = 'User';
 const arr = ['Tiếng Việt', 'English'];
@@ -125,6 +126,7 @@ const OnBoarding: React.FC = () => {
           ))}
         </View>
       </View>
+      <StatusBar mode={Constants.statusBar.light} navigation={navigation} />
     </View>
   );
 };
