@@ -1,4 +1,11 @@
-import {CustumInput, Header, Option, UIBottom, UiValidate} from '@components';
+import {
+  CustomInput,
+  Header,
+  Option,
+  StatusBar,
+  UIBottom,
+  UiValidate,
+} from '@components';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import auth from '@react-native-firebase/auth';
@@ -15,6 +22,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RootState, AppDispatch} from '../../../store';
 import {Color} from '../../../constants';
 import {addUser} from '../../../store/slice/user/userSlice';
+import {Constants} from '@components/StatusBar';
 
 export default function CreateCustomer({route}: {route: any}) {
   const navigation = useNavigation<any>();
@@ -47,46 +55,49 @@ export default function CreateCustomer({route}: {route: any}) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Header
-          type={IHeaderEnum.Register}
-          label={'Nhập thông tin'}
-          onPressExit={() => navigation.goBack()}
+    <View style={styles.container}>
+      <Header
+        type={IHeaderEnum.Register}
+        label={'Nhập thông tin'}
+        onPressExit={() => navigation.goBack()}
+      />
+      <UiValidate
+        notification={'Nhập số điện thoại để tạo tài khoản mới'}
+        isValid={true}
+      />
+      <View style={styles.row}>
+        <Option onPress={() => Alert.alert('option')} />
+        <CustomInput
+          onChangText={(text: string) => {
+            setNumber(text);
+          }}
+          placeholder={'Số điện thoại'}
+          containerTextInput={{
+            borderBottomColor: Color.lineColor,
+            flex: 1,
+          }}
+          keyboardType={'number-pad'}
+          maxLength={10}
+          onFocus={() => setFocus(false)}
+          onBlur={() => setFocus(true)}
         />
-        <UiValidate
-          notification={'Nhập số điện thoại để tạo tài khoản mới'}
-          isValid={true}
-        />
-        <View style={styles.row}>
-          <Option onPress={() => Alert.alert('option')} />
-          <CustumInput
-            onChangText={(text: string) => {
-              setNumber(text);
-            }}
-            placeholder={'Số điện thoại'}
-            containerTextInput={{
-              borderBottomColor: Color.lineColor,
-              flex: 1,
-            }}
-            keyboardType={'number-pad'}
-            maxLength={10}
-            onFocus={() => setFocus(false)}
-            onBlur={() => setFocus(true)}
-          />
-        </View>
-        <View style={{flex: 1}} />
-        {focus && (
-          <UIBottom
-            disabled={disable}
-            color={disable ? Color.Darkgray : Color.primary}
-            onPress={() => {
-              signInWithPhoneNumber(formartNumberPhone);
-            }}
-          />
-        )}
       </View>
-    </TouchableWithoutFeedback>
+      <View style={{flex: 1}} />
+      {focus && (
+        <UIBottom
+          disabled={disable}
+          color={disable ? Color.Darkgray : Color.primary}
+          onPress={() => {
+            signInWithPhoneNumber(formartNumberPhone);
+          }}
+        />
+      )}
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
+    </View>
   );
 }
 const styles = StyleSheet.create({

@@ -25,4 +25,6 @@ export const RouterName = {
   PostStatus: 'PostStatus',
   PreViewImage: 'PreViewImage',
   CommentScreen: 'CommentScreen',
+  QRCode: 'QRCode',
+  QRCodeScan: 'QRCodeScan',
 };

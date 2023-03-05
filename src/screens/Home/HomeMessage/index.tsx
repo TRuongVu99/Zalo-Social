@@ -1,8 +1,9 @@
 import Header from '@components/Header';
-import {FontSize} from '@constants';
-import {fontFamily} from '@fonts/Font';
-import {Icon} from '@icon/index';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {Icon} from '@icon/index';
+import UserData from '@data/UserData';
+import {Color, FontSize} from '@constants';
+import {fontFamily} from '@fonts/Font';
 import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
@@ -21,6 +22,7 @@ import {
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
+import StatusBar, {Constants} from '@components/StatusBar';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
@@ -58,6 +60,9 @@ const Home: React.FC = () => {
       </TouchableOpacity>
     );
   };
+  const onQRCode = async () => {
+    navigation.navigate(RouterName.QRCodeScan);
+  };
   return (
     <View style={styles.container}>
       <Header
@@ -66,8 +71,15 @@ const Home: React.FC = () => {
         nameIconRight1={Icon.qrcode}
         nameIconRight2={Icon.plus}
         typeOption={IPeronalEnum.AddFriend}
+        onPressIconRight1={() => onQRCode()}
       />
+
       <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
     </View>
   );
 };

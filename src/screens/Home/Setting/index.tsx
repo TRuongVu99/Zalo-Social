@@ -25,6 +25,7 @@ import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import {useDispatch} from 'react-redux';
+import StatusBar, {Constants} from '@components/StatusBar';
 
 const data = [
   {
@@ -172,6 +173,11 @@ const Setting = () => {
             }}
           />
         }
+      />
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
       />
     </View>
   );

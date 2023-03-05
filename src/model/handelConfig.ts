@@ -8,6 +8,7 @@ export enum IHeaderEnum {
   Personal = 'PERSONAL',
   PostStatus = 'PostStatus',
   Comment = 'COMMENT',
+  QRCode = 'QRCode',
 }
 
 export enum IButtonEnum {

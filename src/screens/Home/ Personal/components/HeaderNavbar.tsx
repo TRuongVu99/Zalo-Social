@@ -15,9 +15,10 @@ import {RouterName} from '@navigation/rootName';
 interface IHeaderNavbar {
   label?: string;
   type?: string;
+  isFromQRcode?: boolean;
 }
 
-const HeaderNavbar = ({label, type}: IHeaderNavbar) => {
+const HeaderNavbar = ({label, type, isFromQRcode}: IHeaderNavbar) => {
   const navigation = useNavigation<any>();
   return (
     <View
@@ -27,7 +28,11 @@ const HeaderNavbar = ({label, type}: IHeaderNavbar) => {
       ]}>
       <TouchableOpacity
         style={[styles.back]}
-        onPress={() => navigation.navigate(RouterName.Profile)}>
+        onPress={() => {
+          isFromQRcode
+            ? (navigation.popToTop(), navigation.goBack())
+            : navigation.goBack();
+        }}>
         <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
       </TouchableOpacity>
       <View style={styles.iconInPersonal}>

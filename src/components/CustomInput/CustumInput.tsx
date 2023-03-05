@@ -25,7 +25,7 @@ interface ICustomInput
   onPress?: (event: GestureResponderEvent) => void;
   text?: string;
 }
-const CustumInput: React.FC<ICustomInput> = ({
+const CustomInput: React.FC<ICustomInput> = ({
   onChangText,
   textInputStyle,
   containerTextInput,
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
   text: {fontFamily: fontFamily.primaryFont, color: Color.DimGray},
   button: {},
 });
-export default CustumInput;
+export default CustomInput;

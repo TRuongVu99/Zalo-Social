@@ -3,6 +3,7 @@ import {Loading} from '@components';
 import PreViewImage from '@components/PreViewImage';
 import auth from '@react-native-firebase/auth';
 import {firebase} from '@react-native-firebase/firestore';
+import firestore from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConfirmOTP from '@screens/Authen/ConfirmOTP';
@@ -31,6 +32,10 @@ import {
   getAllStatus,
   getNewAllStatus,
 } from '@store/slice/contents/contentsSlice';
+import {StackAnimationTypes} from 'react-native-screens';
+import QRCodeScreen from '@screens/Home/MyQRCode';
+import QRCodeScan from '@screens/Home/QRCodeScan';
+import {getMessageAll} from '@store/slice/message/messageSlice';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -40,6 +45,25 @@ const Application = () => {
   const {loadingApp} = useSelector((state: RootState) => state?.app);
   const dispatch = useDispatch<AppDispatch>();
   firebase.auth().settings.appVerificationDisabledForTesting = true;
+  // firebase.auth().settings.appVerificationDisabledForTesting = true;
+  // useEffect(() => {
+  //   getMessage1(profileUser.numberPhone);
+  // }, []);
+
+  function allMessages() {
+    const subscriber = firestore()
+      .collection('Message')
+      .onSnapshot(querySnapshot => {
+        const data: any = [];
+        querySnapshot.forEach(documentSnapshot => {
+          data.push(documentSnapshot.data());
+        });
+        dispatch(getMessageAll(data));
+      });
+
+    // Stop listening for updates when no longer required
+    return () => subscriber();
+  }
 
   async function onAuthStateChanged(user: any) {
     setUser(user);
@@ -148,12 +172,21 @@ const Application = () => {
               />
               <Stack.Screen
                 options={{
-                  animation: option,
+                  animation: option as StackAnimationTypes,
                   presentation: 'transparentModal',
                   fullScreenGestureEnabled: true,
                 }}
                 name={RouterName.PersonalFriendRequest}
                 component={PersonalFriendRequest}
+              />
+              <Stack.Screen name={RouterName.QRCode} component={QRCodeScreen} />
+              <Stack.Screen
+                name={RouterName.QRCodeScan}
+                component={QRCodeScan}
+                options={{
+                  animation: 'none',
+                  presentation: 'transparentModal',
+                }}
               />
             </>
           )}

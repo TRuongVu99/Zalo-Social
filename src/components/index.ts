@@ -1,4 +1,4 @@
-import CustumInput from './CustumInput';
+import CustomInput from './CustomInput';
 import Header from './Header';
 import UiValidate from './UiValidate';
 import Option from './Option';
@@ -9,9 +9,10 @@ import UIButton from './UIButton';
 import UITab from './BottomTabBar';
 import ResultSearch from './ResultSearch';
 import Loading from './Loading';
+import StatusBar from './StatusBar';
 
 export {
-  CustumInput,
+  CustomInput,
   Header,
   UiValidate,
   Option,
@@ -22,4 +23,5 @@ export {
   UITab,
   ResultSearch,
   Loading,
+  StatusBar,
 };
