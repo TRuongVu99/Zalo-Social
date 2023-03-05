@@ -4,6 +4,7 @@ import {IButtonEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {getMessage} from '@store/slice/message/messageSlice';
 import {
   addFrendByPhoneNumber,
   addOption,
@@ -212,12 +213,16 @@ const Personal = ({route}: IPersonal) => {
           <RenderUserUI
             urlAvatar={profile?.avatar}
             name={profile?.username}
-            urlBackground={profile.background}
+            urlBackground={profile?.background}
             type={IPeronalEnum.Friend}
             profileFriend={profileFriend}
             profile={newProfileUser}
             isFromQRcode={isFromQRcode}
-            onPressMessage={() => {
+            onPressMessage={async () => {
+              await dispatch(
+                getMessage({numberPhone: profileUser.numberPhone}),
+              ).unwrap();
+
               navigation.navigate(RouterName.Message, {
                 profileFriend,
               });

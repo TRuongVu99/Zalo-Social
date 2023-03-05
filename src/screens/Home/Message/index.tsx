@@ -2,7 +2,7 @@ import Header from '@components/Header';
 import {Color, FontSize} from '@constants';
 import DataMesseger from '@data/DataMesseger';
 import {fontFamily} from '@fonts/Font';
-import {IHeaderEnum} from '@model/handelConfig';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/storage';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -48,7 +48,7 @@ const renderUI = (item: any, profileFriend: any) => {
         ]}>
         <Text style={styles.message}>{item.message}</Text>
         <Text style={styles.message}>
-          {item.isReceive ? item.timeReceive.hour : item.timeSent.hour}
+          {item.isReceive ? item.timeReceive?.hour : item.timeSent?.hour}
         </Text>
       </TouchableOpacity>
     </View>
@@ -69,7 +69,6 @@ const Message = ({route}: {route: any}) => {
       item.phoneOfSender === profileFriend.numberPhone ||
       item.phoneOfReceive === profileFriend.numberPhone,
   );
-  console.log({data});
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
       setPaddingBottom(false);
@@ -78,7 +77,9 @@ const Message = ({route}: {route: any}) => {
       setPaddingBottom(true);
     });
   }, []);
-
+  // useEffect(() => {
+  //   dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+  // }, []);
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
@@ -88,6 +89,16 @@ const Message = ({route}: {route: any}) => {
           onPress={() => navigation.navigate(RouterName.HomeMessage)}
           type={IHeaderEnum.Message}
           label={name ? name : profileFriend.username}
+          onPressUser={() =>
+            // navigation.navigate(RouterName.Personal, {
+            //   profile: profileFriend,
+            //   type: IPeronalEnum.Friend,
+            // })
+            console.log({
+              profile: profileFriend,
+              type: IPeronalEnum.Friend,
+            })
+          }
         />
         <FlatList
           inverted

@@ -62,7 +62,7 @@ interface IMessage {
 }
 export const getMessage = createAsyncThunk(
   'message/getMessage',
-  async (params: any) => {
+  async (params: any, thunkAPI) => {
     const data = await firestore()
       .collection('Message')
       .doc(params.numberPhone)

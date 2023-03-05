@@ -39,15 +39,8 @@ interface IHeader {
   type?: string;
   label?: string;
   placeholder?: string;
-  onChangeText?: (value: string) => void;
   nameIconRight1?: string | undefined;
   nameIconRight2?: string | undefined;
-  onPress?: (event: GestureResponderEvent) => void;
-  onPressIconRight1?: (event: GestureResponderEvent) => void;
-  onPressIconRight2?: (event: GestureResponderEvent) => void;
-  onPressExit?: (event: GestureResponderEvent) => void;
-  onPostStatus?: (event: GestureResponderEvent) => void;
-  onPressBack?: () => void;
   styleIconRight?: StyleProp<ImageStyle>;
   buttonBack?: string;
   name?: string;
@@ -55,26 +48,34 @@ interface IHeader {
   typeOption?: string;
   typePersonal?: string;
   isPost?: boolean;
+  onPressUser?: () => void;
+  onChangeText?: (value: string) => void;
+  onPress?: (event: GestureResponderEvent) => void;
+  onPressIconRight1?: (event: GestureResponderEvent) => void;
+  onPressIconRight2?: (event: GestureResponderEvent) => void;
+  onPressExit?: (event: GestureResponderEvent) => void;
+  onPostStatus?: (event: GestureResponderEvent) => void;
+  onPressBack?: () => void;
 }
 
 const Header = ({
-  type,
-  label,
-  placeholder,
   onChangeText,
-  nameIconRight1,
-  nameIconRight2,
   onPress,
   onPressIconRight2,
   onPressIconRight1,
   onPressExit,
+  onPostStatus,
+  onPressUser,
+  type,
+  label,
+  placeholder,
   name,
   StyleHeaderSetting,
   typeOption,
   typePersonal,
+  nameIconRight1,
+  nameIconRight2,
   isPost,
-  onPostStatus,
-  onPressBack,
 }: IHeader) => {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<any>();
@@ -118,7 +119,9 @@ const Header = ({
           <TouchableOpacity style={[styles.back]} onPress={onPress}>
             <IconEntypo name="chevron-thin-left" size={20} color={'white'} />
           </TouchableOpacity>
-          <Text style={styles.label}>{label}</Text>
+          <Pressable onPress={onPressUser} style={{flex: 1}}>
+            <Text style={styles.label}>{label}</Text>
+          </Pressable>
           <TouchableOpacity
             style={styles.buttonRight}
             onPress={onPressIconRight1}>
@@ -409,9 +412,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.primaryFont,
     fontSize: FontSize.h4 * 1.1,
     color: 'white',
-    alignSelf: 'center',
     fontWeight: '500',
-    flex: 1,
   },
   textInput: {
     flex: 1,

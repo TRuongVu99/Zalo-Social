@@ -246,8 +246,10 @@ const RenderUserUI = ({
         typeUrl === 'background'
           ? updateBackground(imageURL)
           : updateAvatar(imageURL);
-        updateBackgroundListFriend(imageURL);
-        updateAvatarListFriend(imageURL);
+        typeUrl === 'background'
+          ? updateBackgroundListFriend(imageURL)
+          : updateAvatarListFriend(imageURL);
+
         console.log('Tải URL thành công');
       })
       .catch(() => console.log('Tải URL thất bại'));
@@ -302,7 +304,7 @@ const RenderUserUI = ({
           newProfileUser={newProfileUser}
           onPressLike={() => {
             const newLikes = [...item?.likes];
-            newLikes.push(newProfileUser);
+            newLikes?.push(newProfileUser);
 
             setTimeout(() => {
               dispatch(
@@ -376,7 +378,6 @@ const RenderUserUI = ({
               dataContents,
               index,
             });
-            // dispatch(updateComment([...item?.comments]));
           }}
         />
       </View>
@@ -415,20 +416,20 @@ const RenderUserUI = ({
         }
         showsVerticalScrollIndicator={false}
         HeaderComponent={
-          type !== IPeronalEnum.Friend && (
-            <Pressable
-              style={styles.backgroundChange}
-              onPress={() => {
+          <Pressable
+            style={styles.backgroundChange}
+            onPress={() => {
+              if (type !== IPeronalEnum.Friend) {
                 setIsSelect(true);
                 setOpstion(optionChangeBackground);
                 setTypeOpstion(IOptionEnum.Avatar);
-              }}>
-              <FastImage
-                source={{uri: uriImage}}
-                style={{width: '100%', height: '100%'}}
-              />
-            </Pressable>
-          )
+              }
+            }}>
+            <FastImage
+              source={{uri: urlBackground}}
+              style={{width: '100%', height: '100%'}}
+            />
+          </Pressable>
         }>
         <View>
           {type !== IPeronalEnum.Friend && (

@@ -8,7 +8,7 @@ import {RouterName} from '@navigation/rootName';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {getMessages} from '@store/slice/message/messageSlice';
+import {getMessage, getMessages} from '@store/slice/message/messageSlice';
 import React from 'react';
 import {
   FlatList,
@@ -23,6 +23,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 
 import StatusBar, {Constants} from '@components/StatusBar';
+import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
@@ -30,27 +31,18 @@ const Home: React.FC = () => {
   const ListFriend = profileUser?.listFriend?.filter(
     (item: any) => item.status === 3,
   );
-  function getMessage(numberPhone: any) {
-    const subscriber = firestore()
-      .collection('Message')
-      .doc(numberPhone)
-      .onSnapshot((documentSnapshot: any) => {
-        dispatch(getMessages(documentSnapshot.data()));
-      });
-
-    return () => subscriber();
-  }
 
   const renderUI = (item: any) => {
     return (
       <TouchableOpacity
         style={{flexDirection: 'row'}}
         onPress={() => {
-          getMessage(profileUser.numberPhone);
-          navigation.navigate(RouterName.Message, {
-            name: item.username,
-            profileFriend: item,
-          });
+          dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+          // navigation.navigate(RouterName.Message, {
+          //   name: item.username,
+          //   profileFriend: item,
+          // });
+          console.log({item});
         }}>
         <Image style={styles.avatar} source={{uri: item.avatar}} />
         <View style={styles.viewMessage}>
