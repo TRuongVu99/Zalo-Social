@@ -8,6 +8,9 @@ import {fontFamily} from '@fonts/Font';
 import FontSize from '@constants/FontSize';
 import isAndroid from '@utils/Platform';
 import {IHeaderEnum} from '@model/handelConfig';
+import {Icon} from '@icon/index';
+import FastImage from 'react-native-fast-image';
+import {RouterName} from '@navigation/rootName';
 
 interface IHeaderNavbar {
   label?: string;
@@ -42,11 +45,10 @@ const HeaderNavbar = ({label, type, isFromQRcode}: IHeaderNavbar) => {
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
-          <IconFeather
-            name={'more-horizontal'}
-            size={24}
-            color={'white'}
-            style={styles.icon}
+          <FastImage
+            source={Icon.more}
+            tintColor={'white'}
+            style={{width: 30, height: 30}}
           />
         </TouchableOpacity>
       </View>

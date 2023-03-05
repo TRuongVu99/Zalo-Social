@@ -92,7 +92,11 @@ const ConfirmOTP = ({route}: {route: any}) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Header type={IHeaderEnum.Register} label={'Kích hoạt tài khoản'} />
+        <Header
+          type={IHeaderEnum.Register}
+          label={'Kích hoạt tài khoản'}
+          onPressExit={() => navigation.goBack()}
+        />
         <UiValidate
           isValid={true}
           notification={

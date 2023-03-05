@@ -66,6 +66,7 @@ const FriendRequest = ({route}: IFriendRequest) => {
         type={IHeaderEnum.Register}
         name={'setting'}
         label={label}
+        onPressExit={() => navigation.goBack()}
         StyleHeaderSetting={{
           paddingVertical: 15,
           paddingTop: Platform.OS === 'android' ? 15 : inset.top * 1.15,

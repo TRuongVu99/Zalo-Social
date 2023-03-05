@@ -56,7 +56,11 @@ export default function CreateCustomer({route}: {route: any}) {
 
   return (
     <View style={styles.container}>
-      <Header type={IHeaderEnum.Register} label={'Nhập thông tin'} />
+      <Header
+        type={IHeaderEnum.Register}
+        label={'Nhập thông tin'}
+        onPressExit={() => navigation.goBack()}
+      />
       <UiValidate
         notification={'Nhập số điện thoại để tạo tài khoản mới'}
         isValid={true}

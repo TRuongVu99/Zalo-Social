@@ -1,40 +1,32 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TouchableNativeFeedback,
-  Keyboard,
-  Alert,
-  FlatList,
-  Image,
-} from 'react-native';
-import React, {useCallback, useContext, useEffect} from 'react';
 import Header from '@components/Header';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
 import UserData from '@data/UserData';
 import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
-import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '@store/index';
 import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/native';
+import {RootState} from '@store/index';
 import {getMessages} from '@store/slice/message/messageSlice';
+import React from 'react';
+import {
+  FlatList,
+  Image,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+
 import StatusBar, {Constants} from '@components/StatusBar';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
   const {profileUser} = useSelector((state: RootState) => state?.user);
-  const {Messages, MessageAll} = useSelector(
-    (state: RootState) => state?.message,
-  );
-  const Message = MessageAll.filter((item: any) => item.message !== undefined);
-  const messageRecevive = Message.map((item: any) => {
-    const data = item.message.filter((items: any) => items.isReceive === true);
-    return data;
-  });
   const ListFriend = profileUser?.listFriend?.filter(
     (item: any) => item.status === 3,
   );
@@ -46,20 +38,18 @@ const Home: React.FC = () => {
         dispatch(getMessages(documentSnapshot.data()));
       });
 
-    // Stop listening for updates when no longer required
     return () => subscriber();
   }
 
   const renderUI = (item: any) => {
-    console.log({img: item.avatar});
     return (
       <TouchableOpacity
         style={{flexDirection: 'row'}}
         onPress={() => {
-          getMessage(item.numberPhone);
+          getMessage(profileUser.numberPhone);
           navigation.navigate(RouterName.Message, {
             name: item.username,
-            numberPhoneFriend: item.numberPhone,
+            profileFriend: item,
           });
         }}>
         <Image style={styles.avatar} source={{uri: item.avatar}} />
@@ -83,6 +73,7 @@ const Home: React.FC = () => {
         typeOption={IPeronalEnum.AddFriend}
         onPressIconRight1={() => onQRCode()}
       />
+
       <FlatList data={ListFriend} renderItem={({item}) => renderUI(item)} />
       <StatusBar
         mode={Constants.statusBar.light}
@@ -106,7 +97,6 @@ const styles = StyleSheet.create({
     height: 60,
     marginVertical: 10,
     marginHorizontal: 15,
-    borderWidth: 0.5,
     borderRadius: 60 / 2,
   },
   viewMessage: {

@@ -1,27 +1,30 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  Image,
-  Alert,
-  Platform,
-} from 'react-native';
-import React from 'react';
 import Header from '@components/Header';
-import {IHeaderEnum} from '@model/handelConfig';
-import {Icon} from '@icon/index';
-import {RouterName} from '@navigation/rootName';
-import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import {fontFamily} from '@fonts/Font';
+import UIButton from '@components/UIButton';
 import Color from '@constants/Color';
 import FontSize from '@constants/FontSize';
-import UIButton from '@components/UIButton';
+import {fontFamily} from '@fonts/Font';
+import {Icon} from '@icon/index';
+import {IHeaderEnum} from '@model/handelConfig';
+import {RouterName} from '@navigation/rootName';
+import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
+import {resetStatus} from '@store/slice/contents/contentsSlice';
+import {resetMessage} from '@store/slice/message/messageSlice';
+import {resetUser} from '@store/slice/user/userSlice';
+import React from 'react';
+import {
+  Alert,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import {useDispatch} from 'react-redux';
 import StatusBar, {Constants} from '@components/StatusBar';
 
 const data = [
@@ -125,12 +128,14 @@ const renderItem = ({item}: {item: any}) => {
 const Setting = () => {
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
+  const dispatch = useDispatch<any>();
   return (
     <View style={styles.container}>
       <Header
         label={'Cài đặt'}
         type={IHeaderEnum.Register}
         name={'search1'}
+        onPressExit={() => navigation.goBack()}
         onPress={() => {
           navigation.navigate(RouterName.SearchScreen);
         }}
@@ -157,7 +162,11 @@ const Setting = () => {
                   onPress: async () => {
                     await auth()
                       .signOut()
-                      .then(() => console.log('User signed out!'));
+                      .then(() => {
+                        dispatch(resetStatus());
+                        dispatch(resetMessage());
+                        dispatch(resetUser());
+                      });
                   },
                 },
               ]);

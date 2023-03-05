@@ -12,11 +12,11 @@ import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
 import FontSize from '@constants/FontSize';
 import {IPreviewImageEnum} from '@model/handelConfig';
-import {removeImageInList} from '@store/slice/contents';
 import {useDispatch} from 'react-redux';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '@constants/Color';
 import FastImage from 'react-native-fast-image';
+import {removeImageInList} from '@store/slice/contents/contentsSlice';
 
 interface IRenderImage {
   ListImage: any;

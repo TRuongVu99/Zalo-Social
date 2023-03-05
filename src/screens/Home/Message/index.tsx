@@ -1,15 +1,16 @@
 import Header from '@components/Header';
-import StatusBar, {Constants} from '@components/StatusBar';
 import {Color, FontSize} from '@constants';
+import DataMesseger from '@data/DataMesseger';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/storage';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {sentMessage} from '@store/slice/message/messageSlice';
+import {getMessage, sentMessage} from '@store/slice/message/messageSlice';
 import Platform from '@utils/Platform';
 import moment from 'moment';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -30,7 +31,7 @@ const renderUI = (item: any, profileFriend: any) => {
   return (
     <View
       style={{
-        flexDirection: item.isReceive ? 'row' : 'row-reverse',
+        flexDirection: item.isSender ? 'row-reverse' : 'row',
         alignItems: 'center',
         marginBottom: 5,
       }}>
@@ -46,7 +47,9 @@ const renderUI = (item: any, profileFriend: any) => {
           {backgroundColor: item.isReceive ? 'white' : Color.message},
         ]}>
         <Text style={styles.message}>{item.message}</Text>
-        <Text style={styles.message}>{item.timeSent.hour}</Text>
+        <Text style={styles.message}>
+          {item.isReceive ? item.timeReceive.hour : item.timeSent.hour}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -56,21 +59,17 @@ const Message = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
   const navigation = useNavigation<any>();
   const inset = useSafeAreaInsets();
-  const {name, numberPhoneFriend} = route?.params;
-  const {profileFriend} = useSelector(
-    (state: RootState) => state?.profileFriend,
-  );
+  const {name, profileFriend} = route?.params;
   const {profileUser} = useSelector((state: RootState) => state?.user);
   const {Messages} = useSelector((state: RootState) => state?.message);
   const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
   const [messageApp, setMessage] = useState<string>('');
-  const arr1 = Messages?.message?.filter(
-    (item: any) => item.phoneOfSender === profileUser.numberPhone,
+  const data = Messages?.message?.filter(
+    (item: any) =>
+      item.phoneOfSender === profileFriend.numberPhone ||
+      item.phoneOfReceive === profileFriend.numberPhone,
   );
-  const arr2 = Messages?.message?.filter(
-    (item: any) => item.phoneOfReceive === numberPhoneFriend,
-  );
-  const data = arr1?.concat(arr2);
+  console.log({data});
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
       setPaddingBottom(false);
@@ -91,16 +90,15 @@ const Message = ({route}: {route: any}) => {
           label={name ? name : profileFriend.username}
         />
         <FlatList
-          style={{
+          inverted
+          contentContainerStyle={{
             marginHorizontal: 15,
             paddingBottom: 20,
-            flex: 1,
           }}
-          // inverted={false}
-          data={data}
+          data={data?.reverse()}
           renderItem={({item}) => renderUI(item, profileFriend)}
-          extraData={(item: any) => item.timestamp}
         />
+
         <View
           style={[
             styles.viewTextInput,
@@ -109,8 +107,9 @@ const Message = ({route}: {route: any}) => {
           <TouchableOpacity>
             <IconSimple name={'emotsmile'} size={26} color={Color.DimGray} />
           </TouchableOpacity>
-
           <TextInput
+            value={messageApp}
+            multiline={true}
             placeholder="Tin nhắn"
             onChangeText={(text: string) => setMessage(text)}
             style={styles.textInput}
@@ -118,6 +117,7 @@ const Message = ({route}: {route: any}) => {
           {messageApp !== '' ? (
             <TouchableOpacity
               onPress={() => {
+                setMessage('');
                 dispatch(
                   sentMessage({
                     numberPhone: profileFriend.numberPhone,
@@ -125,7 +125,7 @@ const Message = ({route}: {route: any}) => {
                       phoneOfSender: profileUser.numberPhone,
                       isReceive: true,
                       message: messageApp,
-                      timeSent: {
+                      timeReceive: {
                         hour: moment().format('LT'),
                         day: moment().format('L'),
                       },
@@ -136,7 +136,7 @@ const Message = ({route}: {route: any}) => {
                   sentMessage({
                     numberPhone: profileUser.numberPhone,
                     message: {
-                      phoneOfReceive: profileUser.numberPhone,
+                      phoneOfReceive: profileFriend.numberPhone,
                       isSender: true,
                       message: messageApp,
                       timeSent: {
@@ -167,11 +167,6 @@ const Message = ({route}: {route: any}) => {
             </>
           )}
         </View>
-        <StatusBar
-          mode={Constants.statusBar.light}
-          navigation={navigation}
-          backgroundColor={Color.primary}
-        />
       </View>
     </KeyboardAvoidingView>
   );
@@ -218,6 +213,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: Platform.isIos ? 5 : 0,
 
     paddingHorizontal: 10,
   },

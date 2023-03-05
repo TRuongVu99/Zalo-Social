@@ -13,5 +13,6 @@ export * from './Home/SearchScreen';
 export * from './Home/Message';
 export * from './Home/Setting';
 export * from './Home/OptionMessage';
+export * from './Home/CommentScreen';
 export * from './Home/MyQRCode';
 export * from './Home/QRCodeScan';

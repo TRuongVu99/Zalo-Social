@@ -5,5 +5,5 @@ export const fontFamily = {
   mainFont: 'Roboto-Thin',
   RobotoMedium: 'Roboto-Medium',
   SanFranciscoDisplayMedium: 'SanFranciscoDisplay-Medium',
-  PoppinsRegular: 'Poppins-Regular',
+  PoppinsRegular: 'SanFranciscoText-Regular',
 };

@@ -15,5 +15,7 @@ export default {
   white: 'rgba(255, 255, 255, 0.8)',
   heart: 'rgb(208, 0, 20)',
   message: 'rgb(200,  240, 250)',
+  icon: 'rgb(100, 99, 99)',
+  textComment: 'rgb(31, 32, 31)',
   black: '#000',
 };

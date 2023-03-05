@@ -6,14 +6,14 @@ import {Icon} from '@icon/index';
 import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
 import {getStatus} from '@store/slice/contents/contentsSlice';
-import React, {useEffect} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../../store';
 import FastImage from 'react-native-fast-image';
-import {endLoading, startLoading} from '@store/slice/app/appSlice';
 import StatusBar, {Constants} from '@components/StatusBar';
 
 export const urlAvatar =

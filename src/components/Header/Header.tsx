@@ -47,6 +47,7 @@ interface IHeader {
   onPressIconRight2?: (event: GestureResponderEvent) => void;
   onPressExit?: (event: GestureResponderEvent) => void;
   onPostStatus?: (event: GestureResponderEvent) => void;
+  onPressBack?: () => void;
   styleIconRight?: StyleProp<ImageStyle>;
   buttonBack?: string;
   name?: string;
@@ -73,6 +74,7 @@ const Header = ({
   typePersonal,
   isPost,
   onPostStatus,
+  onPressBack,
 }: IHeader) => {
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<any>();
@@ -86,27 +88,20 @@ const Header = ({
             {paddingTop: Platform.OS === 'ios' ? inset.top * 1.15 : 10},
             StyleHeaderSetting,
           ]}>
-          <TouchableOpacity
-            style={[styles.back]}
-            onPress={() => navigation.goBack()}>
+          <TouchableOpacity style={[styles.back]} onPress={onPressExit}>
             <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
           </TouchableOpacity>
           <Text style={styles.label}>{label}</Text>
           <TouchableOpacity onPress={onPress}>
             <Icons name={name} size={24} color={'white'} />
           </TouchableOpacity>
-          {typePersonal === IHeaderEnum.Personal && (
+          {typePersonal === IHeaderEnum.Comment && (
             <View style={styles.iconInPersonal}>
-              <TouchableOpacity
-                style={{paddingHorizontal: 20}}
-                onPress={onPressIconRight1}>
-                <IconFeather name={'phone'} size={24} color={'black'} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onPressIconRight2}>
-                <IconFeather
-                  name={'more-horizontal'}
-                  size={24}
-                  color={'black'}
+              <TouchableOpacity onPress={onPressIconRight1}>
+                <FastImage
+                  source={Icon.more}
+                  tintColor={'white'}
+                  style={{width: 30, height: 30}}
                 />
               </TouchableOpacity>
             </View>

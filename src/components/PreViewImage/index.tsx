@@ -9,7 +9,7 @@ import {
   removeImageInList,
 } from '@store/slice/contents/contentsSlice';
 import {windowWidth} from '@utils/Dimensions';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Image,
@@ -23,15 +23,17 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
+import ImageView from 'react-native-image-viewing';
 const PreViewImage = ({route}: {route: any}) => {
   const {listImages} = useSelector((state: RootState) => state.contents);
   const newListImage = listImages.filter((item: any, index: number) => {
     return listImages.indexOf(item) === index;
   });
-  const {UrlImage, type} = route?.params;
+  const {UrlImage, type, data} = route?.params;
   const inset = useSafeAreaInsets();
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
+  const [visible, setIsVisible] = useState<boolean>(false);
   const getImagesInAlbum = () => {
     ImagePicker.openPicker({
       multiple: true,
@@ -44,7 +46,11 @@ const PreViewImage = ({route}: {route: any}) => {
       dispatch(addImagetoList(dataImages));
     });
   };
-
+  console.log({
+    data: data.media.map((item: any) => {
+      return {uri: item};
+    }),
+  });
   switch (type) {
     case IPreviewImageEnum.Photoshop:
       return (
@@ -112,6 +118,19 @@ const PreViewImage = ({route}: {route: any}) => {
             </TouchableOpacity>
           </View>
         </View>
+      );
+    case IPreviewImageEnum.ImageOfStatus:
+      return (
+        <ImageView
+          images={data.media.map((item: any) => {
+            return {uri: item};
+          })}
+          imageIndex={0}
+          visible={visible}
+          onRequestClose={() => {
+            setIsVisible(false);
+          }}
+        />
       );
     default:
       return (
