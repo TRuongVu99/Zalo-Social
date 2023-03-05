@@ -208,7 +208,7 @@ const RenderStatus = ({
 
 export default RenderStatus;
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     paddingVertical: 10,
     backgroundColor: 'white',

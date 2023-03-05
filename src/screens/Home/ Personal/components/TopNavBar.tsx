@@ -10,6 +10,7 @@ import Color from '@constants/Color';
 import isAndroid from '@utils/Platform';
 import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
+import {RouterName} from '@navigation/rootName';
 
 interface ITopNavBar {
   avatar?: string;
@@ -27,7 +28,7 @@ const TopNavBar = ({avatar, userName, type}: ITopNavBar) => {
       ]}>
       <TouchableOpacity
         style={[styles.back]}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate(RouterName.Profile)}>
         <IconEntypo name="chevron-thin-left" size={22} color={'black'} />
       </TouchableOpacity>
       <View style={styles.user}>

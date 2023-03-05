@@ -18,6 +18,7 @@ import {
   getStatus,
   likeStatus,
   sentComment,
+  updateComment,
 } from '@store/slice/contents/contentsSlice';
 import Platform from '@utils/Platform';
 import React, {useEffect, useState} from 'react';
@@ -44,14 +45,17 @@ const CommentScreen = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
   const {dataContents} = useSelector((state: RootState) => state.contents);
   const {profileUser} = useSelector((state: RootState) => state.user);
+  const {dataComments} = useSelector((state: RootState) => state.contents);
   const {profile, newProfileUser, profileFriend, type, index, items} =
     route?.params;
 
-  console.log({items});
   const arrs = [...dataContents?.listStatusContents]
     ?.reverse()
     .filter((a: any, i: number) => index === i);
-  const data = arrs ? items : arrs[0];
+  const data = items ? items : arrs[0];
+  // console.log({data});
+  // console.log({dataContents});
+
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
   const isLikeUser = data?.likes?.some(
@@ -76,6 +80,7 @@ const CommentScreen = ({route}: {route: any}) => {
             : profile.numberPhone,
       }),
     );
+    dispatch(updateComment([...data?.comments]));
   }, []);
   const onPressUnLike = async () => {
     const newLike = [...data?.likes];
@@ -134,7 +139,6 @@ const CommentScreen = ({route}: {route: any}) => {
     const newComment = [...data?.comments];
     const dataComment = {...newProfileUser, comment: commentApp};
     newComment.push(dataComment);
-
     await dispatch(
       sentComment({
         dataContents,
@@ -155,11 +159,7 @@ const CommentScreen = ({route}: {route: any}) => {
             : profile.numberPhone,
       }),
     );
-    dispatch(
-      getStatus({
-        numberPhone: profileFriend.numberPhone,
-      }),
-    );
+    dispatch(updateComment(newComment));
   };
   const datas = data?.media?.map((img: any) => {
     return {uri: img};
@@ -345,7 +345,7 @@ const CommentScreen = ({route}: {route: any}) => {
             </TouchableOpacity>
           </View>
           <View>
-            {data?.comments?.map((comment: any) => (
+            {dataComments?.map((comment: any) => (
               <View style={{flexDirection: 'row', paddingBottom: 10}}>
                 <TouchableOpacity>
                   <FastImage

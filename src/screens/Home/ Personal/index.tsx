@@ -45,7 +45,6 @@ const Personal = ({route}: IPersonal) => {
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-  console.log('kaka', profileUser, newProfileUser);
 
   const profileUserRecall = {
     ...profileUser,
@@ -223,15 +222,6 @@ const Personal = ({route}: IPersonal) => {
         />
       );
   }
-  // return (
-  //   <RenderUserUI
-  //     urlAvatar={profileUser?.avatar}
-  //     name={profileUser?.username}
-  //     urlBackground={profileUser?.background}
-  //     loading={loading}
-  //     profile={newProfileUser}
-  //   />
-  // );
 };
 
 export default Personal;

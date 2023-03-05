@@ -52,6 +52,7 @@ import HeaderViewing from '../ Personal/components/HeaderViewing';
 import {RootState} from '@store/index';
 import {OpstionHeader} from './data';
 import moment from 'moment';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
 
 const NewFeed = () => {
   const navigation = useNavigation<any>();
@@ -73,18 +74,42 @@ const NewFeed = () => {
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-
+  const onGetAllStatus = async () => {
+    dispatch(startLoading());
+    await dispatch(getAllStatus({profileUser})).unwrap();
+    dispatch(endLoading());
+  };
   useEffect(() => {
-    dispatch(getAllStatus({profileUser}));
+    onGetAllStatus();
   }, []);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(getAllStatus({profileUser}));
-
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
+    }, 100);
   }, []);
+
+  const onPressComments = async (item: any) => {
+    const items = {...item};
+    delete items.profile;
+    if (item?.profile) {
+      await dispatch(
+        getStatus({
+          numberPhone: item?.profile.numberPhone,
+        }),
+      );
+    }
+
+    navigation.navigate(RouterName.CommentScreen, {
+      items,
+      profile: profileUser,
+      newProfileUser,
+      profileFriend: item?.profile,
+      type: item?.profile !== undefined ? IPeronalEnum.Friend : 'user',
+    });
+  };
+
   const onPressUnLike = async (item: any) => {
     const newLike = [...item?.likes];
     const arr = newLike.filter(
@@ -92,50 +117,44 @@ const NewFeed = () => {
     );
     const items = {...item};
     delete items.profile;
-    // console.log({items});
-    console.log({arr});
-    await dispatch(
-      getStatus({numberPhone: item?.profile.numberPhone}),
+    const arrs = await dispatch(
+      getStatus({numberPhone: item.profile.numberPhone}),
     ).unwrap();
-    setTimeout(() => {
-      dispatch(
-        likeStatus({
-          dataContents: dataContents,
-          numberPhone: item?.profile.numberPhone,
-          contents: item,
-          likeStatus: false,
-          newLikes: arr,
-        }),
-      );
-      // dispatch(getAllStatus({profileUser}));
-    }, 2000);
+    dispatch(
+      likeStatus({
+        dataContents: arrs,
+        numberPhone: item?.profile.numberPhone,
+        contents: item,
+        likeStatus: false,
+        newLikes: arr,
+      }),
+    );
+    console.log({dataContents});
   };
   const onPressLike = async (item: any) => {
     const newLikes = [...item?.likes];
     newLikes.push(newProfileUser);
-    // const items = {...item};
-    // delete items.profile;
-    dispatch(getStatus({numberPhone: item?.profile.numberPhone}));
-    console.log({numberPhone: item?.profile.numberPhone});
-    setTimeout(() => {
-      // dispatch(
-      //   likeStatus({
-      //     dataContents: dataContents,
-      //     numberPhone: item?.profile.numberPhone,
+    const arr = await dispatch(
+      getStatus({numberPhone: item.profile.numberPhone}),
+    ).unwrap();
 
-      //     contents: item,
-      //     likeStatus: true,
-      //     profile: newProfileUser,
-      //     newLikes,
-      //   }),
-      // );
-      console.log({dataContents});
-    }, 2000);
-    // console.log({dataContents});
-    // console.log({numberPhone: item?.profile.numberPhone});
-
-    // dispatch(getAllStatus({profileUser}));
+    dispatch(
+      likeStatus({
+        dataContents: arr,
+        numberPhone: item?.profile.numberPhone,
+        contents: item,
+        likeStatus: true,
+        newLikes,
+        profileUser,
+      }),
+    );
   };
+  const datata = [...AllStatus].sort(function (a, b) {
+    return b.id - a.id;
+  });
+  // console.log(datata);
+
+  // console.log({moment: moment()});
 
   const renderUI = (item: any, index: number) => {
     const datas = item?.media?.map((img: any, id: number) => {
@@ -144,73 +163,48 @@ const NewFeed = () => {
     const isLikeUser = item?.likes?.some(
       (items: any) => items?.uid === profileUser?.uid,
     );
+    let m1 = moment(
+      `${moment(
+        `${item.dayOfPostStatus.day} ${item.dayOfPostStatus.hour}`,
+        'MM/DD/YYYY HH:mm:ss A',
+      ).format('MM/DD/YYYY HH:mm:ss A')}`,
+      'MM/DD/YYYY HH:mm:ss A',
+    );
+    let m2 = moment(
+      `${moment().format('MM/DD/YYYY HH:mm:ss A')}`,
+      'MM/DD/YYYY HH:mm:ss A',
+    );
+    const diff = m2.diff(m1, 'minute');
+    const resultTime =
+      Math.floor(diff / 60) < 1
+        ? diff + ' phút trước'
+        : Math.floor(diff / 60) >= 1 && Math.floor(diff / 60) <= 24
+        ? Math.floor(diff / 60) + ' giờ trước'
+        : Math.floor(diff / 1440) + ' ngày trước';
     return (
-      <View style={styles.renderUI}>
-        <ImageView
-          images={datas}
-          imageIndex={0}
-          visible={visible}
-          onRequestClose={() => setIsVisible(false)}
-          HeaderComponent={() => (
-            <HeaderViewing onPressClose={() => setIsVisible(false)} />
-          )}
-          FooterComponent={() => (
-            <>
-              <View style={styles.content}>
-                <Text style={styles.textContents}>{item?.textContent}</Text>
-              </View>
-              <View
-                style={[
-                  styles.iconLeft,
-                  {paddingBottom: Platform.isIos ? bottom * 1.2 : 20},
-                ]}>
-                <TouchableOpacity
-                  key={item.dayOfPostStatus.hour}
-                  onPress={() => {
-                    setLike(!like);
-                    setQuantity(like ? quantity - 1 : quantity + 1);
-                    // like ? onPressUnLike() : onPressLike();
-                  }}
-                  style={styles.heart}>
-                  {!isLikeUser ? (
-                    <IconFontAwesome
-                      name={'heart-o'}
-                      size={24}
-                      color={'white'}
-                    />
-                  ) : (
-                    <IconAntDesign
-                      name={'heart'}
-                      size={24}
-                      color={Color.heart}
-                    />
-                  )}
-                  <Text style={styles.likes}>{quantity}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.row}>
-                  <FastImage
-                    source={Icon.comments}
-                    style={styles.comment}
-                    tintColor={'white'}
-                  />
-                  <Text style={styles.likes}>{item.comments?.length}</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          )}
-        />
-        <View style={styles.view1}>
-          <FastImage
-            source={{
-              uri: item.profile.avatar,
-            }}
-            style={styles.avatar}
-          />
-          <View style={{paddingLeft: 20}}>
-            <Text style={styles.labelStyle}>{item.profile.username}</Text>
+      <Pressable style={styles.renderUI} onPress={() => onPressComments(item)}>
+        <View style={[styles.view1]}>
+          <Pressable
+            onPress={() => {
+              navigation.navigate(RouterName.Personal, {
+                profile: item.profile,
+                type: IPeronalEnum.Friend,
+              });
+              // console.log({item: item.profile});
+            }}>
+            <FastImage
+              source={{
+                uri: item.profile.avatar,
+              }}
+              style={styles.avatar}
+            />
+          </Pressable>
+          <View>
+            <TouchableOpacity>
+              <Text style={styles.labelStyle}>{item.profile.username}</Text>
+            </TouchableOpacity>
             <View style={styles.row}>
-              <Text style={styles.description}>{item.dayOfPostStatus.day}</Text>
+              <Text style={styles.description}>{resultTime}</Text>
             </View>
           </View>
         </View>
@@ -270,7 +264,7 @@ const NewFeed = () => {
         </View>
         <View style={[styles.iconLeft]}>
           <TouchableOpacity
-            onPress={() => {
+            onPress={async () => {
               const items = {...item};
               delete items.profile;
               console.log({isLikeUser});
@@ -296,26 +290,8 @@ const NewFeed = () => {
 
           <TouchableOpacity
             style={styles.row}
-            onPress={async () => {
-              const items = {...item};
-              delete items.profile;
-              if (item?.profile) {
-                await dispatch(
-                  getStatus({
-                    numberPhone: item?.profile.numberPhone,
-                  }),
-                );
-              }
-
-              navigation.navigate(RouterName.CommentScreen, {
-                items,
-                profile: profileUser,
-                newProfileUser,
-                profileFriend: item?.profile,
-                type:
-                  item?.profile !== undefined ? IPeronalEnum.Friend : 'user',
-                index,
-              });
+            onPress={() => {
+              onPressComments(item);
             }}>
             <FastImage
               source={Icon.comments}
@@ -325,7 +301,7 @@ const NewFeed = () => {
             <Text style={styles.likes}>{item.comments.length}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Pressable>
     );
   };
   return (
@@ -353,7 +329,16 @@ const NewFeed = () => {
               }}
               style={styles.avatar}
             />
-            <Text style={styles.textInput}>Hôm nay bạn thế nào?</Text>
+            {
+              <Pressable
+                onPress={() => {
+                  navigation.navigate(RouterName.PostStatus, {
+                    numberPhone: profileUser.numberPhone,
+                  });
+                }}>
+                <Text style={styles.textInput}>Hôm nay bạn thế nào?</Text>
+              </Pressable>
+            }
           </View>
           <View style={[styles.row, styles.opstionHeader]}>
             {OpstionHeader.map((item: any) => (
@@ -373,7 +358,7 @@ const NewFeed = () => {
           />
         </View>
         <FlatList
-          data={[...AllStatus].reverse()}
+          data={datata}
           renderItem={({item, index}) => renderUI(item, index)}
         />
       </ScrollView>
@@ -394,7 +379,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 50 / 2,
     marginHorizontal: 20,
-    marginBottom: 20,
     marginVertical: 10,
   },
   textInput: {
@@ -441,6 +425,7 @@ const styles = StyleSheet.create({
   view1: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingBottom: 10,
   },
   labelStyle: {
     fontFamily: fontFamily.RobotoMedium,

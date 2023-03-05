@@ -10,6 +10,7 @@ import isAndroid from '@utils/Platform';
 import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
 import FastImage from 'react-native-fast-image';
+import {RouterName} from '@navigation/rootName';
 
 interface IHeaderNavbar {
   label?: string;
@@ -26,7 +27,7 @@ const HeaderNavbar = ({label, type}: IHeaderNavbar) => {
       ]}>
       <TouchableOpacity
         style={[styles.back]}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate(RouterName.Profile)}>
         <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
       </TouchableOpacity>
       <View style={styles.iconInPersonal}>

@@ -8,10 +8,12 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useNavigation} from '@react-navigation/core';
 import {AppDispatch, RootState} from '@store/index';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
 import {
   deleteStatus,
   getStatus,
   likeStatus,
+  updateComment,
 } from '@store/slice/contents/contentsSlice';
 import {getUserProfile} from '@store/slice/user/userSlice';
 import {windowHeight, windowWidth} from '@utils/Dimensions';
@@ -110,6 +112,7 @@ const RenderUserUI = ({
   }, [Loading]);
 
   const onRefresh = useCallback(() => {
+    dispatch(startLoading());
     setRefreshing(true);
     dispatch(
       getStatus({
@@ -121,6 +124,7 @@ const RenderUserUI = ({
     );
     setTimeout(() => {
       setRefreshing(false);
+      dispatch(endLoading());
     }, 2000);
   }, []);
 
@@ -370,6 +374,7 @@ const RenderUserUI = ({
               dataContents,
               index,
             });
+            // dispatch(updateComment([...item?.comments]));
           }}
         />
       </View>

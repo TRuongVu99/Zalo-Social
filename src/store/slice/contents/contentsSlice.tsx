@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import moment from 'moment';
+import {useDispatch} from 'react-redux';
 import {endLoading, startLoading} from '../app/appSlice';
 
 interface IFriend {
@@ -17,6 +18,7 @@ interface IFriend {
   };
   dataContents?: any;
   AllStatus?: any;
+  dataComments?: any;
 }
 
 const initialState: IFriend = {
@@ -26,6 +28,7 @@ const initialState: IFriend = {
     listStatusContents: [],
   },
   AllStatus: [],
+  dataComments: [],
 };
 
 export const getStatus = createAsyncThunk(
@@ -46,7 +49,9 @@ export const getStatus = createAsyncThunk(
 );
 export const getAllStatus = createAsyncThunk(
   'contents/getAllStatus',
+
   async (params: any) => {
+    // const dispatch = useDispatch<any>();
     const listFriends = params.profileUser?.listFriend;
     const newProfileUser = {
       ...params.profileUser,
@@ -98,6 +103,17 @@ interface ICreateContent {
   newLikes?: any;
   dataContents?: any;
   newComment?: any;
+  profileUser?: {
+    username?: string | undefined;
+    numberPhone?: string | undefined;
+    uid?: string | undefined;
+    listFriend?: any;
+    UserId?: string | undefined;
+    avatar?: string | undefined;
+    listFriendInvitations?: any;
+    timeStamp?: string | undefined;
+    background?: string | undefined;
+  };
 }
 export const updateContent = createAsyncThunk(
   'contents/updateContent',
@@ -123,37 +139,33 @@ export const updateContent = createAsyncThunk(
 
 export const likeStatus = createAsyncThunk(
   'contents/likeStatus',
-  async (params: ICreateContent) => {
+  async (params: ICreateContent, thunkAPI) => {
     const content = params?.contents;
     const newContent = params?.dataContents?.listStatusContents?.map(
       (item: any) => {
-        // if (JSON.stringify(item) === JSON.stringify(content)) {
-        //   return {...item, likes: params.newLikes};
-        // }
         if (item.id === content.id) {
           return {...item, likes: params.newLikes};
         }
         return item;
       },
     );
-    console.log({newContent});
-    console.log({content});
 
-    // firestore()
-    //   .collection('Status')
-    //   .doc(params.numberPhone)
-    //   .set({
-    //     listStatusContents: newContent,
-    //   })
-    //   .then(() => {
-    //     params.likeStatus
-    //       ? console.log('Like status')
-    //       : console.log('Unlike status');
-    //   })
-    //   .catch(err => {
-    //     console.log('Like status thất bại');
-    //     console.log(err);
-    //   });
+    firestore()
+      .collection('Status')
+      .doc(params.numberPhone)
+      .set({
+        listStatusContents: newContent,
+      })
+      .then(() => {
+        params.likeStatus
+          ? console.log('Like status')
+          : console.log('Unlike status');
+        thunkAPI.dispatch(getAllStatus({profileUser: params.profileUser}));
+      })
+      .catch(err => {
+        console.log('Like status thất bại');
+        console.log(err);
+      });
   },
 );
 export const sentComment = createAsyncThunk(
@@ -230,6 +242,9 @@ export const counterSlice = createSlice({
     getNewAllStatus: (state, action) => {
       state.AllStatus.concat(action.payload);
     },
+    updateComment: (state, action) => {
+      state.dataComments = action.payload;
+    },
     setLikePost: (state, action) => {
       const {isLike, data, uid, newProfileUser, type} = action.payload;
       const arr =
@@ -290,6 +305,7 @@ export const {
   setLikePost,
   getNewAllStatus,
   resetStatus,
+  updateComment,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

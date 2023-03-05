@@ -1,6 +1,6 @@
 import FontSize from '@constants/FontSize';
 import {windowWidth} from '@utils/Dimensions';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   Image,
@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useDispatch} from 'react-redux';
 
 interface IRenderImage {
   ListImage: any;
@@ -17,25 +19,31 @@ interface IRenderImage {
 }
 
 export const RenderImage1 = ({ListImage, onPressImg}: IRenderImage) => {
+  const dispatch = useDispatch();
+  const inset = useSafeAreaInsets();
+  const [indexs, setIndex] = useState<any>();
+  const [visible, setIsVisible] = useState(false);
   return (
-    <FlatList
-      data={ListImage}
-      keyboardShouldPersistTaps="handled"
-      renderItem={({item}: {item: any; index: number}) => {
-        return (
-          <TouchableOpacity onPress={onPressImg}>
-            <FastImage
-              source={{
-                uri: item,
-                priority: FastImage.priority.high,
-              }}
-              resizeMode={'cover'}
-              style={styles.image1}
-            />
-          </TouchableOpacity>
-        );
-      }}
-    />
+    <>
+      <FlatList
+        data={ListImage}
+        keyboardShouldPersistTaps="handled"
+        renderItem={({item}: {item: any; index: number}) => {
+          return (
+            <TouchableOpacity onPress={onPressImg}>
+              <FastImage
+                source={{
+                  uri: item,
+                  priority: FastImage.priority.high,
+                }}
+                resizeMode={'cover'}
+                style={styles.image1}
+              />
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </>
   );
 };
 export const RenderImage2 = ({ListImage, onPressImg}: IRenderImage) => {

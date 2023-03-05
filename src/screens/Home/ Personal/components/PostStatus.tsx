@@ -192,7 +192,7 @@ const PostStatus = ({route}: {route: any}) => {
         />
         <ScrollView keyboardShouldPersistTaps="handled" style={{}}>
           <TextInput
-            caretHidden={true}
+            caretHidden={text.length > 0 ? true : false}
             multiline={true}
             onChangeText={texts => setText(texts)}
             defaultValue={text}
