@@ -26,4 +26,8 @@ export const RouterName = {
   PreViewImage: 'PreViewImage',
   QRCode: 'QRCode',
   QRCodeScan: 'QRCodeScan',
+  ChatGPT: 'ChatGPT',
+  SwitchAccount: 'SwitchAccount',
+  LoginSwitchAccount: 'LoginSwitchAccount',
+  ConfirmSwitchAccount: 'ConfirmSwitchAccount',
 };

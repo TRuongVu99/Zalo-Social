@@ -23,6 +23,9 @@ import UIButton from '@components/UIButton';
 import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import StatusBar, {Constants} from '@components/StatusBar';
+import {useDispatch, useSelector} from 'react-redux';
+import {setAccountDeviceStorage} from '@store/slice/user/userSlice';
+import {RootState} from '@store/index';
 
 const data = [
   {
@@ -91,40 +94,49 @@ const data = [
     descriptions: null,
   },
 ];
-const renderItem = ({item}: {item: any}) => {
-  return (
-    <TouchableOpacity
-      style={[
-        styles.item,
-        {
-          marginBottom:
-            item.label === 'Ví QR' || item.label === 'Dữ Liệu và bộ nhớ'
-              ? 10
-              : 0,
-        },
-      ]}>
-      <FastImage
-        source={item.icon}
-        style={styles.icon}
-        tintColor={Color.blue}
-      />
-      <View style={styles.container}>
-        <Text style={[styles.labelStyle, styles.userName]}>{item.label}</Text>
-        {item.descriptions !== null && (
-          <Text style={styles.description}>{item.descriptions}</Text>
-        )}
-      </View>
-      {item.label !== 'Ví QR' && (
-        <TouchableOpacity style={{padding: 10}}>
-          <IconEntypo name="chevron-thin-right" size={12} color={'black'} />
-        </TouchableOpacity>
-      )}
-    </TouchableOpacity>
-  );
-};
+
 const Setting = () => {
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
+  const {profileUser} = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const renderItem = ({item}: {item: any}) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          if (item.label === 'Chuyển tài khoản') {
+            dispatch(setAccountDeviceStorage(profileUser));
+            navigation.navigate(RouterName.SwitchAccount);
+          }
+        }}
+        style={[
+          styles.item,
+          {
+            marginBottom:
+              item.label === 'Ví QR' || item.label === 'Dữ Liệu và bộ nhớ'
+                ? 10
+                : 0,
+          },
+        ]}>
+        <FastImage
+          source={item.icon}
+          style={styles.icon}
+          tintColor={Color.blue}
+        />
+        <View style={styles.container}>
+          <Text style={[styles.labelStyle, styles.userName]}>{item.label}</Text>
+          {item.descriptions !== null && (
+            <Text style={styles.description}>{item.descriptions}</Text>
+          )}
+        </View>
+        {item.label !== 'Ví QR' && (
+          <TouchableOpacity style={{padding: 10}}>
+            <IconEntypo name="chevron-thin-right" size={12} color={'black'} />
+          </TouchableOpacity>
+        )}
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <Header

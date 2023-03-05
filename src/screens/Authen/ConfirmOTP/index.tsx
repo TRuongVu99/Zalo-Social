@@ -4,6 +4,7 @@ import OTPInput from '@components/OTPInput';
 import UiValidate from '@components/UiValidate';
 import {Color, FontSize} from '@constants';
 import {IHeaderEnum} from '@model/handelConfig';
+import {RouterName} from '@navigation/rootName';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
@@ -35,7 +36,10 @@ const ConfirmOTP = ({route}: {route: any}) => {
   });
   const {confirm, numberPhone, isLogin} = route.params;
   const {profileUser} = useSelector((state: RootState) => state.user);
+  const {isSwitchAccount} = useSelector((state: RootState) => state.app);
+
   const {username} = profileUser;
+
   useEffect(() => {
     if (count === 0) return;
     const interval = setInterval(() => {
@@ -66,6 +70,12 @@ const ConfirmOTP = ({route}: {route: any}) => {
   async function confirmCode(code: string) {
     try {
       const result = await confirm?.confirm(code).then(async (user: any) => {
+        console.log({isSwitchAccount});
+
+        if (isSwitchAccount) {
+          navigation.replace(RouterName.BottomTabBar);
+        }
+        console.log(user);
         if (!isLogin) {
           await firestore()
             .collection('Users')

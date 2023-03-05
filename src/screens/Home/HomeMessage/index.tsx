@@ -23,6 +23,7 @@ import {RootState} from '@store/index';
 import firestore from '@react-native-firebase/firestore';
 import {getMessages} from '@store/slice/message/messageSlice';
 import StatusBar, {Constants} from '@components/StatusBar';
+import {setIsSwitchAccount} from '@store/slice/app/appSlice';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
@@ -73,6 +74,12 @@ const Home: React.FC = () => {
   const onQRCode = async () => {
     navigation.navigate(RouterName.QRCodeScan);
   };
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setIsSwitchAccount(false));
+    }, []),
+  );
+
   return (
     <View style={styles.container}>
       <Header

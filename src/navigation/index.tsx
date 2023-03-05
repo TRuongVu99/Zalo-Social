@@ -26,11 +26,13 @@ import {getMessageAll, getMessages} from '@store/slice/message/messageSlice';
 import React, {useEffect, useState} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 import {useDispatch, useSelector} from 'react-redux';
-import {getUserProfile} from '../store/slice/user/userSlice';
+import {getAccountDevice, getUserProfile} from '../store/slice/user/userSlice';
 import {RouterName} from './rootName';
 import {StackAnimationTypes} from 'react-native-screens';
 import QRCodeScreen from '@screens/Home/MyQRCode';
 import QRCodeScan from '@screens/Home/QRCodeScan';
+import ChatGPT from '@screens/Home/ChatGPT';
+import SwitchAccount from '@screens/Home/SwitchAccount';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -40,7 +42,7 @@ const Application = () => {
   const {loadingApp} = useSelector((state: RootState) => state?.app);
 
   const dispatch = useDispatch<AppDispatch>();
-  // firebase.auth().settings.appVerificationDisabledForTesting = true;
+  firebase.auth().settings.appVerificationDisabledForTesting = true;
   // useEffect(() => {
   //   getMessage1(profileUser.numberPhone);
   // }, []);
@@ -66,10 +68,12 @@ const Application = () => {
   async function onAuthStateChanged(user: any) {
     setUser(user);
     const uid = user?._user?.uid;
-
+    await dispatch(getAccountDevice());
     try {
       if (user) {
-        dispatch(getUserProfile({uid}));
+        setTimeout(() => {
+          dispatch(getUserProfile({uid}));
+        }, 1000);
       }
     } catch (error) {
       console.log(error);
@@ -171,6 +175,11 @@ const Application = () => {
                 component={PersonalFriendRequest}
               />
               <Stack.Screen name={RouterName.QRCode} component={QRCodeScreen} />
+              <Stack.Screen name={RouterName.ChatGPT} component={ChatGPT} />
+              <Stack.Screen
+                name={RouterName.SwitchAccount}
+                component={SwitchAccount}
+              />
               <Stack.Screen
                 name={RouterName.QRCodeScan}
                 component={QRCodeScan}
@@ -178,6 +187,14 @@ const Application = () => {
                   animation: 'none',
                   presentation: 'transparentModal',
                 }}
+              />
+              <Stack.Screen
+                name={RouterName.LoginSwitchAccount}
+                component={Login}
+              />
+              <Stack.Screen
+                name={RouterName.ConfirmSwitchAccount}
+                component={ConfirmOTP}
               />
             </>
           )}

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
@@ -14,11 +15,54 @@ export interface IUser {
     background?: string | undefined;
   };
   option?: string;
+  accountDevice?: Array<any>;
 }
 const initialState: IUser = {
   profileUser: {},
   option: 'fade',
+  accountDevice: [],
 };
+const AccountDeviceKey = 'AccountDeviceKey';
+export const getAccountDevice = createAsyncThunk(
+  'user/getAccountDevice',
+  async (_, thunkAPI) => {
+    // Filter results
+    AsyncStorage.getItem(AccountDeviceKey)
+      .then(data => {
+        console.log({data});
+        if (data !== null) {
+          thunkAPI.dispatch(setAccountDevice(JSON.parse(data)));
+        }
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  },
+);
+
+export const setAccountDeviceStorage = createAsyncThunk(
+  'user/setAccountDeviceStorage',
+  async (params, thunkAPI) => {
+    const {accountDevice, profileUser} = thunkAPI.getState()?.user;
+    const isUser = accountDevice?.filter((v: any) => v.uid === params?.uid);
+    console.log({
+      profileUser: params,
+      accountDevice: profileUser,
+      accountDevices: accountDevice,
+    });
+    // Filter results
+    if (isUser?.length === 0) {
+      AsyncStorage.setItem(AccountDeviceKey, JSON.stringify(params))
+        .then(() => {
+          thunkAPI.dispatch(getAccountDevice());
+          console.log('setAccountDeviceStorage');
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    }
+  },
+);
 
 export const getUserProfile = createAsyncThunk(
   'user/getUserProfile',
@@ -33,6 +77,8 @@ export const getUserProfile = createAsyncThunk(
         querySnapshot.forEach(snapshot => {
           profile = {...snapshot.data(), UserId: snapshot.id};
         });
+        thunkAPI.dispatch(getAccountDevice());
+
         return profile;
       })
       .catch(_err => {
@@ -154,6 +200,9 @@ export const counterSlice = createSlice({
     addOption: (state, action) => {
       state.option = action.payload;
     },
+    setAccountDevice: (state, action) => {
+      state.accountDevice = state.accountDevice?.concat(action.payload);
+    },
   },
   extraReducers(builder) {
     //fulfilled
@@ -162,6 +211,6 @@ export const counterSlice = createSlice({
     });
   },
 });
-export const {addUser, addOption} = counterSlice.actions;
+export const {addUser, addOption, setAccountDevice} = counterSlice.actions;
 
 export default counterSlice.reducer;

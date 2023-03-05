@@ -134,7 +134,11 @@ const AddFriend = () => {
             {
               marginBottom: item.label === 'Có thể bạn quen' ? 10 : 0,
             },
-          ]}>
+          ]}
+          onPress={() =>
+            options[0]?.label === item?.label &&
+            navigation.navigate(RouterName.QRCodeScan)
+          }>
           <Image source={item.icon} style={styles.icon} />
           <View style={styles.container}>
             <Text style={[styles.labelStyle, styles.userName]}>

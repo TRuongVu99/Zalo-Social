@@ -15,3 +15,5 @@ export * from './Home/Setting';
 export * from './Home/OptionMessage';
 export * from './Home/MyQRCode';
 export * from './Home/QRCodeScan';
+export * from './Home/ChatGPT';
+export * from './Home/SwitchAccount';

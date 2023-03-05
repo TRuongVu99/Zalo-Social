@@ -10,12 +10,16 @@ import {RouterName} from '@navigation/rootName';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {RootState} from '@store/index';
 import React, {useState} from 'react';
 
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useSelector} from 'react-redux';
+
 const Login = ({route}: {route: any}) => {
   console.log(route.params);
   const navigation = useNavigation<any>();
+  const {isSwitchAccount} = useSelector((state: RootState) => state.app);
   const [focus, setFocus] = useState<boolean>(true);
   const [numberPhone, setNumber] = useState<string>('');
   const formartNumberPhone: string =
@@ -27,7 +31,10 @@ const Login = ({route}: {route: any}) => {
       await auth()
         .signInWithPhoneNumber(phoneNumber)
         .then(a => {
-          navigation.navigate(RouterName.ConfirmOTP, {
+          const routerConfirm = isSwitchAccount
+            ? RouterName.ConfirmSwitchAccount
+            : RouterName.ConfirmOTP;
+          navigation.navigate(routerConfirm, {
             numberPhone: numberPhone,
             confirm: a,
             isLogin: true,

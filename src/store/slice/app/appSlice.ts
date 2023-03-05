@@ -2,10 +2,12 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 
 interface IApp {
   loadingApp: boolean;
+  isSwitchAccount: boolean;
 }
 
 const initialState: IApp = {
   loadingApp: false,
+  isSwitchAccount: false,
 };
 export const appSlice = createSlice({
   name: 'app',
@@ -17,8 +19,12 @@ export const appSlice = createSlice({
     endLoading: state => {
       state.loadingApp = false;
     },
+    setIsSwitchAccount: (state, action) => {
+      state.isSwitchAccount = action.payload;
+    },
   },
 });
-export const {startLoading, endLoading} = appSlice.actions;
+export const {startLoading, endLoading, setIsSwitchAccount, setIsLoginAccount} =
+  appSlice.actions;
 
 export default appSlice.reducer;

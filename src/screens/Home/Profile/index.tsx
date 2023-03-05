@@ -61,7 +61,9 @@ const Profile = () => {
       case 'Ví QR':
         navigation.navigate(RouterName.QRCode);
         break;
-
+      case 'Cloud của tôi':
+        navigation.navigate(RouterName.ChatGPT);
+        break;
       default:
         break;
     }
