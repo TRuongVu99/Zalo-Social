@@ -27,4 +27,5 @@ export const RouterName = {
   CommentScreen: 'CommentScreen',
   QRCode: 'QRCode',
   QRCodeScan: 'QRCodeScan',
+  Optional: 'Optional',
 };

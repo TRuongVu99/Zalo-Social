@@ -36,6 +36,7 @@ import {StackAnimationTypes} from 'react-native-screens';
 import QRCodeScreen from '@screens/Home/MyQRCode';
 import QRCodeScan from '@screens/Home/QRCodeScan';
 import {getMessageAll} from '@store/slice/message/messageSlice';
+import Optional from '@screens/Home/Optional';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -49,21 +50,6 @@ const Application = () => {
   // useEffect(() => {
   //   getMessage1(profileUser.numberPhone);
   // }, []);
-
-  function allMessages() {
-    const subscriber = firestore()
-      .collection('Message')
-      .onSnapshot(querySnapshot => {
-        const data: any = [];
-        querySnapshot.forEach(documentSnapshot => {
-          data.push(documentSnapshot.data());
-        });
-        dispatch(getMessageAll(data));
-      });
-
-    // Stop listening for updates when no longer required
-    return () => subscriber();
-  }
 
   async function onAuthStateChanged(user: any) {
     setUser(user);
@@ -134,6 +120,7 @@ const Application = () => {
                 component={BottomTabBar}
               />
               <Stack.Screen name={RouterName.Message} component={Message} />
+              <Stack.Screen name={RouterName.Optional} component={Optional} />
               <Stack.Screen
                 name={RouterName.OptionMessage}
                 component={OptionMessage}

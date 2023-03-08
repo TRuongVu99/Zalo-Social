@@ -13,11 +13,14 @@ import {fontFamily} from '@fonts/Font';
 import {useNavigation} from '@react-navigation/native';
 import {RouterName} from '@navigation/rootName';
 import {Icon} from '@icon/index';
+import {useDispatch} from 'react-redux';
+import {getMessage} from '@store/slice/message/messageSlice';
 
 interface IResultSearch {
   data?: any;
   index?: number;
   listTitle: any;
+  profileUser: any;
 }
 
 type ItemProps = {
@@ -44,22 +47,26 @@ const Item = ({
   </TouchableOpacity>
 );
 
-const ResultSearch = ({data, index, listTitle}: IResultSearch) => {
+const ResultSearch = ({data, index, listTitle, profileUser}: IResultSearch) => {
   const navigation = useNavigation<any>();
-  // const listTitle = ['TẤT CẢ', 'LIÊN HỆ', 'TIN NHẮN', 'KHÁM PHÁ'];
+  const dispatch = useDispatch<any>();
   const [selected, setSelected] = useState<string>('TẤT CẢ');
   const renderUI = ({item}: {item: any}) => {
     return (
       <TouchableOpacity
         style={{flexDirection: 'row'}}
-        onPress={() => {
+        onPress={async () => {
+          await dispatch(
+            getMessage({numberPhone: profileUser.numberPhone}),
+          ).unwrap();
+
           navigation.navigate(RouterName.Message, {
-            name: item.name,
+            profileFriend: data[0],
           });
         }}>
-        <Image source={{uri: item.url}} style={styles.avatarUser} />
+        <Image source={{uri: item.avatar}} style={styles.avatarUser} />
         <View style={styles.userName}>
-          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.name}>{item.username}</Text>
           <TouchableOpacity style={styles.backgroundCall}>
             <Image source={Icon.call} style={styles.call} />
           </TouchableOpacity>
@@ -115,7 +122,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50 / 2,
-    borderWidth: 0.5,
     margin: 12,
   },
   userName: {

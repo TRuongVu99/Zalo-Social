@@ -110,7 +110,6 @@ const FriendRequest = ({route}: IFriendRequest) => {
               };
               delete profileUserRecall?.listFriend;
               delete profileUserRecall?.listFriendInvitations;
-              console.log({item});
               dispatch(
                 handleConfirm({
                   numberPhone: item.numberPhone,
@@ -197,14 +196,12 @@ const FriendRequest = ({route}: IFriendRequest) => {
                   profileReject: newprofileUsers,
                 }),
               );
-              // handleReject(item.UserId, newprofileUsers),
               dispatch(
                 handleUnFriend({
                   UserId: profileUser?.UserId,
                   profileUnFriend: item,
                 }),
               );
-              // handleUnFriend(profileUser.UserId, item),
               setTimeout(() => {
                 dispatch(
                   getUserProfile({

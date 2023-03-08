@@ -1,6 +1,7 @@
 import {
   GestureResponderEvent,
   ImageStyle,
+  Modal,
   Platform,
   Pressable,
   StyleProp,
@@ -53,6 +54,7 @@ interface IHeader {
   onPress?: (event: GestureResponderEvent) => void;
   onPressIconRight1?: (event: GestureResponderEvent) => void;
   onPressIconRight2?: (event: GestureResponderEvent) => void;
+  onPressIconRight3?: (event: GestureResponderEvent) => void;
   onPressExit?: (event: GestureResponderEvent) => void;
   onPostStatus?: (event: GestureResponderEvent) => void;
   onPressBack?: () => void;
@@ -63,6 +65,7 @@ const Header = ({
   onPress,
   onPressIconRight2,
   onPressIconRight1,
+  onPressIconRight3,
   onPressExit,
   onPostStatus,
   onPressUser,
@@ -133,7 +136,7 @@ const Header = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttonRight}
-            onPress={onPressIconRight1}>
+            onPress={onPressIconRight2}>
             <FastImage
               source={icon.videocall}
               style={[styles.styleiconRightMessage]}
@@ -142,7 +145,7 @@ const Header = ({
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.buttonRight, {paddingEnd: 0}]}
-            onPress={onPressIconRight1}>
+            onPress={onPressIconRight3}>
             <FastImage
               source={icon.menu}
               style={[styles.styleiconRightMessage]}
@@ -413,6 +416,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.h4 * 1.1,
     color: 'white',
     fontWeight: '500',
+    flex: 1,
   },
   textInput: {
     flex: 1,

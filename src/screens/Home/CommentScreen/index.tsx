@@ -19,12 +19,14 @@ import {
   likeStatus,
   sentComment,
   updateComment,
+  updateComment2,
 } from '@store/slice/contents/contentsSlice';
 import Platform from '@utils/Platform';
 import React, {useEffect, useState} from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -43,18 +45,16 @@ import CustomInput from './components/CustomInput';
 
 const CommentScreen = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
-  const {dataContents} = useSelector((state: RootState) => state.contents);
+  const {dataContents, dataComments, indexImg} = useSelector(
+    (state: RootState) => state.contents,
+  );
   const {profileUser} = useSelector((state: RootState) => state.user);
-  const {dataComments} = useSelector((state: RootState) => state.contents);
   const {profile, newProfileUser, profileFriend, type, index, items} =
     route?.params;
-
   const arrs = [...dataContents?.listStatusContents]
     ?.reverse()
     .filter((a: any, i: number) => index === i);
   const data = items ? items : arrs[0];
-  // console.log({data});
-  // console.log({dataContents});
 
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
@@ -67,10 +67,8 @@ const CommentScreen = ({route}: {route: any}) => {
       ? data?.likes?.length
       : items?.likes.length,
   );
-  const [indexs, setIndex] = useState<any>();
   const [visible, setIsVisible] = useState(false);
   const [commentApp, setComment] = useState<string>('');
-
   useEffect(() => {
     dispatch(
       getStatus({
@@ -80,11 +78,11 @@ const CommentScreen = ({route}: {route: any}) => {
             : profile.numberPhone,
       }),
     );
-    dispatch(updateComment([...data?.comments]));
+    dispatch(updateComment2([...data?.comments]));
   }, []);
   const onPressUnLike = async () => {
     const newLike = [...data?.likes];
-    const arr = newLike.filter(
+    const arr2 = newLike.filter(
       (item1: any) => item1.numberPhone !== profile.numberPhone,
     );
     await dispatch(
@@ -97,7 +95,7 @@ const CommentScreen = ({route}: {route: any}) => {
         contents: data,
         likeStatus: false,
         profile: newProfileUser,
-        newLikes: arr,
+        newLikes: arr2,
       }),
     ).unwrap();
     dispatch(
@@ -139,6 +137,7 @@ const CommentScreen = ({route}: {route: any}) => {
     const newComment = [...data?.comments];
     const dataComment = {...newProfileUser, comment: commentApp};
     newComment.push(dataComment);
+    dispatch(updateComment(dataComment));
     await dispatch(
       sentComment({
         dataContents,
@@ -159,12 +158,11 @@ const CommentScreen = ({route}: {route: any}) => {
             : profile.numberPhone,
       }),
     );
-    dispatch(updateComment(newComment));
   };
   const datas = data?.media?.map((img: any) => {
     return {uri: img};
   });
-
+  // console.log({dataComments});
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
@@ -197,7 +195,7 @@ const CommentScreen = ({route}: {route: any}) => {
 
         <ImageView
           images={datas}
-          imageIndex={indexs}
+          imageIndex={indexImg}
           visible={visible}
           onRequestClose={() => setIsVisible(false)}
           HeaderComponent={() => (
@@ -252,15 +250,23 @@ const CommentScreen = ({route}: {route: any}) => {
 
         <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.view1}>
-            <FastImage
-              source={{
-                uri:
-                  type === IPeronalEnum.Friend
-                    ? profileFriend.avatar
-                    : profile?.avatar,
-              }}
-              style={styles.avatar}
-            />
+            <Pressable
+              onPress={() => {
+                navigation.navigate(RouterName.Personal, {
+                  profile: profileFriend,
+                  type: IPeronalEnum.Friend,
+                });
+              }}>
+              <FastImage
+                source={{
+                  uri:
+                    type === IPeronalEnum.Friend
+                      ? profileFriend.avatar
+                      : profile?.avatar,
+                }}
+                style={styles.avatar}
+              />
+            </Pressable>
             <View style={{paddingLeft: 20}}>
               <Text style={styles.labelStyle}>
                 {type === IPeronalEnum.Friend
