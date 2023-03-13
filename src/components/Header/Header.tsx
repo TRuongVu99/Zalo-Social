@@ -53,7 +53,7 @@ interface IHeader {
   onChangeText?: (value: string) => void;
   onPress?: (event: GestureResponderEvent) => void;
   onPressIconRight1?: (event: GestureResponderEvent) => void;
-  onPressIconRight2?: (event: GestureResponderEvent) => void;
+  onPressIconRight2?: () => void;
   onPressIconRight3?: (event: GestureResponderEvent) => void;
   onPressExit?: (event: GestureResponderEvent) => void;
   onPostStatus?: (event: GestureResponderEvent) => void;

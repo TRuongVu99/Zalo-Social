@@ -4,16 +4,16 @@ import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
+import {getStatus} from '@store/slice/contents/contentsSlice';
 import {getMessage, sentMessage} from '@store/slice/message/messageSlice';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 import Platform from '@utils/Platform';
 import moment from 'moment';
 import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   FlatList,
   Image,
   Keyboard,
@@ -83,6 +83,15 @@ const Message = ({route}: {route: any}) => {
   useEffect(() => {
     dispatch(getMessage({numberPhone: profileUser.numberPhone}));
   }, []);
+  const onGetStatus = async () => {
+    dispatch(startLoading());
+    await dispatch(
+      getStatus({
+        numberPhone: profileFriend.numberPhone,
+      }),
+    ).unwrap();
+    dispatch(endLoading());
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
@@ -98,7 +107,7 @@ const Message = ({route}: {route: any}) => {
           label={name ? name : profileFriend.username}
           onPressUser={async () => {
             dispatch(addProfileFriend(profileFriend));
-
+            onGetStatus();
             navigation.navigate(RouterName.Personal, {
               profile: profileFriend,
               type: IPeronalEnum.Friend,

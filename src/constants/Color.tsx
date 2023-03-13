@@ -18,4 +18,7 @@ export default {
   icon: 'rgb(100, 99, 99)',
   textComment: 'rgb(31, 32, 31)',
   black: '#000',
+  backgroundIcon: 'rgba(240, 241, 242, 0.7)',
+  orange: 'rgb(251, 100, 0)',
+  red: 'rgb(185, 18, 24)',
 };

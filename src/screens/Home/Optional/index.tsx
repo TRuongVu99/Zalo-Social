@@ -1,19 +1,16 @@
 import Header from '@components/Header';
-import UIButton from '@components/UIButton';
+import StatusBar, {Constants} from '@components/StatusBar';
 import Color from '@constants/Color';
 import FontSize from '@constants/FontSize';
 import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import {resetStatus} from '@store/slice/contents/contentsSlice';
-import {resetMessage} from '@store/slice/message/messageSlice';
-import {resetUser} from '@store/slice/user/userSlice';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
+import {getStatus} from '@store/slice/contents/contentsSlice';
 import React, {useRef, useState} from 'react';
 import {
-  Alert,
   FlatList,
   Platform,
   StyleSheet,
@@ -22,15 +19,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import ActionSheet from 'react-native-actionsheet';
 import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconEntypo from 'react-native-vector-icons/Entypo';
 import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch} from 'react-redux';
-import StatusBar, {Constants} from '@components/StatusBar';
 import {data, listItem1} from './data';
-import ActionSheet from 'react-native-actionsheet';
 const Optional = ({route}: {route: any}) => {
   const {profile} = route.params;
   const navigation = useNavigation<any>();
@@ -45,7 +40,15 @@ const Optional = ({route}: {route: any}) => {
     'Cho đến khi được mở lại',
     'Huỷ',
   ];
-
+  const onGetStatus = async () => {
+    dispatch(startLoading());
+    await dispatch(
+      getStatus({
+        numberPhone: profile.numberPhone,
+      }),
+    ).unwrap();
+    dispatch(endLoading());
+  };
   const renderItem = ({item}: {item: any}) => {
     return (
       <TouchableOpacity
@@ -131,9 +134,10 @@ const Optional = ({route}: {route: any}) => {
                     <View style={styles.view1}>
                       <TouchableOpacity
                         style={styles.button1}
-                        onPress={() => {
+                        onPress={async () => {
                           switch (item.id) {
                             case 2:
+                              onGetStatus();
                               navigation.navigate(RouterName.Personal, {
                                 profile,
                                 type: IPeronalEnum.Friend,

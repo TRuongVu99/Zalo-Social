@@ -46,6 +46,7 @@
     "react-native-image-crop-picker": "^0.33.2",
     "react-native-image-viewing": "^0.2.2",
     "react-native-indicators": "^0.17.0",
+    "react-native-linear-gradient": "^2.6.2",
     "react-native-popup-menu": "^0.16.1",
     "react-native-qrcode-svg": "^6.2.0",
     "react-native-safe-area-context": "^4.4.1",

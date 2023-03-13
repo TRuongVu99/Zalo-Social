@@ -65,7 +65,8 @@ const NewFeed = () => {
   const dispatch = useDispatch<any>();
   const [visible, setIsVisible] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
-
+  const [itemApp, setItem] = useState<any>([]);
+  // console.log({itemApp});
   const [refreshing, setRefreshing] = useState(false);
   const [like, setLike] = useState<boolean>(true);
   const newProfileUser = {
@@ -158,6 +159,7 @@ const NewFeed = () => {
     const datas = item?.media?.map((img: any, id: number) => {
       return {uri: img};
     });
+    console.log({datas});
     const isLikeUser = item?.likes?.some(
       (items: any) => items?.uid === profileUser?.uid,
     );
@@ -183,7 +185,7 @@ const NewFeed = () => {
     return (
       <>
         <ImageView
-          images={item?.media?.map((img: any, id: number) => {
+          images={itemApp?.media?.map((img: any) => {
             return {uri: img};
           })}
           imageIndex={0}
@@ -195,7 +197,7 @@ const NewFeed = () => {
           FooterComponent={() => (
             <>
               <View style={styles.content}>
-                <Text style={styles.textContents}>{item?.textContent}</Text>
+                <Text style={styles.textContents}>{itemApp?.textContent}</Text>
               </View>
               <View
                 style={[
@@ -203,11 +205,11 @@ const NewFeed = () => {
                   {paddingBottom: Platform.isIos ? bottom * 1.2 : 20},
                 ]}>
                 <TouchableOpacity
-                  key={item.dayOfPostStatus.hour}
+                  key={itemApp.dayOfPostStatus.hour}
                   onPress={() => {
                     setLike(!like);
-                    setQuantity(like ? quantity - 1 : quantity + 1);
-                    like ? onPressUnLike(item) : onPressLike(item);
+                    setQuantity(!like ? quantity - 1 : quantity + 1);
+                    like ? onPressUnLike(itemApp) : onPressLike(itemApp);
                   }}
                   style={styles.heart}>
                   {!isLikeUser ? (
@@ -235,7 +237,7 @@ const NewFeed = () => {
                     tintColor={'white'}
                   />
                   <Text style={[styles.likes, {color: 'white'}]}>
-                    {item.comments?.length}
+                    {itemApp.comments?.length}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -291,6 +293,7 @@ const NewFeed = () => {
               <RenderImage1
                 ListImage={item?.media}
                 onPressImg={() => {
+                  setItem(item);
                   setIsVisible(true);
                 }}
               />
@@ -298,6 +301,7 @@ const NewFeed = () => {
               <RenderImage2
                 ListImage={item?.media}
                 onPressImg={() => {
+                  setItem(item);
                   setIsVisible(true);
                 }}
               />
@@ -305,6 +309,7 @@ const NewFeed = () => {
               <RenderImage3
                 ListImage={item?.media}
                 onPressImg={() => {
+                  setItem(item);
                   setIsVisible(true);
                 }}
               />
@@ -312,6 +317,7 @@ const NewFeed = () => {
               <RenderImage4
                 ListImage={item?.media}
                 onPressImg={() => {
+                  setItem(item);
                   setIsVisible(true);
                 }}
               />
@@ -324,7 +330,7 @@ const NewFeed = () => {
               onPress={async () => {
                 const items = {...item};
                 delete items.profile;
-                console.log({isLikeUser});
+                // console.log({isLikeUser});
                 dispatch(
                   setLikePost({
                     isLike: isLikeUser,

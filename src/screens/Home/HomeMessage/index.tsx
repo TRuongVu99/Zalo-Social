@@ -1,13 +1,12 @@
 import Header from '@components/Header';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
-import UserData from '@data/UserData';
 import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {getMessage, getMessages} from '@store/slice/message/messageSlice';
+import {getMessage} from '@store/slice/message/messageSlice';
 import React from 'react';
 import {
   FlatList,
@@ -18,9 +17,7 @@ import {
   View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-
 import StatusBar, {Constants} from '@components/StatusBar';
-import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
