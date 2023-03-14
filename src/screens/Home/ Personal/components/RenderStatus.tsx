@@ -141,7 +141,7 @@ const RenderStatus = ({
                 ) : (
                   <IconAntDesign name={'heart'} size={24} color={Color.heart} />
                 )}
-                <Text style={styles.likes}>{data.likes.length}</Text>
+                <Text style={styles.likes}>{data?.likes?.length}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.row}>
@@ -150,7 +150,7 @@ const RenderStatus = ({
                   style={styles.comment}
                   tintColor={'white'}
                 />
-                <Text style={styles.likes}>{data.comments.length}</Text>
+                <Text style={styles.likes}>{data?.comments?.length}</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -181,7 +181,7 @@ const RenderStatus = ({
 
           <TouchableOpacity onPress={onPressComments} style={styles.row}>
             <FastImage source={Icon.comments} style={styles.comments} />
-            <Text style={styles.like}>{data.comments.length}</Text>
+            <Text style={styles.like}>{data?.comments?.length}</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity>

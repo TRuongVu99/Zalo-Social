@@ -59,11 +59,14 @@ const NewFeed = () => {
   const {bottom} = useSafeAreaInsets();
   const {profileUser} = useSelector((state: RootState) => state.user);
   const {AllStatus} = useSelector((state: RootState) => state.contents);
-  const {dataContents} = useSelector((state: RootState) => state.contents);
+  const {dataContents, indexImg} = useSelector(
+    (state: RootState) => state.contents,
+  );
   const dispatch = useDispatch<any>();
   const [visible, setIsVisible] = useState(false);
   const [quantity, setQuantity] = useState<number>(1);
-
+  const [itemApp, setItem] = useState<any>([]);
+  // console.log({itemApp});
   const [refreshing, setRefreshing] = useState(false);
   const [like, setLike] = useState<boolean>(true);
   const newProfileUser = {
@@ -156,6 +159,7 @@ const NewFeed = () => {
     const datas = item?.media?.map((img: any, id: number) => {
       return {uri: img};
     });
+    console.log({datas});
     const isLikeUser = item?.likes?.some(
       (items: any) => items?.uid === profileUser?.uid,
     );
@@ -177,126 +181,191 @@ const NewFeed = () => {
         : Math.floor(diff / 60) >= 1 && Math.floor(diff / 60) <= 24
         ? Math.floor(diff / 60) + ' giờ trước'
         : Math.floor(diff / 1440) + ' ngày trước';
+
     return (
-      <Pressable style={styles.renderUI} onPress={() => onPressComments(item)}>
-        <View style={[styles.view1]}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate(RouterName.Personal, {
-                profile: item.profile,
-                type: IPeronalEnum.Friend,
-              });
-            }}>
-            <FastImage
-              source={{
-                uri: item.profile.avatar,
-              }}
-              style={styles.avatar}
-            />
-          </Pressable>
-          <View>
-            <TouchableOpacity>
-              <Text style={styles.labelStyle}>{item.profile.username}</Text>
-            </TouchableOpacity>
-            <View style={styles.row}>
-              <Text style={styles.description}>{resultTime}</Text>
+      <>
+        <ImageView
+          images={itemApp?.media?.map((img: any) => {
+            return {uri: img};
+          })}
+          imageIndex={0}
+          visible={visible}
+          onRequestClose={() => setIsVisible(false)}
+          HeaderComponent={() => (
+            <HeaderViewing onPressClose={() => setIsVisible(false)} />
+          )}
+          FooterComponent={() => (
+            <>
+              <View style={styles.content}>
+                <Text style={styles.textContents}>{itemApp?.textContent}</Text>
+              </View>
+              <View
+                style={[
+                  styles.iconLeft,
+                  {paddingBottom: Platform.isIos ? bottom * 1.2 : 20},
+                ]}>
+                <TouchableOpacity
+                  key={itemApp.dayOfPostStatus.hour}
+                  onPress={() => {
+                    setLike(!like);
+                    setQuantity(!like ? quantity - 1 : quantity + 1);
+                    like ? onPressUnLike(itemApp) : onPressLike(itemApp);
+                  }}
+                  style={styles.heart}>
+                  {!isLikeUser ? (
+                    <IconFontAwesome
+                      name={'heart-o'}
+                      size={24}
+                      color={'white'}
+                    />
+                  ) : (
+                    <IconAntDesign
+                      name={'heart'}
+                      size={24}
+                      color={Color.heart}
+                    />
+                  )}
+                  <Text style={[styles.likes, {color: 'white'}]}>
+                    {quantity}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.row}>
+                  <FastImage
+                    source={Icon.comments}
+                    style={styles.comment}
+                    tintColor={'white'}
+                  />
+                  <Text style={[styles.likes, {color: 'white'}]}>
+                    {itemApp.comments?.length}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+        />
+
+        <Pressable
+          style={styles.renderUI}
+          onPress={() => onPressComments(item)}>
+          <View style={[styles.view1]}>
+            <Pressable
+              onPress={() => {
+                navigation.navigate(RouterName.Personal, {
+                  profile: item.profile,
+                  type: IPeronalEnum.Friend,
+                });
+              }}>
+              <FastImage
+                source={{
+                  uri: item.profile.avatar,
+                }}
+                style={styles.avatar}
+              />
+            </Pressable>
+            <View>
+              <TouchableOpacity>
+                <Text style={styles.labelStyle}>{item.profile.username}</Text>
+              </TouchableOpacity>
+              <View style={styles.row}>
+                <Text style={styles.description}>{resultTime}</Text>
+              </View>
             </View>
           </View>
-        </View>
-        {item?.textContent !== '' && (
-          <Text
-            style={[
-              styles.textContent,
-              {
-                fontFamily: item?.stylesText?.fontFamily,
-                color: item?.stylesText?.color,
-              },
-            ]}>
-            {item?.textContent}
-          </Text>
-        )}
-        <View
-          style={{
-            alignItems: 'center',
-            paddingVertical: 15,
-          }}>
-          {item.media.length === 1 ? (
-            <RenderImage1
-              ListImage={item?.media}
-              onPressImg={() => {
-                // setIsVisible(true);
-                // setIndex(index);
-                // setItem(item);
-              }}
-            />
-          ) : item?.media.length === 2 ? (
-            <RenderImage2
-              ListImage={item?.media}
-              onPressImg={() => {
-                // setIsVisible(true);
-                // setIndex(index);
-              }}
-            />
-          ) : item?.media.length > 2 && item?.media.length < 5 ? (
-            <RenderImage3
-              ListImage={item?.media}
-              onPressImg={() => {
-                // setIsVisible(true);
-                // setIndex(index);
-              }}
-            />
-          ) : item?.media.length > 4 ? (
-            <RenderImage4
-              ListImage={item?.media}
-              onPressImg={() => {
-                // setIsVisible(true);
-                // setIndex(index);
-              }}
-            />
-          ) : (
-            <View />
+          {item?.textContent !== '' && (
+            <Text
+              style={[
+                styles.textContent,
+                {
+                  fontFamily: item?.stylesText?.fontFamily,
+                  color: item?.stylesText?.color,
+                },
+              ]}>
+              {item?.textContent}
+            </Text>
           )}
-        </View>
-        <View style={[styles.iconLeft]}>
-          <TouchableOpacity
-            onPress={async () => {
-              const items = {...item};
-              delete items.profile;
-              console.log({isLikeUser});
-              dispatch(
-                setLikePost({
-                  isLike: isLikeUser,
-                  data: item,
-                  uid: profileUser?.uid,
-                  newProfileUser,
-                  type: 'newFeed',
-                }),
-              );
-              isLikeUser ? onPressUnLike(item) : onPressLike(item);
-            }}
-            style={styles.heart}>
-            {!isLikeUser ? (
-              <IconFontAwesome name={'heart-o'} size={24} color={'black'} />
-            ) : (
-              <IconAntDesign name={'heart'} size={24} color={Color.heart} />
-            )}
-            <Text style={styles.likes}>{item.likes.length}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => {
-              onPressComments(item);
+          <View
+            style={{
+              alignItems: 'center',
+              paddingVertical: 15,
             }}>
-            <FastImage
-              source={Icon.comments}
-              style={styles.comment}
-              tintColor={'black'}
-            />
-            <Text style={styles.likes}>{item.comments.length}</Text>
-          </TouchableOpacity>
-        </View>
-      </Pressable>
+            {item.media.length === 1 ? (
+              <RenderImage1
+                ListImage={item?.media}
+                onPressImg={() => {
+                  setItem(item);
+                  setIsVisible(true);
+                }}
+              />
+            ) : item?.media.length === 2 ? (
+              <RenderImage2
+                ListImage={item?.media}
+                onPressImg={() => {
+                  setItem(item);
+                  setIsVisible(true);
+                }}
+              />
+            ) : item?.media.length > 2 && item?.media.length < 5 ? (
+              <RenderImage3
+                ListImage={item?.media}
+                onPressImg={() => {
+                  setItem(item);
+                  setIsVisible(true);
+                }}
+              />
+            ) : item?.media.length > 4 ? (
+              <RenderImage4
+                ListImage={item?.media}
+                onPressImg={() => {
+                  setItem(item);
+                  setIsVisible(true);
+                }}
+              />
+            ) : (
+              <View />
+            )}
+          </View>
+          <View style={[styles.iconLeft]}>
+            <TouchableOpacity
+              onPress={async () => {
+                const items = {...item};
+                delete items.profile;
+                // console.log({isLikeUser});
+                dispatch(
+                  setLikePost({
+                    isLike: isLikeUser,
+                    data: item,
+                    uid: profileUser?.uid,
+                    newProfileUser,
+                    type: 'newFeed',
+                  }),
+                );
+                isLikeUser ? onPressUnLike(item) : onPressLike(item);
+              }}
+              style={styles.heart}>
+              {!isLikeUser ? (
+                <IconFontAwesome name={'heart-o'} size={24} color={'black'} />
+              ) : (
+                <IconAntDesign name={'heart'} size={24} color={Color.heart} />
+              )}
+              <Text style={styles.likes}>{item.likes.length}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.row}
+              onPress={() => {
+                onPressComments(item);
+              }}>
+              <FastImage
+                source={Icon.comments}
+                style={styles.comment}
+                tintColor={'black'}
+              />
+              <Text style={styles.likes}>{item.comments.length}</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </>
     );
   };
   return (

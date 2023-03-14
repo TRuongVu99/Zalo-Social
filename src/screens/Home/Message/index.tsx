@@ -1,16 +1,18 @@
 import Header from '@components/Header';
+import StatusBar, {Constants} from '@components/StatusBar';
 import {Color, FontSize} from '@constants';
-import DataMesseger from '@data/DataMesseger';
 import {fontFamily} from '@fonts/Font';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/storage';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {endLoading, startLoading} from '@store/slice/app/appSlice';
+import {getStatus} from '@store/slice/contents/contentsSlice';
 import {getMessage, sentMessage} from '@store/slice/message/messageSlice';
+import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 import Platform from '@utils/Platform';
 import moment from 'moment';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -59,7 +61,7 @@ const Message = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
   const navigation = useNavigation<any>();
   const inset = useSafeAreaInsets();
-  const {name, profileFriend} = route?.params;
+  const {name, profileFriend, type} = route?.params;
   const {profileUser} = useSelector((state: RootState) => state?.user);
   const {Messages} = useSelector((state: RootState) => state?.message);
   const [paddingBottom, setPaddingBottom] = useState<boolean>(true);
@@ -69,6 +71,7 @@ const Message = ({route}: {route: any}) => {
       item.phoneOfSender === profileFriend.numberPhone ||
       item.phoneOfReceive === profileFriend.numberPhone,
   );
+  console.log({Messages});
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
       setPaddingBottom(false);
@@ -77,28 +80,44 @@ const Message = ({route}: {route: any}) => {
       setPaddingBottom(true);
     });
   }, []);
-  // useEffect(() => {
-  //   dispatch(getMessage({numberPhone: profileUser.numberPhone}));
-  // }, []);
+  useEffect(() => {
+    dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+  }, []);
+  const onGetStatus = async () => {
+    dispatch(startLoading());
+    await dispatch(
+      getStatus({
+        numberPhone: profileFriend.numberPhone,
+      }),
+    ).unwrap();
+    dispatch(endLoading());
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
       style={styles.container}>
       <View style={styles.container}>
         <Header
-          onPress={() => navigation.navigate(RouterName.HomeMessage)}
+          onPress={() => {
+            type === IHeaderEnum.Phonebook
+              ? navigation.goBack()
+              : navigation.navigate(RouterName.HomeMessage);
+          }}
           type={IHeaderEnum.Message}
           label={name ? name : profileFriend.username}
-          onPressUser={() =>
-            // navigation.navigate(RouterName.Personal, {
-            //   profile: profileFriend,
-            //   type: IPeronalEnum.Friend,
-            // })
-            console.log({
+          onPressUser={async () => {
+            dispatch(addProfileFriend(profileFriend));
+            onGetStatus();
+            navigation.navigate(RouterName.Personal, {
               profile: profileFriend,
               type: IPeronalEnum.Friend,
-            })
-          }
+            });
+          }}
+          onPressIconRight3={() => {
+            navigation.navigate(RouterName.Optional, {
+              profile: profileFriend,
+            });
+          }}
         />
         <FlatList
           inverted
@@ -157,6 +176,7 @@ const Message = ({route}: {route: any}) => {
                     },
                   }),
                 );
+                dispatch(getMessage({numberPhone: profileUser.numberPhone}));
               }}>
               <IconIonicons name={'send'} size={24} color={Color.primary} />
             </TouchableOpacity>
@@ -179,6 +199,11 @@ const Message = ({route}: {route: any}) => {
           )}
         </View>
       </View>
+      <StatusBar
+        mode={Constants.statusBar.light}
+        navigation={navigation}
+        backgroundColor={Color.primary}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -216,7 +241,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    paddingVertical: Platform.isIos ? 15 : 10,
+    paddingVertical: Platform.isIos ? 5 : 10,
     fontSize: FontSize.h4,
     paddingHorizontal: 10,
   },
@@ -224,9 +249,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Platform.isIos ? 5 : 0,
-
+    paddingVertical: Platform.isIos ? 10 : 0,
     paddingHorizontal: 10,
+    marginTop: 10,
   },
 });
 export default Message;

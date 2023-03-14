@@ -1,29 +1,23 @@
 import Header from '@components/Header';
 import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
-import UserData from '@data/UserData';
 import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
 import {RouterName} from '@navigation/rootName';
-import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {getMessage, getMessages} from '@store/slice/message/messageSlice';
+import {getMessage} from '@store/slice/message/messageSlice';
 import React from 'react';
 import {
   FlatList,
   Image,
-  Keyboard,
   StyleSheet,
   Text,
-  TouchableNativeFeedback,
   TouchableOpacity,
   View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-
 import StatusBar, {Constants} from '@components/StatusBar';
-import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 const Home: React.FC = () => {
   const navigation = useNavigation<any>();
   const dispatch = useDispatch<any>();
@@ -31,6 +25,7 @@ const Home: React.FC = () => {
   const ListFriend = profileUser?.listFriend?.filter(
     (item: any) => item.status === 3,
   );
+  const {Messages} = useSelector((state: RootState) => state?.message);
 
   const renderUI = (item: any) => {
     return (
@@ -38,11 +33,10 @@ const Home: React.FC = () => {
         style={{flexDirection: 'row'}}
         onPress={() => {
           dispatch(getMessage({numberPhone: profileUser.numberPhone}));
-          // navigation.navigate(RouterName.Message, {
-          //   name: item.username,
-          //   profileFriend: item,
-          // });
-          console.log({item});
+          navigation.navigate(RouterName.Message, {
+            name: item.username,
+            profileFriend: item,
+          });
         }}>
         <Image style={styles.avatar} source={{uri: item.avatar}} />
         <View style={styles.viewMessage}>

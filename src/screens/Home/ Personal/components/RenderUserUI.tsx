@@ -92,14 +92,23 @@ const RenderUserUI = ({
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-  useEffect(() => {
-    if (type === IPeronalEnum.Friend) {
-      dispatch(getStatus({numberPhone: profileFriend.numberPhone}));
-    }
-  }, []);
+  // useEffect(() => {
+  //   dispatch(
+  //     getStatus({
+  //       numberPhone:
+  //         type === IPeronalEnum.Friend
+  //           ? profileFriend?.numberPhone
+  //           : profileUser.numberPhone,
+  //     }),
+  //   );
+  // }, []);
 
   const dataStatus = [...dataContents?.listStatusContents];
-
+  const lengthMedia = dataStatus
+    ?.map((l: any) => {
+      return l.media;
+    })
+    .flat(Infinity).length;
   useEffect(() => {
     if (Loading) {
       setTimeout(() => {
@@ -120,7 +129,7 @@ const RenderUserUI = ({
       getStatus({
         numberPhone:
           type === IPeronalEnum.Friend
-            ? profileFriend.numberPhone
+            ? profileFriend?.numberPhone
             : profileUser.numberPhone,
       }),
     );
@@ -264,15 +273,16 @@ const RenderUserUI = ({
       updateAvatar(`data:${images.mime};base64,${images.data}`);
     });
   };
-  const uriImage = useMemo(() => {
-    return urlBackground ? urlBackground : image.background;
-  }, [urlBackground]);
+  // const uriImage = useMemo(() => {
+  //   return urlBackground ? urlBackground : image.background;
+  // }, [urlBackground]);
   const onPressOptions = (item: any, index: number) => {
     setIsSelect(true);
     setOpstion(optionStatus);
     setTypeOpstion(IOptionEnum.HandleStatus);
     setItem({item, index});
   };
+
   const RenderItemStatus = ({
     item,
     index,
@@ -312,8 +322,8 @@ const RenderUserUI = ({
                   dataContents,
                   numberPhone:
                     type === IPeronalEnum.Friend
-                      ? profileFriend.numberPhone
-                      : profileUser.numberPhone,
+                      ? profileFriend?.numberPhone
+                      : profileUser?.numberPhone,
                   contents: item,
                   likeStatus: true,
                   profile: profile,
@@ -324,8 +334,8 @@ const RenderUserUI = ({
                 getStatus({
                   numberPhone:
                     type === IPeronalEnum.Friend
-                      ? profileFriend.numberPhone
-                      : profileUser.numberPhone,
+                      ? profileFriend?.numberPhone
+                      : profileUser?.numberPhone,
                 }),
               );
             }, 500);
@@ -340,8 +350,8 @@ const RenderUserUI = ({
                 dataContents,
                 numberPhone:
                   type === IPeronalEnum.Friend
-                    ? profileFriend.numberPhone
-                    : profileUser.numberPhone,
+                    ? profileFriend?.numberPhone
+                    : profileUser?.numberPhone,
                 contents: item,
                 likeStatus: false,
                 profile: profile,
@@ -352,8 +362,8 @@ const RenderUserUI = ({
               getStatus({
                 numberPhone:
                   type === IPeronalEnum.Friend
-                    ? profileFriend.numberPhone
-                    : profileUser.numberPhone,
+                    ? profileFriend?.numberPhone
+                    : profileUser?.numberPhone,
               }),
             );
           }}
@@ -395,7 +405,7 @@ const RenderUserUI = ({
         TopNavBarComponent={
           <>
             <TopNavBar
-              avatar={urlAvatar ? urlAvatar : image.background}
+              avatar={urlAvatar ? urlAvatar : image?.background}
               userName={
                 type === IPeronalEnum.Friend
                   ? profileFriend?.username
@@ -497,13 +507,26 @@ const RenderUserUI = ({
             </Pressable>
             <Text style={styles.userName}>{name}</Text>
             {type === IPeronalEnum.Friend &&
-              dataContents?.listStatusContents?.length === 0 &&
-              type === IPeronalEnum.Friend && (
+              (type === IPeronalEnum.Friend &&
+              dataContents?.listStatusContents?.length === 0 ? (
                 <Text
                   style={[styles.depcription, styles.textDepcriptionFriend]}>
                   Chưa có hoạt động nào. Hãy trò chuyện để hiểu nhau hơn!
                 </Text>
-              )}
+              ) : (
+                <View style={styles.view2}>
+                  <TouchableOpacity style={[styles.buttom, {flex: 1}]}>
+                    <FastImage source={Icon.image} style={styles.iconLabel} />
+                    <Text style={styles.label}>Ảnh</Text>
+                    <Text style={styles.lengthMedia}>{lengthMedia}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.buttom, {flex: 1}]}>
+                    <FastImage source={Icon.video} style={styles.iconLabel} />
+                    <Text style={styles.label}>video</Text>
+                    <Text style={styles.lengthMedia}>0</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
             {type !== IPeronalEnum.Friend && (
               <>
                 <TouchableOpacity style={styles.depcription}>
@@ -712,5 +735,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 4,
     marginBottom: 10,
+  },
+  lengthMedia: {
+    fontFamily: fontFamily.primaryFont,
+    color: Color.icon,
+    marginLeft: 5,
+  },
+  view2: {
+    top: -40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
   },
 });

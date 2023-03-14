@@ -3,10 +3,11 @@ import StatusBar, {Constants} from '@components/StatusBar';
 import Color from '@constants/Color';
 import {fontFamily} from '@fonts/Font';
 import {Icon} from '@icon/index';
-import {IHeaderEnum} from '@model/handelConfig';
+import {IHeaderEnum, IOptionEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {AppDispatch, RootState} from '@store/index';
+import {getMessage} from '@store/slice/message/messageSlice';
 import {getUserProfile} from '@store/slice/user/userSlice';
 import React, {useCallback, useState} from 'react';
 import {
@@ -138,7 +139,16 @@ const Phonebook = () => {
         <FlatList
           data={ListFriend}
           renderItem={({item}) => (
-            <TouchableOpacity style={styles.friend}>
+            <TouchableOpacity
+              style={styles.friend}
+              onPress={() => {
+                dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+                navigation.navigate(RouterName.Message, {
+                  name: item.username,
+                  profileFriend: item,
+                  type: IHeaderEnum.Phonebook,
+                });
+              }}>
               <Image
                 source={{
                   uri: item.avatar,

@@ -4,6 +4,7 @@ import {IButtonEnum, IPeronalEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
+import {getStatus} from '@store/slice/contents/contentsSlice';
 import {getMessage} from '@store/slice/message/messageSlice';
 import {
   addFrendByPhoneNumber,
@@ -37,10 +38,19 @@ const Personal = ({route}: IPersonal) => {
       dispatch(addOption('fade'));
     }
   }, []);
-
   const {profileFriend} = useSelector(
     (state: RootState) => state.profileFriend,
   );
+  useEffect(() => {
+    dispatch(
+      getStatus({
+        numberPhone:
+          type === IPeronalEnum.Friend
+            ? profile?.numberPhone
+            : profileUser.numberPhone,
+      }),
+    );
+  }, []);
   const newProfileUser = {
     ...profileUser,
     timeStamp: moment().format('L'),
@@ -64,7 +74,6 @@ const Personal = ({route}: IPersonal) => {
   };
   delete newprofileFriend?.listFriend;
   delete newprofileFriend?.listFriendInvitations;
-
   switch (type) {
     case IPeronalEnum.AddFriend:
       return (
@@ -215,7 +224,7 @@ const Personal = ({route}: IPersonal) => {
             name={profile?.username}
             urlBackground={profile?.background}
             type={IPeronalEnum.Friend}
-            profileFriend={profileFriend}
+            profileFriend={profile}
             profile={newProfileUser}
             isFromQRcode={isFromQRcode}
             onPressMessage={async () => {
@@ -224,7 +233,7 @@ const Personal = ({route}: IPersonal) => {
               ).unwrap();
 
               navigation.navigate(RouterName.Message, {
-                profileFriend,
+                profileFriend: profile,
               });
             }}
           />

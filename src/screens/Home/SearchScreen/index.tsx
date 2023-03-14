@@ -7,15 +7,20 @@ import {IHeaderEnum} from '@model/handelConfig';
 import Header from '@components/Header';
 import ResultSearch from '@components/ResultSearch';
 import UserData from '@data/UserData';
+import {useSelector} from 'react-redux';
+import {RootState} from '@store/index';
 export const searchbyName = (items: any, key: string) => {
   return items.filter((item: any) =>
-    item.name.toLowerCase().trim().includes(key.toLowerCase().trim()),
+    item.username.toLowerCase().trim().includes(key.toLowerCase().trim()),
   );
 };
 const SearchScreen = () => {
   const navigation = useNavigation<any>();
   const [keyword, setKeyword] = useState<string>('');
-
+  const {profileUser} = useSelector((state: RootState) => state?.user);
+  const ListFriend = profileUser?.listFriend?.filter(
+    (item: any) => item.status === 3,
+  );
   if (keyword.length > 0) {
     return (
       <View style={styles.container}>
@@ -25,12 +30,13 @@ const SearchScreen = () => {
           placeholder={'Tìm kiếm'}
           onChangeText={text => setKeyword(text)}
         />
-        {searchbyName(UserData, keyword).length > 0
+        {searchbyName(ListFriend, keyword).length > 0
           ? keyword.length > 0 && (
               <ResultSearch
                 listTitle={['TẤT CẢ', 'LIÊN HỆ', 'TIN NHẮN', 'KHÁM PHÁ']}
-                data={searchbyName(UserData, keyword)}
-                index={searchbyName(UserData, keyword).length}
+                data={searchbyName(ListFriend, keyword)}
+                index={searchbyName(ListFriend, keyword).length}
+                profileUser={profileUser}
               />
             )
           : keyword.length > 0 && (

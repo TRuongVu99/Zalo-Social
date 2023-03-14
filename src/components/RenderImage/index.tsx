@@ -1,4 +1,5 @@
 import FontSize from '@constants/FontSize';
+import HeaderViewing from '@screens/Home/ Personal/components/HeaderViewing';
 import {windowWidth} from '@utils/Dimensions';
 import React, {useState} from 'react';
 import {
@@ -12,7 +13,15 @@ import {
 import FastImage from 'react-native-fast-image';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
-
+import ImageView from 'react-native-image-viewing';
+import Platform from '@utils/Platform';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Icon} from '@icon/index';
+import Color from '@constants/Color';
+import {fontFamily} from '@fonts/Font';
+import {updateIndexImg} from '@store/slice/contents/contentsSlice';
 interface IRenderImage {
   ListImage: any;
   onPressImg?: () => void;
@@ -20,17 +29,19 @@ interface IRenderImage {
 
 export const RenderImage1 = ({ListImage, onPressImg}: IRenderImage) => {
   const dispatch = useDispatch();
-  const inset = useSafeAreaInsets();
-  const [indexs, setIndex] = useState<any>();
-  const [visible, setIsVisible] = useState(false);
+
   return (
     <>
       <FlatList
         data={ListImage}
         keyboardShouldPersistTaps="handled"
-        renderItem={({item}: {item: any; index: number}) => {
+        renderItem={({item, index}: {item: any; index: number}) => {
           return (
-            <TouchableOpacity onPress={onPressImg}>
+            <TouchableOpacity
+              onPressIn={() => {
+                dispatch(updateIndexImg(index));
+              }}
+              onPress={onPressImg}>
               <FastImage
                 source={{
                   uri: item,
@@ -47,28 +58,37 @@ export const RenderImage1 = ({ListImage, onPressImg}: IRenderImage) => {
   );
 };
 export const RenderImage2 = ({ListImage, onPressImg}: IRenderImage) => {
+  const dispatch = useDispatch();
+
   return (
-    <FlatList
-      data={ListImage}
-      numColumns={2}
-      keyboardShouldPersistTaps="handled"
-      renderItem={({item}: {item: any; index: number}) => {
-        return (
-          <TouchableOpacity onPress={onPressImg}>
-            <FastImage
-              source={{
-                uri: item,
-                priority: FastImage.priority.high,
+    <>
+      <FlatList
+        data={ListImage}
+        numColumns={2}
+        keyboardShouldPersistTaps="handled"
+        renderItem={({item, index}: {item: any; index: number}) => {
+          return (
+            <TouchableOpacity
+              onPressIn={() => {
+                dispatch(updateIndexImg(index));
               }}
-              style={styles.image2}
-            />
-          </TouchableOpacity>
-        );
-      }}
-    />
+              onPress={onPressImg}>
+              <FastImage
+                source={{
+                  uri: item,
+                  priority: FastImage.priority.high,
+                }}
+                style={styles.image2}
+              />
+            </TouchableOpacity>
+          );
+        }}
+      />
+    </>
   );
 };
 export const RenderImage3 = ({ListImage, onPressImg}: IRenderImage) => {
+  const dispatch = useDispatch();
   return (
     <FlatList
       data={ListImage}
@@ -76,7 +96,11 @@ export const RenderImage3 = ({ListImage, onPressImg}: IRenderImage) => {
       keyboardShouldPersistTaps="handled"
       renderItem={({item, index}: {item: any; index: number}) => {
         return (
-          <TouchableOpacity onPress={onPressImg}>
+          <TouchableOpacity
+            onPressIn={() => {
+              dispatch(updateIndexImg(index));
+            }}
+            onPress={onPressImg}>
             {ListImage.length === 3 ? (
               <FastImage
                 source={{
@@ -103,6 +127,7 @@ export const RenderImage3 = ({ListImage, onPressImg}: IRenderImage) => {
   );
 };
 export const RenderImage4 = ({ListImage, onPressImg}: IRenderImage) => {
+  const dispatch = useDispatch();
   return (
     <FlatList
       data={ListImage}
@@ -110,7 +135,11 @@ export const RenderImage4 = ({ListImage, onPressImg}: IRenderImage) => {
       keyboardShouldPersistTaps="handled"
       renderItem={({item, index}: {item: any; index: number}) => {
         return (
-          <TouchableOpacity onPress={onPressImg}>
+          <TouchableOpacity
+            onPressIn={() => {
+              dispatch(updateIndexImg(index));
+            }}
+            onPress={onPressImg}>
             {index < 9 && (
               <>
                 <FastImage
@@ -179,4 +208,41 @@ const styles = StyleSheet.create({
     height: windowWidth,
     // margin: 1.5,
   },
+  heart: {
+    marginLeft: 10,
+    flexDirection: 'row',
+  },
+  like: {
+    fontFamily: fontFamily.primaryFont,
+    color: Color.DimGray,
+    fontSize: FontSize.h4,
+    marginHorizontal: 5,
+  },
+  minus: {paddingHorizontal: 5},
+  textContent: {
+    fontSize: FontSize.h4,
+    marginLeft: 10,
+  },
+  row: {flexDirection: 'row', alignItems: 'center'},
+  likes: {
+    fontFamily: fontFamily.primaryFont,
+    color: 'white',
+    fontSize: FontSize.h4,
+    marginHorizontal: 8,
+  },
+  content: {
+    marginVertical: 30,
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Color.DimGray,
+    marginHorizontal: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  comment: {width: 28, height: 28, marginLeft: 20},
+  textContents: {
+    fontFamily: fontFamily.primaryFont,
+    fontSize: FontSize.h4 * 0.9,
+    color: 'white',
+  },
+  iconLeft: {flexDirection: 'row', flex: 1, alignItems: 'center'},
 });

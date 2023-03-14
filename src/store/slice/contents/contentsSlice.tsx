@@ -19,6 +19,8 @@ interface IFriend {
   dataContents?: any;
   AllStatus?: any;
   dataComments?: any;
+  arr?: any;
+  indexImg?: number | undefined;
 }
 
 const initialState: IFriend = {
@@ -29,6 +31,8 @@ const initialState: IFriend = {
   },
   AllStatus: [],
   dataComments: [],
+  arr: [],
+  indexImg: 0,
 };
 
 export const getStatus = createAsyncThunk(
@@ -243,7 +247,13 @@ export const counterSlice = createSlice({
       state.AllStatus.concat(action.payload);
     },
     updateComment: (state, action) => {
+      state.dataComments.push(action.payload);
+    },
+    updateComment2: (state, action) => {
       state.dataComments = action.payload;
+    },
+    updateIndexImg: (state, action) => {
+      state.indexImg = action.payload;
     },
     setLikePost: (state, action) => {
       const {isLike, data, uid, newProfileUser, type} = action.payload;
@@ -306,6 +316,8 @@ export const {
   getNewAllStatus,
   resetStatus,
   updateComment,
+  updateComment2,
+  updateIndexImg,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
