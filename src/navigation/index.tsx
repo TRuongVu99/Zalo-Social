@@ -37,6 +37,7 @@ import QRCodeScreen from '@screens/Home/MyQRCode';
 import QRCodeScan from '@screens/Home/QRCodeScan';
 import {getMessageAll} from '@store/slice/message/messageSlice';
 import Optional from '@screens/Home/Optional';
+import ChatGPT from '@screens/Home/ChatGPT';
 const Stack = createNativeStackNavigator<any>();
 
 const Application = () => {
@@ -130,6 +131,7 @@ const Application = () => {
                 name={RouterName.CommentScreen}
                 component={CommentScreen}
               />
+              <Stack.Screen name={RouterName.ChatGPT} component={ChatGPT} />
               <Stack.Screen name={RouterName.AddFriend} component={AddFriend} />
               <Stack.Screen name={RouterName.Personal} component={Personal} />
               <Stack.Screen
