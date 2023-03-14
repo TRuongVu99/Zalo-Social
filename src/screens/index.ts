@@ -17,3 +17,4 @@ export * from './Home/CommentScreen';
 export * from './Home/MyQRCode';
 export * from './Home/QRCodeScan';
 export * from './Home/Optional';
+export * from './Home/ChatGPT';

@@ -28,4 +28,5 @@ export const RouterName = {
   QRCode: 'QRCode',
   QRCodeScan: 'QRCodeScan',
   Optional: 'Optional',
+  ChatGPT: 'ChatGPT',
 };

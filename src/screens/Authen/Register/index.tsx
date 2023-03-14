@@ -28,7 +28,11 @@ const Register = () => {
   const dispatch = useDispatch();
   return (
     <View style={styles.container}>
-      <Header type={IHeaderEnum.Register} label={'Tạo tài khoản'} />
+      <Header
+        onPressExit={() => navigation.goBack()}
+        type={IHeaderEnum.Register}
+        label={'Tạo tài khoản'}
+      />
       <View style={styles.view1}>
         <Text style={styles.label}>Tên Zalo</Text>
         <CustomInput

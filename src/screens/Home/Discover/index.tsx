@@ -26,7 +26,7 @@ import IconIonicons from 'react-native-vector-icons/Ionicons';
 import {data1, data2, data3, data4} from './data';
 
 const Discover = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const onQRCode = async () => {
     navigation.navigate(RouterName.QRCodeScan);
   };
@@ -40,13 +40,19 @@ const Discover = () => {
         nameIconRight2={Icon.qrcode}
         onPressIconRight2={() => onQRCode()}
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.view}>
           <Text style={styles.label}>Tiện ích cho bạn</Text>
           <View style={styles.view1}>
             {data1.map((item: any) => {
               return (
-                <TouchableOpacity style={styles.icon1}>
+                <TouchableOpacity
+                  key={item.id}
+                  style={styles.icon1}
+                  onPress={() =>
+                    item.label === 'Chat GPT' &&
+                    navigation.navigate(RouterName.ChatGPT)
+                  }>
                   <View style={styles.view2}>
                     <FastImage source={item.icon} style={styles.styleIcon1} />
                   </View>
