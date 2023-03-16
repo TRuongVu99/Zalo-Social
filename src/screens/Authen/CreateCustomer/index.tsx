@@ -14,6 +14,7 @@ import React, {useState} from 'react';
 import {
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -23,6 +24,7 @@ import {RootState, AppDispatch} from '../../../store';
 import {Color} from '../../../constants';
 import {addUser} from '../../../store/slice/user/userSlice';
 import {Constants} from '@components/StatusBar';
+import Platform from '@utils/Platform';
 
 export default function CreateCustomer({route}: {route: any}) {
   const navigation = useNavigation<any>();
@@ -55,35 +57,37 @@ export default function CreateCustomer({route}: {route: any}) {
   }
 
   return (
-    <View style={styles.container}>
-      <Header
-        type={IHeaderEnum.Register}
-        label={'Nhập thông tin'}
-        onPressExit={() => navigation.goBack()}
-      />
-      <UiValidate
-        notification={'Nhập số điện thoại để tạo tài khoản mới'}
-        isValid={true}
-      />
-      <View style={styles.row}>
-        <Option onPress={() => Alert.alert('option')} />
-        <CustomInput
-          onChangText={(text: string) => {
-            setNumber(text);
-          }}
-          placeholder={'Số điện thoại'}
-          containerTextInput={{
-            borderBottomColor: Color.lineColor,
-            flex: 1,
-          }}
-          keyboardType={'number-pad'}
-          maxLength={10}
-          onFocus={() => setFocus(false)}
-          onBlur={() => setFocus(true)}
+    <KeyboardAvoidingView
+      behavior={Platform.isIos ? 'padding' : undefined}
+      style={styles.container}>
+      <View style={styles.container}>
+        <Header
+          type={IHeaderEnum.Register}
+          label={'Nhập thông tin'}
+          onPressExit={() => navigation.goBack()}
         />
-      </View>
-      <View style={{flex: 1}} />
-      {focus && (
+        <UiValidate
+          notification={'Nhập số điện thoại để tạo tài khoản mới'}
+          isValid={true}
+        />
+        <View style={styles.row}>
+          <Option onPress={() => Alert.alert('option')} />
+          <CustomInput
+            onChangText={(text: string) => {
+              setNumber(text);
+            }}
+            placeholder={'Số điện thoại'}
+            containerTextInput={{
+              borderBottomColor: Color.lineColor,
+              flex: 1,
+            }}
+            keyboardType={'number-pad'}
+            maxLength={10}
+            onFocus={() => setFocus(false)}
+            onBlur={() => setFocus(true)}
+          />
+        </View>
+        <View style={{flex: 1}} />
         <UIBottom
           disabled={disable}
           color={disable ? Color.Darkgray : Color.primary}
@@ -91,13 +95,13 @@ export default function CreateCustomer({route}: {route: any}) {
             signInWithPhoneNumber(formartNumberPhone);
           }}
         />
-      )}
-      <StatusBar
-        mode={Constants.statusBar.light}
-        navigation={navigation}
-        backgroundColor={Color.primary}
-      />
-    </View>
+        <StatusBar
+          mode={Constants.statusBar.light}
+          navigation={navigation}
+          backgroundColor={Color.primary}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 const styles = StyleSheet.create({

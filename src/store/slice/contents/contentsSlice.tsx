@@ -37,7 +37,7 @@ const initialState: IFriend = {
 
 export const getStatus = createAsyncThunk(
   'contents/getStatus',
-  async (params: any) => {
+  async (params: any, thunkAPI) => {
     // Filter results
     const data = await firestore()
       .collection('Status')
@@ -45,6 +45,7 @@ export const getStatus = createAsyncThunk(
       .get()
       .then(querySnapshot => querySnapshot.data())
       .catch(_err => {
+        thunkAPI.dispatch(endLoading());
         console.log('Get Thất bại');
       });
 
@@ -54,8 +55,7 @@ export const getStatus = createAsyncThunk(
 export const getAllStatus = createAsyncThunk(
   'contents/getAllStatus',
 
-  async (params: any) => {
-    // const dispatch = useDispatch<any>();
+  async (params: any, thunkAPI) => {
     const listFriends = params.profileUser?.listFriend;
     const newProfileUser = {
       ...params.profileUser,
@@ -79,21 +79,24 @@ export const getAllStatus = createAsyncThunk(
       .catch(_err => {
         console.log('Get Thất bại');
       });
-    for (let i = 0; i < listFriends.length; ++i) {
-      await firestore()
-        .collection('Status')
-        .doc(listFriends[i].numberPhone)
-        .get()
-        .then(querySnapshot => {
-          const arr = querySnapshot
-            .data()
-            ?.listStatusContents.map((items: any) => {
-              return {...items, profile: listFriends[i]};
-            });
-          data.push(arr);
-        })
-        .catch(err => console.log({err}));
+    if (listFriends.length > 0) {
+      for (let i = 0; i < listFriends.length; ++i) {
+        await firestore()
+          .collection('Status')
+          .doc(listFriends[i].numberPhone)
+          .get()
+          .then(querySnapshot => {
+            const arr = querySnapshot
+              .data()
+              ?.listStatusContents.map((items: any) => {
+                return {...items, profile: listFriends[i]};
+              });
+            data.push(arr);
+          })
+          .catch(err => console.log({err}));
+      }
     }
+    console.log({data});
 
     return data.flat(Infinity);
   },

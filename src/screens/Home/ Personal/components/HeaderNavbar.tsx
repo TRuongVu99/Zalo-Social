@@ -1,16 +1,12 @@
-import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-import {windowWidth} from '@utils/Dimensions';
-import IconFeather from 'react-native-vector-icons/Feather';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import {useNavigation} from '@react-navigation/core';
-import {fontFamily} from '@fonts/Font';
-import FontSize from '@constants/FontSize';
-import isAndroid from '@utils/Platform';
-import {IHeaderEnum} from '@model/handelConfig';
 import {Icon} from '@icon/index';
-import FastImage from 'react-native-fast-image';
+import {IHeaderEnum} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
+import {useNavigation} from '@react-navigation/core';
+import React from 'react';
+import {Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import IconEntypo from 'react-native-vector-icons/Entypo';
+import IconFeather from 'react-native-vector-icons/Feather';
 
 interface IHeaderNavbar {
   label?: string;
@@ -31,7 +27,9 @@ const HeaderNavbar = ({label, type, isFromQRcode}: IHeaderNavbar) => {
         onPress={() => {
           isFromQRcode
             ? (navigation.popToTop(), navigation.goBack())
-            : navigation.goBack();
+            : type
+            ? navigation.goBack()
+            : navigation.navigate(RouterName.Profile);
         }}>
         <IconEntypo name="chevron-thin-left" size={22} color={'white'} />
       </TouchableOpacity>

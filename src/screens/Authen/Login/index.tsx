@@ -13,8 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-const Login = ({route}: {route: any}) => {
-  console.log(route.params);
+const Login = () => {
   const navigation = useNavigation<any>();
   const [focus, setFocus] = useState<boolean>(true);
   const [numberPhone, setNumber] = useState<string>('');

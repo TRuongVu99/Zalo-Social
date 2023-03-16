@@ -111,7 +111,6 @@ const RenderUserUI = ({
       }, loading?.timeOut);
     }
   }, [Loading]);
-
   const onRefresh = useCallback(() => {
     dispatch(startLoading());
     setRefreshing(true);
@@ -263,9 +262,7 @@ const RenderUserUI = ({
       updateAvatar(`data:${images.mime};base64,${images.data}`);
     });
   };
-  // const uriImage = useMemo(() => {
-  //   return urlBackground ? urlBackground : image.background;
-  // }, [urlBackground]);
+
   const onPressOptions = (item: any, index: number) => {
     setIsSelect(true);
     setOpstion(optionStatus);
@@ -575,7 +572,7 @@ const RenderUserUI = ({
           <FastImage
             style={{
               width: windowWidth,
-              height: '100%',
+              height: windowHeight,
               position: 'absolute',
               backgroundColor: 'rgba(0, 0, 0, 0.2)',
             }}

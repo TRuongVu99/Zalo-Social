@@ -35,7 +35,10 @@ import {
 import {StackAnimationTypes} from 'react-native-screens';
 import QRCodeScreen from '@screens/Home/MyQRCode';
 import QRCodeScan from '@screens/Home/QRCodeScan';
-import {getMessageAll} from '@store/slice/message/messageSlice';
+import {
+  getMessageAll,
+  getMessageHomeAll,
+} from '@store/slice/message/messageSlice';
 import Optional from '@screens/Home/Optional';
 import ChatGPT from '@screens/Home/ChatGPT';
 const Stack = createNativeStackNavigator<any>();
@@ -47,10 +50,6 @@ const Application = () => {
   const {loadingApp} = useSelector((state: RootState) => state?.app);
   const dispatch = useDispatch<AppDispatch>();
   firebase.auth().settings.appVerificationDisabledForTesting = true;
-  // firebase.auth().settings.appVerificationDisabledForTesting = true;
-  // useEffect(() => {
-  //   getMessage1(profileUser.numberPhone);
-  // }, []);
 
   async function onAuthStateChanged(user: any) {
     setUser(user);
@@ -60,6 +59,7 @@ const Application = () => {
       if (user) {
         const response = await dispatch(getUserProfile({uid})).unwrap();
         if (Object.keys(response).length > 0) {
+          dispatch(getMessageHomeAll({numberPhone: response.numberPhone}));
           dispatch(getAllStatus({profileUser: response}));
         }
       }

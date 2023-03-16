@@ -1,58 +1,46 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  FlatList,
-  Image,
-  Alert,
-  Pressable,
-  ScrollView,
-  Keyboard,
-  TextInput,
-  KeyboardAvoidingView,
-  RefreshControl,
-} from 'react-native';
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import Header from '@components/Header';
-import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
-import {Icon} from '@icon/index';
-import {RouterName} from '@navigation/rootName';
-import {useNavigation} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
-import IconEntypo from 'react-native-vector-icons/Entypo';
-import {fontFamily} from '@fonts/Font';
-import Color from '@constants/Color';
-import FontSize from '@constants/FontSize';
-import UIButton from '@components/UIButton';
-import FastImage from 'react-native-fast-image';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  getAllStatus,
-  getStatus,
-  likeStatus,
-  sentComment,
-  setLikePost,
-} from '@store/slice/contents/contentsSlice';
-import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import IconIonicons from 'react-native-vector-icons/Ionicons';
 import {
   RenderImage1,
   RenderImage2,
   RenderImage3,
   RenderImage4,
 } from '@components/RenderImage';
-import ImageView from 'react-native-image-viewing';
-import Platform from '@utils/Platform';
-import HeaderViewing from '../ Personal/components/HeaderViewing';
+import Color from '@constants/Color';
+import FontSize from '@constants/FontSize';
+import {fontFamily} from '@fonts/Font';
+import {Icon} from '@icon/index';
+import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {RouterName} from '@navigation/rootName';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {OpstionHeader} from './data';
-import moment from 'moment';
 import {endLoading, startLoading} from '@store/slice/app/appSlice';
+import {
+  getAllStatus,
+  getStatus,
+  likeStatus,
+  setLikePost,
+} from '@store/slice/contents/contentsSlice';
+import Platform from '@utils/Platform';
+import moment from 'moment';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import ImageView from 'react-native-image-viewing';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useDispatch, useSelector} from 'react-redux';
+import HeaderViewing from '../ Personal/components/HeaderViewing';
+import {OpstionHeader} from './data';
 
 const NewFeed = () => {
   const navigation = useNavigation<any>();
@@ -77,12 +65,19 @@ const NewFeed = () => {
   delete newProfileUser?.listFriend;
   const onGetAllStatus = async () => {
     dispatch(startLoading());
-    await dispatch(getAllStatus({profileUser})).unwrap();
-    dispatch(endLoading());
+    dispatch(getAllStatus({profileUser}));
+    setTimeout(() => {
+      dispatch(endLoading());
+    }, 1500);
   };
   useEffect(() => {
     onGetAllStatus();
   }, []);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(getAllStatus({profileUser}));
+    }, []),
+  );
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(getAllStatus({profileUser}));
@@ -152,7 +147,6 @@ const NewFeed = () => {
   const datata = [...AllStatus].sort(function (a, b) {
     return b.id - a.id;
   });
-
   const renderUI = (item: any, index: number) => {
     const isLikeUser = item?.likes?.some(
       (items: any) => items?.uid === profileUser?.uid,
@@ -236,7 +230,7 @@ const NewFeed = () => {
                   </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.row}>
+                <TouchableOpacity style={styles.row} onPress={() => {}}>
                   <FastImage
                     source={Icon.comments}
                     style={styles.comment}

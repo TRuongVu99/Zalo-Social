@@ -55,7 +55,10 @@ const CommentScreen = ({route}: {route: any}) => {
     ?.reverse()
     .filter((a: any, i: number) => index === i);
   const data = items ? items : arrs[0];
-
+  const numberPhoneCmt =
+    type === IPeronalEnum.Friend
+      ? profileFriend.numberPhone
+      : profile.numberPhone;
   const navigation = useNavigation<any>();
   const {bottom} = useSafeAreaInsets();
   const isLikeUser = data?.likes?.some(
@@ -135,16 +138,14 @@ const CommentScreen = ({route}: {route: any}) => {
   };
   const onComments = async () => {
     const newComment = [...data?.comments];
-    const dataComment = {...newProfileUser, comment: commentApp};
+    const dataComment = {...newProfileUser, comment: commentApp.trim()};
     newComment.push(dataComment);
     dispatch(updateComment(dataComment));
+
     await dispatch(
       sentComment({
         dataContents,
-        numberPhone:
-          type === IPeronalEnum.Friend
-            ? profileFriend.numberPhone
-            : profile.numberPhone,
+        numberPhone: numberPhoneCmt,
         contents: data,
         profile: newProfileUser,
         newComment: newComment,

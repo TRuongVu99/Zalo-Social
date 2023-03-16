@@ -7,6 +7,7 @@ import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
   Keyboard,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -19,6 +20,7 @@ import {addUser} from '../../../store/slice/user/userSlice';
 import {fontFamily} from '../../../assets/fonts/Font';
 import {Color, FontSize} from '../../../constants';
 import {Constants} from '@components/StatusBar';
+import Platform from '@utils/Platform';
 
 const Register = () => {
   const navigation = useNavigation<any>();
@@ -27,44 +29,46 @@ const Register = () => {
 
   const dispatch = useDispatch();
   return (
-    <View style={styles.container}>
-      <Header
-        onPressExit={() => navigation.goBack()}
-        type={IHeaderEnum.Register}
-        label={'Tạo tài khoản'}
-      />
-      <View style={styles.view1}>
-        <Text style={styles.label}>Tên Zalo</Text>
-        <CustomInput
-          onChangText={text => setName(text)}
-          placeholder={'Gồm 2-40 ký tự'}
-          textInputStyle={{
-            fontSize: FontSize.h5,
-            paddingLeft: 10,
-            fontFamily: fontFamily.primaryFont,
-          }}
-          onFocus={() => setFocus(false)}
-          onBlur={() => setFocus(true)}
+    <KeyboardAvoidingView
+      behavior={Platform.isIos ? 'padding' : undefined}
+      style={styles.container}>
+      <View style={styles.container}>
+        <Header
+          onPressExit={() => navigation.goBack()}
+          type={IHeaderEnum.Register}
+          label={'Tạo tài khoản'}
         />
-      </View>
-      <View style={styles.view2}>
-        <Text style={styles.text}>Lưu ý khi đặt tên</Text>
-        <View style={styles.row}>
-          <Icon name={'circle'} size={8} color={Color.DimGray} />
-          <Text style={styles.text}>Không vi phạm</Text>
-          <TouchableOpacity>
-            <Text style={styles.text2}>Quy định đặt tên trên Zalo</Text>
-          </TouchableOpacity>
+        <View style={styles.view1}>
+          <Text style={styles.label}>Tên Zalo</Text>
+          <CustomInput
+            onChangText={text => setName(text)}
+            placeholder={'Gồm 2-40 ký tự'}
+            textInputStyle={{
+              fontSize: FontSize.h5,
+              paddingLeft: 10,
+              fontFamily: fontFamily.primaryFont,
+            }}
+            onFocus={() => setFocus(false)}
+            onBlur={() => setFocus(true)}
+          />
         </View>
-        <View style={styles.row}>
-          <Icon name={'circle'} size={8} color={Color.DimGray} />
-          <Text style={styles.text}>
-            Nên sử dụng tên thật giúp bạn bè dễ nhận ra bạn
-          </Text>
+        <View style={styles.view2}>
+          <Text style={styles.text}>Lưu ý khi đặt tên</Text>
+          <View style={styles.row}>
+            <Icon name={'circle'} size={8} color={Color.DimGray} />
+            <Text style={styles.text}>Không vi phạm</Text>
+            <TouchableOpacity>
+              <Text style={styles.text2}>Quy định đặt tên trên Zalo</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.row}>
+            <Icon name={'circle'} size={8} color={Color.DimGray} />
+            <Text style={styles.text}>
+              Nên sử dụng tên thật giúp bạn bè dễ nhận ra bạn
+            </Text>
+          </View>
         </View>
-      </View>
-      <View style={{flex: 1}} />
-      {focus && (
+        <View style={{flex: 1}} />
         <UIBottom
           color={Color.primary}
           onPress={() => {
@@ -72,13 +76,13 @@ const Register = () => {
             navigation.navigate(RouterName.CreateCustomer);
           }}
         />
-      )}
-      <StatusBar
-        mode={Constants.statusBar.dark}
-        navigation={navigation}
-        backgroundColor={Color.primary}
-      />
-    </View>
+        <StatusBar
+          mode={Constants.statusBar.dark}
+          navigation={navigation}
+          backgroundColor={Color.primary}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({

@@ -52,7 +52,6 @@ const Profile = () => {
 
   const onGetProfile = async () => {
     dispatch(startLoading());
-
     await dispatch(getStatus({numberPhone: profileUser.numberPhone})).unwrap();
     dispatch(endLoading());
   };

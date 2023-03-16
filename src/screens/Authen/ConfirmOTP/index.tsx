@@ -3,6 +3,7 @@ import Header from '@components/Header';
 import OTPInput from '@components/OTPInput';
 import UiValidate from '@components/UiValidate';
 import {Color, FontSize} from '@constants';
+import Image from '@constants/Image';
 import {IHeaderEnum} from '@model/handelConfig';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -73,6 +74,8 @@ const ConfirmOTP = ({route}: {route: any}) => {
               numberPhone,
               username,
               uid: auth().currentUser?.uid,
+              avatar: Image.avatarDefault,
+              background: Image.background,
             })
             .catch((error: any) => {
               console.log(error);
