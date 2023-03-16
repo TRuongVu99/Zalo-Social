@@ -8,7 +8,7 @@ import {RouterName} from '@navigation/rootName';
 import storage from '@react-native-firebase/storage';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
-import {endLoading, startLoading} from '@store/slice/app/appSlice';
+import {startLoading} from '@store/slice/app/appSlice';
 import {
   addImagetoList,
   getStatus,

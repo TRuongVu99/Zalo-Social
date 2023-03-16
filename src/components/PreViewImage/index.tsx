@@ -24,6 +24,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import {useDispatch, useSelector} from 'react-redux';
 import ImageView from 'react-native-image-viewing';
+import FastImage from 'react-native-fast-image';
 const PreViewImage = ({route}: {route: any}) => {
   const {listImages} = useSelector((state: RootState) => state.contents);
   const newListImage = listImages.filter((item: any, index: number) => {
@@ -46,11 +47,7 @@ const PreViewImage = ({route}: {route: any}) => {
       dispatch(addImagetoList(dataImages));
     });
   };
-  console.log({
-    data: data.media.map((item: any) => {
-      return {uri: item};
-    }),
-  });
+
   switch (type) {
     case IPreviewImageEnum.Photoshop:
       return (
@@ -65,7 +62,7 @@ const PreViewImage = ({route}: {route: any}) => {
               style={{padding: 5}}
             />
           </TouchableOpacity>
-          <Image
+          <FastImage
             resizeMode="contain"
             style={styles.image}
             source={{uri: UrlImage}}
@@ -94,11 +91,7 @@ const PreViewImage = ({route}: {route: any}) => {
               numColumns={3}
               renderItem={({item, index}) => (
                 <View>
-                  <Image
-                    borderRadius={5}
-                    style={styles.imageMore}
-                    source={{uri: item}}
-                  />
+                  <FastImage style={styles.imageMore} source={{uri: item}} />
                   <TouchableOpacity
                     onPress={() => dispatch(removeImageInList(index))}
                     style={styles.viewAbsolute}>
@@ -186,6 +179,7 @@ const styles = StyleSheet.create({
     width: windowWidth / 3.1,
     height: windowWidth / 3.1,
     margin: 1,
+    borderRadius: 5,
   },
   header: {
     flexDirection: 'row',

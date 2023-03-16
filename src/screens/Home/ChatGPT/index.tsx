@@ -10,7 +10,7 @@ const logo =
   'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/640px-ChatGPT_logo.svg.png';
 
 const API_URL = 'https://api.openai.com/v1/completions';
-const YOUR_API_KEY = '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';
+const YOUR_API_KEY = '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';
 const MAX_TOKENS = 1000;
 
 export default function ChatGPT() {

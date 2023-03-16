@@ -92,16 +92,6 @@ const RenderUserUI = ({
   };
   delete newProfileUser?.listFriendInvitations;
   delete newProfileUser?.listFriend;
-  // useEffect(() => {
-  //   dispatch(
-  //     getStatus({
-  //       numberPhone:
-  //         type === IPeronalEnum.Friend
-  //           ? profileFriend?.numberPhone
-  //           : profileUser.numberPhone,
-  //     }),
-  //   );
-  // }, []);
 
   const dataStatus = [...dataContents?.listStatusContents];
   const lengthMedia = dataStatus

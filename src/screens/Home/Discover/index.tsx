@@ -40,7 +40,7 @@ const Discover = () => {
         nameIconRight2={Icon.qrcode}
         onPressIconRight2={() => onQRCode()}
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         <View style={styles.view}>
           <Text style={styles.label}>Tiện ích cho bạn</Text>
           <View style={styles.view1}>
@@ -91,7 +91,7 @@ const Discover = () => {
             <View style={[styles.view1, {flex: 1.1}]}>
               {data2.map((item: any) => {
                 return (
-                  <TouchableOpacity style={styles.icon4}>
+                  <TouchableOpacity key={item.id} style={styles.icon4}>
                     <Image
                       source={item.icon}
                       style={[styles.styleIcon3]}
@@ -154,6 +154,7 @@ const Discover = () => {
             {data3.map((item: any) => {
               return (
                 <View
+                  key={item.id}
                   style={[
                     styles.row2,
                     {
@@ -204,7 +205,7 @@ const Discover = () => {
             <View style={[styles.row2, {justifyContent: 'space-around'}]}>
               {data4.map((item: any) => {
                 return (
-                  <TouchableOpacity>
+                  <TouchableOpacity key={item.id}>
                     <View style={styles.icon3}>
                       <FastImage source={item.icon} style={styles.styleIcon1} />
                     </View>

@@ -1,8 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {useEffect} from 'react';
-import {message} from '.';
-
+import {store} from '../../index';
 // export const likeStatus = createAsyncThunk(
 //   'message/likeStatus',
 //   async (params: ICreateContent) => {
@@ -52,11 +50,11 @@ import {message} from '.';
 // );
 interface IMessage {
   Messages: {
-    isSender?: boolean;
-    isReceive?: boolean;
+    isSender?: boolean | undefined;
+    isReceive?: boolean | undefined;
     message?: any;
-    timeSent?: number;
-    image?: string;
+    timeSent?: number | undefined;
+    image?: string | undefined;
   };
   MessageAll: any;
 }
@@ -68,6 +66,46 @@ export const getMessage = createAsyncThunk(
       .doc(params.numberPhone)
       .get()
       .then(querySnapshot => querySnapshot.data())
+      .catch(_err => {
+        console.log('Get Thất bại');
+      });
+
+    return data;
+  },
+);
+
+export const getMessageHomeAll = createAsyncThunk(
+  'message/getMessageHomeAll',
+  async (params: any, thunkAPI) => {
+    const {profileUser} = thunkAPI.getState()?.user;
+    const ListFriend = profileUser?.listFriend?.filter(
+      (item: any) => item.status === 3,
+    );
+    const data = await firestore()
+      .collection('Message')
+      .doc(params.numberPhone)
+      .get()
+      .then(querySnapshot => {
+        const newData = ListFriend.map((item: any) => {
+          const dataMessage = querySnapshot
+            .data()
+            ?.message?.filter(
+              (items: any) =>
+                items.phoneOfSender === item.numberPhone ||
+                items.phoneOfReceive === item.numberPhone,
+            );
+          const reverseDataMessage = dataMessage?.reverse()[0];
+          return {
+            ...item,
+            lastMessage: reverseDataMessage,
+          };
+        });
+
+        const Data = newData.filter((Item: any) => {
+          return Item.lastMessage;
+        });
+        return Data;
+      })
       .catch(_err => {
         console.log('Get Thất bại');
       });
@@ -119,14 +157,21 @@ export const counterSlice = createSlice({
       state.Messages = {};
       state.MessageAll = [];
     },
+    DataMessegers: (state, action) => {
+      state.MessageAll = action.payload;
+    },
   },
   extraReducers(builder) {
     //fulfilled
     builder.addCase(getMessage.fulfilled, (state: any, action) => {
       state.Messages = action.payload;
     });
+    builder.addCase(getMessageHomeAll.fulfilled, (state: any, action) => {
+      state.MessageAll = action.payload;
+    });
   },
 });
-export const {getMessages, getMessageAll, resetMessage} = counterSlice.actions;
+export const {getMessages, getMessageAll, resetMessage, DataMessegers} =
+  counterSlice.actions;
 
 export default counterSlice.reducer;

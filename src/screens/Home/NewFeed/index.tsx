@@ -64,9 +64,8 @@ const NewFeed = () => {
   );
   const dispatch = useDispatch<any>();
   const [visible, setIsVisible] = useState(false);
-  const [quantity, setQuantity] = useState<number>(1);
   const [itemApp, setItem] = useState<any>([]);
-  // console.log({itemApp});
+  const [quantity, setQuantity] = useState<any>();
   const [refreshing, setRefreshing] = useState(false);
   const [like, setLike] = useState<boolean>(true);
   const newProfileUser = {
@@ -131,7 +130,6 @@ const NewFeed = () => {
         newLikes: arr,
       }),
     );
-    console.log({dataContents});
   };
   const onPressLike = async (item: any) => {
     const newLikes = [...item?.likes];
@@ -156,13 +154,13 @@ const NewFeed = () => {
   });
 
   const renderUI = (item: any, index: number) => {
-    const datas = item?.media?.map((img: any, id: number) => {
-      return {uri: img};
-    });
-    console.log({datas});
     const isLikeUser = item?.likes?.some(
       (items: any) => items?.uid === profileUser?.uid,
     );
+    const isLikeUsers = itemApp?.likes?.some(
+      (items: any) => items?.uid === profileUser?.uid,
+    );
+
     let m1 = moment(
       `${moment(
         `${item.dayOfPostStatus.day} ${item.dayOfPostStatus.hour}`,
@@ -181,18 +179,22 @@ const NewFeed = () => {
         : Math.floor(diff / 60) >= 1 && Math.floor(diff / 60) <= 24
         ? Math.floor(diff / 60) + ' giờ trước'
         : Math.floor(diff / 1440) + ' ngày trước';
-
     return (
       <>
         <ImageView
           images={itemApp?.media?.map((img: any) => {
             return {uri: img};
           })}
-          imageIndex={0}
+          imageIndex={indexImg}
           visible={visible}
           onRequestClose={() => setIsVisible(false)}
           HeaderComponent={() => (
-            <HeaderViewing onPressClose={() => setIsVisible(false)} />
+            <HeaderViewing
+              onPressClose={() => {
+                setIsVisible(false);
+                dispatch(getAllStatus({profileUser}));
+              }}
+            />
           )}
           FooterComponent={() => (
             <>
@@ -208,11 +210,15 @@ const NewFeed = () => {
                   key={itemApp.dayOfPostStatus.hour}
                   onPress={() => {
                     setLike(!like);
-                    setQuantity(!like ? quantity - 1 : quantity + 1);
-                    like ? onPressUnLike(itemApp) : onPressLike(itemApp);
+                    setQuantity(
+                      !like
+                        ? itemApp?.likes?.length - 1
+                        : itemApp?.likes?.length + 1,
+                    );
+                    !like ? onPressUnLike(itemApp) : onPressLike(itemApp);
                   }}
                   style={styles.heart}>
-                  {!isLikeUser ? (
+                  {!isLikeUsers ? (
                     <IconFontAwesome
                       name={'heart-o'}
                       size={24}
@@ -226,7 +232,7 @@ const NewFeed = () => {
                     />
                   )}
                   <Text style={[styles.likes, {color: 'white'}]}>
-                    {quantity}
+                    {itemApp?.likes?.length}
                   </Text>
                 </TouchableOpacity>
 
@@ -294,6 +300,7 @@ const NewFeed = () => {
                 ListImage={item?.media}
                 onPressImg={() => {
                   setItem(item);
+                  setQuantity(itemApp?.likes?.length);
                   setIsVisible(true);
                 }}
               />
@@ -302,6 +309,7 @@ const NewFeed = () => {
                 ListImage={item?.media}
                 onPressImg={() => {
                   setItem(item);
+                  setQuantity(itemApp?.likes?.length);
                   setIsVisible(true);
                 }}
               />
@@ -310,6 +318,7 @@ const NewFeed = () => {
                 ListImage={item?.media}
                 onPressImg={() => {
                   setItem(item);
+                  setQuantity(itemApp?.likes?.length);
                   setIsVisible(true);
                 }}
               />
@@ -318,6 +327,7 @@ const NewFeed = () => {
                 ListImage={item?.media}
                 onPressImg={() => {
                   setItem(item);
+                  setQuantity(itemApp?.likes?.length);
                   setIsVisible(true);
                 }}
               />

@@ -2,12 +2,20 @@ import Header from '@components/Header';
 import StatusBar, {Constants} from '@components/StatusBar';
 import {Color, FontSize} from '@constants';
 import {fontFamily} from '@fonts/Font';
-import {IHeaderEnum, IPeronalEnum} from '@model/handelConfig';
+import {
+  IHeaderEnum,
+  IPeronalEnum,
+  IPreviewImageEnum,
+} from '@model/handelConfig';
 import {RouterName} from '@navigation/rootName';
 import {useNavigation} from '@react-navigation/native';
 import {RootState} from '@store/index';
 import {endLoading, startLoading} from '@store/slice/app/appSlice';
-import {getStatus} from '@store/slice/contents/contentsSlice';
+import {
+  addImagetoList,
+  getStatus,
+  resetListImages,
+} from '@store/slice/contents/contentsSlice';
 import {getMessage, sentMessage} from '@store/slice/message/messageSlice';
 import {addProfileFriend} from '@store/slice/profileFriend/profileFriendSlice';
 import Platform from '@utils/Platform';
@@ -18,6 +26,7 @@ import {
   Image,
   Keyboard,
   KeyboardAvoidingView,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -27,35 +36,12 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import IconIonicons from 'react-native-vector-icons/Ionicons';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import IconEvilIcons from 'react-native-vector-icons/EvilIcons';
 import {useDispatch, useSelector} from 'react-redux';
-
-const renderUI = (item: any, profileFriend: any) => {
-  return (
-    <View
-      style={{
-        flexDirection: item.isSender ? 'row-reverse' : 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-      }}>
-      {item.isReceive &&
-        (item.isReceive ? (
-          <Image style={styles.avatar} source={{uri: profileFriend.avatar}} />
-        ) : (
-          <View style={{width: 30}} />
-        ))}
-      <TouchableOpacity
-        style={[
-          styles.viewMessage,
-          {backgroundColor: item.isReceive ? 'white' : Color.message},
-        ]}>
-        <Text style={styles.message}>{item.message}</Text>
-        <Text style={styles.message}>
-          {item.isReceive ? item.timeReceive?.hour : item.timeSent?.hour}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+import storage from '@react-native-firebase/storage';
+import ImagePicker from 'react-native-image-crop-picker';
+import FastImage from 'react-native-fast-image';
+import {windowHeight, windowWidth} from '@utils/Dimensions';
 
 const Message = ({route}: {route: any}) => {
   const dispatch = useDispatch<any>();
@@ -71,7 +57,7 @@ const Message = ({route}: {route: any}) => {
       item.phoneOfSender === profileFriend.numberPhone ||
       item.phoneOfReceive === profileFriend.numberPhone,
   );
-  console.log({Messages});
+
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardWillShow', () => {
       setPaddingBottom(false);
@@ -92,6 +78,117 @@ const Message = ({route}: {route: any}) => {
     ).unwrap();
     dispatch(endLoading());
   };
+  const onSentMessage = (message: string) => {
+    setMessage('');
+    dispatch(
+      sentMessage({
+        numberPhone: profileFriend.numberPhone,
+        message: {
+          phoneOfSender: profileUser.numberPhone,
+          isReceive: true,
+          message: message,
+          timeReceive: {
+            hour: moment().format('LT'),
+            day: moment().format('L'),
+          },
+        },
+      }),
+    );
+    dispatch(
+      sentMessage({
+        numberPhone: profileUser.numberPhone,
+        message: {
+          phoneOfReceive: profileFriend.numberPhone,
+          isSender: true,
+          message: message,
+          timeSent: {
+            hour: moment().format('LT'),
+            day: moment().format('L'),
+          },
+        },
+      }),
+    );
+    dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+  };
+  const GetURLMediaToStorage = (image: string) => {
+    storage()
+      .ref(image.substring(image.lastIndexOf('/') + 1))
+      .getDownloadURL()
+      .then((imageURL: string) => {
+        onSentMessage(imageURL);
+        console.log('Tải URL thành công');
+      })
+      .catch(() => console.log('Tải URL thất bại'));
+  };
+  const UploadMediaToStorage = (image: any) => {
+    storage()
+      .ref(image.substring(image.lastIndexOf('/') + 1))
+      .putFile(Platform.isIos ? image.replace('file://', '') : image)
+      .then(() => {
+        console.log('Đăng ảnh thành công');
+        GetURLMediaToStorage(image);
+      })
+      .catch(() => console.log('Đăng ảnh thất bại'));
+  };
+
+  const getImagesInAlbum = () => {
+    ImagePicker.openPicker({
+      width: 700,
+      height: 700,
+      cropping: true,
+    }).then((images: any) => {
+      const dataImg = images.path;
+      UploadMediaToStorage(dataImg);
+    });
+  };
+  const renderUI = (item: any) => {
+    return (
+      <View
+        style={{
+          flexDirection: item.isSender ? 'row-reverse' : 'row',
+          alignItems: 'center',
+          marginBottom: 5,
+        }}>
+        {item.isReceive &&
+          (item.isReceive ? (
+            <Image style={styles.avatar} source={{uri: profileFriend.avatar}} />
+          ) : (
+            <View style={{width: 30}} />
+          ))}
+        {item.message.includes('firebasestorage') ? (
+          <Pressable
+            onPress={() => {
+              navigation.navigate(RouterName.PreViewImage, {
+                UrlImage: item.message,
+                type: IPreviewImageEnum.Photoshop,
+              });
+            }}>
+            <FastImage source={{uri: item.message}} style={styles.image}>
+              <View style={styles.hd}>
+                <Text style={styles.textHd}>HD</Text>
+              </View>
+            </FastImage>
+            <TouchableOpacity>
+              <View style={styles.heart}>
+                <IconEvilIcons name={'heart'} size={24} color={Color.icon} />
+              </View>
+            </TouchableOpacity>
+          </Pressable>
+        ) : (
+          <TouchableOpacity
+            style={[
+              styles.viewMessage,
+              {backgroundColor: item.isReceive ? 'white' : Color.message},
+            ]}>
+            <Text style={styles.message}>{item.message}</Text>
+            <Text style={styles.message}>
+              {item.isReceive ? item.timeReceive?.hour : item.timeSent?.hour}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.isIos ? 'padding' : undefined}
@@ -102,6 +199,7 @@ const Message = ({route}: {route: any}) => {
             type === IHeaderEnum.Phonebook
               ? navigation.goBack()
               : navigation.navigate(RouterName.HomeMessage);
+            dispatch(resetListImages());
           }}
           type={IHeaderEnum.Message}
           label={name ? name : profileFriend.username}
@@ -121,12 +219,9 @@ const Message = ({route}: {route: any}) => {
         />
         <FlatList
           inverted
-          contentContainerStyle={{
-            marginHorizontal: 15,
-            paddingBottom: 20,
-          }}
+          contentContainerStyle={styles.contentContainerStyle}
           data={data?.reverse()}
-          renderItem={({item}) => renderUI(item, profileFriend)}
+          renderItem={({item}) => renderUI(item)}
         />
 
         <View
@@ -147,36 +242,7 @@ const Message = ({route}: {route: any}) => {
           {messageApp !== '' ? (
             <TouchableOpacity
               onPress={() => {
-                setMessage('');
-                dispatch(
-                  sentMessage({
-                    numberPhone: profileFriend.numberPhone,
-                    message: {
-                      phoneOfSender: profileUser.numberPhone,
-                      isReceive: true,
-                      message: messageApp,
-                      timeReceive: {
-                        hour: moment().format('LT'),
-                        day: moment().format('L'),
-                      },
-                    },
-                  }),
-                );
-                dispatch(
-                  sentMessage({
-                    numberPhone: profileUser.numberPhone,
-                    message: {
-                      phoneOfReceive: profileFriend.numberPhone,
-                      isSender: true,
-                      message: messageApp,
-                      timeSent: {
-                        hour: moment().format('LT'),
-                        day: moment().format('L'),
-                      },
-                    },
-                  }),
-                );
-                dispatch(getMessage({numberPhone: profileUser.numberPhone}));
+                onSentMessage(messageApp.trim());
               }}>
               <IconIonicons name={'send'} size={24} color={Color.primary} />
             </TouchableOpacity>
@@ -192,7 +258,12 @@ const Message = ({route}: {route: any}) => {
                   color={Color.DimGray}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  dispatch(resetListImages());
+
+                  getImagesInAlbum();
+                }}>
                 <IconSimple name={'picture'} size={26} color={Color.DimGray} />
               </TouchableOpacity>
             </>
@@ -252,6 +323,44 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.isIos ? 10 : 0,
     paddingHorizontal: 10,
     marginTop: 10,
+  },
+  heart: {
+    bottom: 5,
+    right: 0,
+    width: 27,
+    height: 27,
+    borderRadius: 30,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  contentContainerStyle: {
+    marginHorizontal: 15,
+    paddingBottom: 20,
+  },
+  image: {
+    width: windowWidth / 1.5,
+    height: windowHeight / 3,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: 'white',
+    marginBottom: 20,
+  },
+  hd: {
+    backgroundColor: 'white',
+    alignSelf: 'flex-start',
+    margin: 10,
+    width: 30,
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  textHd: {
+    fontFamily: fontFamily.fontZalo,
+    fontSize: FontSize.h6 * 0.9,
   },
 });
 export default Message;
