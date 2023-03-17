@@ -4,10 +4,13 @@
 
 This project aims to be a strong foundation for react-native applications. It provides a clear and organized structure, core dependencies, and boilerplate to jumpstart development.
 
-## Preview
+## Preview 
 
+https://user-images.githubusercontent.com/120771868/225842639-6d81ab18-4453-4045-a6b1-f1cedc58fd16.mp4
 
+## QR Code 
 
+https://user-images.githubusercontent.com/120771868/225842842-12c3d58c-aab9-4a8f-bdb0-65d7d88af737.mp4
 
 ## Prerequisites
 
